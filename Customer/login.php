@@ -60,6 +60,7 @@
     </style>
 </head>
 <body>
+    <?php include('./component/backButton.php')?>
     <div class="font-login">
         <p>Log In</p>
     </div>
