@@ -98,7 +98,7 @@
         </div>
         <div class="body-container">
             <div class="container">
-                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <form method="post" action="registerProcess.php">
                     <label for="fname">First name</label>
                     <input type="text" id="fname" name="fname" required>
                     <label for="lname">Last name</label>
