@@ -194,7 +194,10 @@
 
 </html>
 <?php include('./component/accessNavBar.php'); ?>
-<!-- <?php include('./component/backButton.php') ?> -->
+<?php include('./component/backButton.php');
+include('./component/getFunction/getProductImages.php');
+?>
+
 <?php
 $cx = mysqli_connect("localhost", "root", "", "shopping");
 $code = $_POST['id_product'];
@@ -233,12 +236,12 @@ echo " <div class='container-body'>
                     </div>
                     <br><br>
                     ";
-                    if ($onHandStock <= 0) {
-                        echo "<input class='buy-button' type='submit' style='background-color:gray;' name='add_to_cart' value='เพิ่มลงตะกร้า' disabled>";
-                    }else {
-                        echo "<input class='buy-button' type='submit' name='add_to_cart' value='เพิ่มลงตะกร้า'>";
-                    }
-                    echo "         
+if ($onHandStock <= 0) {
+    echo "<input class='buy-button' type='submit' style='background-color:gray;' name='add_to_cart' value='เพิ่มลงตะกร้า' disabled>";
+} else {
+    echo "<input class='buy-button' type='submit' name='add_to_cart' value='เพิ่มลงตะกร้า'>";
+}
+echo "         
                 </form>
             </div>
         </div>";
