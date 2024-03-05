@@ -173,6 +173,6 @@
     // Automatic slideshow
     setInterval(function () {
         plusSlides(1);
-    }, 2000);
+    }, 5000);
 </script>
 </html>
