@@ -5,23 +5,31 @@
         padding: 0;
     }
 
+    navCon {
+        padding: 0;
+    }
+
     nav {
-        background-color: rgba(255, 99, 71, 0.8); /* Light red color with transparency */
+        background-color: rgba(255, 255, 255, 0.8);
+        /* Light red color with transparency */
         padding: 10px;
         position: fixed;
         width: 100%;
+        height: 10%;
         top: 0;
-        z-index: 1000;
         display: flex;
-        justify-content: space-between; /* Added to align items to the left and right */
+        justify-content: space-between;
+        /* Added to align items to the left and right */
 
     }
+
     .nav-right {
         display: flex;
         align-items: center;
         justify-content: center;
         margin-right: 3%;
-        position: relative; /* Added relative positioning */
+        position: relative;
+        /* Added relative positioning */
     }
 
     ul {
@@ -29,6 +37,51 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
+    }
+
+    h-li {
+        float: left;
+        width: 200px;
+        height: 50px;
+    }
+
+    h-li a {
+        font-size: larger;
+        display: block;
+        color: rgba(40, 40, 40, 1);
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        transition: background-color 0.25s ease;
+        /* Smooth transition effect */
+        position: relative;
+        /* Added for absolute positioning of the underline */
+    }
+
+    h-li a:hover {
+        color: rgba(0, 0, 0, 1);
+        /* Full red color on hover */
+        text-decoration: underline;
+    }
+
+    /* Style for the clicked link */
+    h-li a.active {
+        text-decoration: underline;
+        font-weight: bold;
+        /* Bootstrap's danger color */
+    }
+
+    h-li a.active::after {
+        content: '';
+        /* Create a pseudo-element for the underline */
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        /* Underline thickness */
+        background-color: white;
+        /* Underline color */
     }
 
     li {
@@ -39,35 +92,48 @@
 
     li a {
         display: block;
-        color: white;
+        color: rgba(40, 40, 40, 1);
         text-align: center;
         padding: 14px 16px;
         text-decoration: none;
-        transition: background-color 0.25s ease; /* Smooth transition effect */
-        position: relative; /* Added for absolute positioning of the underline */
+        transition: background-color 0.25s ease;
+        /* Smooth transition effect */
+        position: relative;
+        /* Added for absolute positioning of the underline */
     }
 
     li a:hover {
-        background-color: rgba(255, 99, 71, 1); /* Full red color on hover */
+        color: rgba(0, 0, 0, 1);
+        /* Full red color on hover */
+        text-decoration: underline;
     }
 
     /* Style for the clicked link */
     li a.active {
-        background-color: #d9534f; /* Bootstrap's danger color */
+        background-color: #d9534f;
+        /* Bootstrap's danger color */
+        text-decoration: underline;
+        font-weight: bold;
+        /* Move text-decoration to this selector */
     }
 
     li a.active::after {
-        content: ''; /* Create a pseudo-element for the underline */
+        content: '';
+        /* Create a pseudo-element for the underline */
         position: absolute;
         left: 0;
         bottom: 0;
         width: 100%;
-        height: 2px; /* Underline thickness */
-        background-color: white; /* Underline color */
+        height: 2px;
+        /* Underline thickness */
+        background-color: white;
+        /* Underline color */
     }
 
+
     body {
-        margin-top: 50px; /* Adjust margin to avoid content being hidden under the fixed navbar */
+        margin-top: 50px;
+        /* Adjust margin to avoid content being hidden under the fixed navbar */
     }
 
     .nav-left {
@@ -84,39 +150,71 @@
     }
 
     .cart-icon {
-        margin-top: -15%;
+        margin-top: -25%;
+        width: 100%;
+        height: 80%;
         justify-content: center;
-        width: 50%; /* Adjust size as needed */
-        height: 50%; /* Adjust size as needed */
+        transition: transform 0.3s;
     }
 
-    .cart-icon-container {
+    .cart-icon:hover {
+        transform: scale(1.25);
+    }
+
+    .cart-icon-container,
+    .user-icon-container,
+    .search-icon-container {
         position: relative;
+        /* border: 1px solid #000; */
+        width: 7%;
+    }
+
+    .user-icon {
+        justify-content: center;
+        transition: transform 0.3s;
+    }
+
+    .user-icon img {
+        width: 50%;
+        height: 50%;
+    }
+
+    .user-icon:hover {
+        transform: scale(1.25);
+    }
+
+
+    .search-icon {
+        justify-content: center;
+        transition: transform 0.3s;
+    }
+
+    .search-icon img {
+        width: 50%;
+        height: 50%;
+    }
+
+    .search-icon:hover {
+        transform: scale(1.25);
     }
 
     .badge {
         position: absolute;
         top: 0;
         right: 25%;
-        background-color: #d9534f; /* Bootstrap's danger color */
+        background-color: #d9534f;
+        /* Bootstrap's danger color */
         color: white;
         padding: 3px 8px;
         border-radius: 50%;
         font-size: 12px;
     }
-
-    .cart-icon {
-        width: 50%; /* Adjust size as needed */
-        height: 50%; /* Adjust size as needed */
-        margin-top: -15%; /* Adjust margin as needed */
-    }
-  
 </style>
 
-<nav>
+<nav class="navCon">
     <div class="nav-left">
         <ul>
-            <li><a <?php echo isActive('index.php'); ?> href="index.php">Home</a></li>
+            <h-li><a <?php echo isActive('index.php'); ?> href="index.php">2ND HANDED</a></h-li>
             <?php $cartIconClass = (basename($_SERVER['PHP_SELF']) == 'cart.php') ? 'class="active"' : ''; ?>
             <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
                 <li><a <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
@@ -125,22 +223,25 @@
     </div>
 
     <ul class="nav-right">
+        <li class="search-icon-container">
+            <a class="search-icon" <?php echo isActive('profile.php'); ?> href="profile.php"><img src="./image/search.png"></a>
+        </li>
         <li class='cart-icon-container'>
-        <a <?php echo $cartIconClass; ?> href='cart.php'>
+            <a <?php echo $cartIconClass; ?> href='cart.php'>
                 <img class='cart-icon' src='./image/cart.webp' alt='Cart'>
-                <?php if(isset($_SESSION['cart'])) : ?>
+                <?php if (isset($_SESSION['cart'])) : ?>
                     <?php $cartIconCount = (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) ? count($_SESSION['cart']) : 0; ?>
 
-                <?php elseif(isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) :?>
+                <?php elseif (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
                     <?php
-                        // echo 'TEST123456';
-                        $cx =  mysqli_connect("localhost", "root", "", "shopping");
-                        $uid = (isset($_SESSION['id_username'])) ? $_SESSION['id_username'] : '';
-                        $cur = "SELECT * FROM cart WHERE CusID = '$uid'";
-                        $msresults = mysqli_query($cx, $cur);
+                    // echo 'TEST123456';
+                    $cx =  mysqli_connect("localhost", "root", "", "shopping");
+                    $uid = (isset($_SESSION['id_username'])) ? $_SESSION['id_username'] : '';
+                    $cur = "SELECT * FROM cart WHERE CusID = '$uid'";
+                    $msresults = mysqli_query($cx, $cur);
 
-                        $cartIconCount = (mysqli_num_rows($msresults) > 0) ? mysqli_num_rows($msresults) : 0;
-                        mysqli_close($cx);
+                    $cartIconCount = (mysqli_num_rows($msresults) > 0) ? mysqli_num_rows($msresults) : 0;
+                    mysqli_close($cx);
                     ?>
                 <?php endif; ?>
                 <?php if (!empty($cartIconCount)) : ?>
@@ -150,7 +251,9 @@
             </a>
         </li>
         <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) && $_SESSION['status'] === true) : ?>
-            <li><a <?php echo isActive('profile.php'); ?> href="profile.php">Profile</a></li>
+            <li class="user-icon-container">
+                <a class="user-icon" <?php echo isActive('profile.php'); ?> href="profile.php"><img src="./image/userTheme.png"></a>
+            </li>
             <li><a <?php echo isActive('logoutProcess.php'); ?> href="logoutProcess.php">Logout</a></li>
 
         <?php else : ?>
@@ -159,10 +262,9 @@
     </ul>
 </nav>
 <?php
-    // Function to check and set 'active' class
-    function isActive($page)
-    {
-        return (basename($_SERVER['PHP_SELF']) == $page) ? 'class="active"' : '';
-    }
+// Function to check and set 'active' class
+function isActive($page)
+{
+    return (basename($_SERVER['PHP_SELF']) == $page) ? 'class="active"' : '';
+}
 ?>
-
