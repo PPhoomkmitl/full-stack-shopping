@@ -69,6 +69,7 @@ mysqli_close($cx);
             align-items: center;
             justify-content: center;
             height: screen;
+            margin-top: 100px;
         }
 
         .container {

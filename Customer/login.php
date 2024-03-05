@@ -88,8 +88,8 @@
             color: #3498db;
         }
 
-        .btn-primary {
-            background-color: #3498db;
+        .btn-success {
+            background-color: #488978;
             color: #fff;
             padding: 0.75rem;
             border: none;
@@ -135,7 +135,7 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h1 class="my-5">Shop Smart<br /><span style="color: #3498db;">Look Sharp.</span></h1>
+                    <h1 class="my-5">Shop Smart<br /><span style="color: #488978;">Look Sharp.</span></h1>
                     <p>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit.
                         Eveniet, itaque accusantium odio, soluta, corrupti aliquam
@@ -157,7 +157,7 @@
                                     <label for="password">Password</label>
                                     <input type="password" id="password" name="password" class="form-control" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+                                <button type="submit" class="btn btn-success btn-block mb-4">Sign in</button>
                             </form>
                             <div class='container-register'> 
                                 <a href="register.php" class="btn btn-link">Don't have an account?</a>

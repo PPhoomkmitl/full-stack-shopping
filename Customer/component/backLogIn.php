@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Document</title>
 </head>
 <style>
-    a.aBack {
+     a.aBack {
         margin-top: 3%;
-        margin-left: 3%;
+        margin-left: 4%;
         display: inline-block;
-        padding: 10px 20px;
-        background-color: #ef476f;
+        padding: 5px 28px;
+        background-color: #4CAF50;
         color: #fff;
         text-decoration: none;
         border-radius: 5px;
     }
 
     a.aBack:hover {
-        background-color: #e0476f;
+        background-color: #28A745;
     }
+
+    
 </style>
 <body>
-    <a class="aBack" href='?aBack=1'> <- กลับไปหน้าหลัก </a>
+    <!-- <a class="aBack" href='?aBack=1'> <- กลับไปหน้าหลัก </a> -->
+    <a class="aBack" href='?aBack=1'>
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
     <?php
         // เช็คว่ามีการคลิกลิงก์ aBack หรือไม่
         if (isset($_GET['aBack'])) {

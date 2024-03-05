@@ -29,11 +29,15 @@
         }
 
         .checkout-header {
-            background-color: #3498db;
-            color: #fff;
+            background-color: #488978;
+            color: #ffff;
             padding: 20px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
+        }
+        .checkout-header h2 {
+            color: #ffff;
+            margin-left: 20px;
         }
 
         .checkout-steps {
@@ -264,11 +268,17 @@
         .dot.pending { background-color: #488978; }
         .dot.inprogress { background-color: #488978; }
         .dot.delivered { background-color: #488978; }
+
+        .backButton {
+            margin-left: 90px;
+        }
     </style>
 </head>
 
 <body>
-    <?php include('./component/backLogIn.php');?>
+    <div class="backButton">
+        <?php include('./component/backButton.php'); ?>
+    </div>
     <?php
         if (isset($_POST['id_customer'])) {
             $uid = $_POST['id_customer'];
@@ -540,6 +550,11 @@
                 </div>
             </div>
             </section>';
+            if (isset($_SESSION['guest'])) {
+                // Unset session ที่คุณต้องการ
+                unset($_SESSION['guest']);
+                unset($_SESSION['id_username']);
+            }
             mysqli_close($cx);
         ?>            
         </div>

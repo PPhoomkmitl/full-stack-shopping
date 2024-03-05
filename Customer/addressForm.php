@@ -1,4 +1,4 @@
-<?php include('./component/backButton.php');
+<?php 
 include('./component/session.php');
 include('../logFolder/AccessLog.php');
 include('../logFolder/CallLog.php');
@@ -9,6 +9,7 @@ include('./component/getFunction/getName.php'); ?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <title>Checkout</title>
     <style>
         body {
@@ -27,11 +28,12 @@ include('./component/getFunction/getName.php'); ?>
         }
 
         .checkout-header {
-            background-color: #3498db;
+            background-color: #488978;
             color: #fff;
             padding: 20px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
+
         }
 
         .checkout-steps {
@@ -100,22 +102,44 @@ include('./component/getFunction/getName.php'); ?>
         }
 
         input[type="submit"] {
-            background-color: #3498db;
+            background-color: #488978;
             font-weight: bold;
             color: white;
         }
 
         input[type="submit"]:hover {
-            background-color: #2B7EB5;
+            background-color: #5E8978;
         }
 
         input[type="submit"]:focus {
-            background-color: #194969;
+            background-color: #5E8978;
+        }
+
+        .breadcrumb {
+            background-color: #f8f9fa; /* Set background color */
+            padding: 10px; /* Add padding for better visual */
+            border-radius: 5px; /* Add border radius for rounded corners */
+        }
+
+        .breadcrumb-item {
+            font-size: 18px; /* Adjust font size */
+        }
+
+        .breadcrumb-item a {
+            color: #007bff; /* Set link color */
+            text-decoration: none; /* Remove default link underline */
+        }
+
+        .breadcrumb-item.active {
+            color: #000; /* Set color for active/last item */
         }
     </style>
 </head>
 
 <body>
+    <div class="mx-5">
+        <?php include('./component/backButton.php'); ?>
+    </div>
     <form id="profileForm" method="post" action="accessInvoice.php">
         <?php
         if (isset($_SESSION['id_username'])) {
@@ -143,44 +167,60 @@ include('./component/getFunction/getName.php'); ?>
                 <div class="checkout-step">Step 3: Success</div>
             </div>
 
-            <div id="shippingForm" class="checkout-form" style="display: block;">
-                <!-- Shipping form content -->
-                <div class="form-group">
-                    <label for="fullname">First Name</label>
-                    <input type="text" id="fullname" name="fname" value="<?php echo $row['RecvFName'] ?? ''; ?>"
-                        required>
-                    <label for="lastname">Last Name</label>
-                    <input type="text" id="lastname" name="lname" value="<?php echo $row['RecvLName'] ?? ''; ?>"
-                        required>
+
+            <div class="container">
+            <div class="col-md-8 order-md-1 mx-auto py-4">
+            <h4 class="mb-3">Billing address</h4>
+            <form class="needs-validation" novalidate="">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                      
+                        <label for="fullname">First Name</label>
+                        <input class="form-control" type="text" id="fullname" name="fname" value="<?php echo $row['RecvFName'] ?? ''; ?>" required>              
+                        <div class="invalid-feedback"> Valid first name is required. </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                   
+                        <label for="lastname">Last Name</label>
+                        <input class="form-control" type="text" id="lastname" name="lname" value="<?php echo $row['RecvLName'] ?? ''; ?>"required>
+                        <div class="invalid-feedback"> Valid last name is required. </div>
+                    </div>
+                </div>
+             
+                <div class="mb-3">
                     <label for="tel">Tel<span>*</span></label>
-                    <input required type="tel" name="tel" value="<?php echo $row['Tel'] ?? ''; ?>">
+                    <input class="form-control" required type="tel" name="tel" value="<?php echo $row['Tel'] ?? ''; ?>">
+                    <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
+                </div>
+                <div class="mb-3">
                     <label for="address">Address</label>
-                    <textarea style="resize:none;" name="address" id="address" rows="3"
-                        required><?php echo $row['Address'] ?? ''; ?></textarea>
+                    <textarea style="resize:none;" name="address" id="address" rows="3" required><?php echo $row['Address'] ?? ''; ?></textarea>
+                    <div class="invalid-feedback"> Please enter your shipping address. </div>
                 </div>
 
-                <!-- <button class="checkout-button" onclick="submit()">Next to Payment</button> -->
-                <input type='submit'>
+                    <input type='submit'>
 
-                <!-- ตรวจสอบว่าเป็น Guest หรือ User และแสดงปุ่ม 'ชำระเงิน' ตามเงื่อนไข -->
-                <?php if (isset($_SESSION['cart'])): ?>
-                    <input type='hidden' name='cart' value='<?php echo json_encode($_SESSION['cart']); ?>'>
-                <?php elseif (isset($_SESSION['id_username'])): ?>
-                    <input type='hidden' name='id_customer' value='<?php echo $uid; ?>'>
-                <?php else: ?>
-                    <p>Oops Something went wrong</p>
-                    <?php echo 'header("Location: ./cart.php")'; ?>
-                <?php endif; ?>
+                    <!-- ตรวจสอบว่าเป็น Guest หรือ User และแสดงปุ่ม 'ชำระเงิน' ตามเงื่อนไข -->
+                    <?php if (isset($_SESSION['cart'])): ?>
+                        <input type='hidden' name='cart' value='<?php echo json_encode($_SESSION['cart']); ?>'>
+                    <?php elseif (isset($_SESSION['id_username'])): ?>
+                        <input type='hidden' name='id_customer' value='<?php echo $uid; ?>'>
+                    <?php else: ?>
+                        <p>Oops Something went wrong</p>
+                        <?php echo 'header("Location: ./cart.php")'; ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </form>
+        
 
-    <script>
+    <!-- <script> -->
 
-        // function submit() {
+        <!-- // function submit() {
         //     document.querySelector('form').submit();
-        // }
-    </script>
+        // } -->
+    <!-- </script> -->
 </body>
 
 </html>

@@ -1,7 +1,6 @@
 <?php include('./component/session.php');
 
 /* มี ฺBug ถ้าไม่ลบ Guest ก่อนที่จะกดกลับไปหน้าหลัก */
-include('./component/backButton.php');
 /* --------------------------------------- */
 
 include('../logFolder/AccessLog.php');
@@ -13,6 +12,7 @@ include('./component/getFunction/getName.php');?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <title>Checkout</title>
     <style>
         body {
@@ -55,7 +55,7 @@ include('./component/getFunction/getName.php');?>
         }
 
         .checkout-header {
-            background-color: #3498db;
+            background-color: #488978;
             color: #fff;
             padding: 20px;
             border-top-left-radius: 8px;
@@ -119,73 +119,82 @@ include('./component/getFunction/getName.php');?>
             background-color: #219653;
         }
         .checkout-sidebar {
-    flex: 0.5;
-    border: 1px solid #ddd;
-    padding: 20px;
-    position: sticky;
-    bottom: 0;
-    border-color: #000;
-    width: max-content;
-    height: max-content;
-    background-color: #f9f9f9; /* สีพื้นหลังของ sidebar */
-    border-radius: 8px; /* เพิ่มมุมโค้งให้กับ sidebar */
-}
+            flex: 0.5;
+            border: 1px solid #ddd;
+            padding: 20px;
+            position: sticky;
+            bottom: 0;
+            border-color: #000;
+            width: max-content;
+            height: max-content;
+            background-color: #f9f9f9; /* สีพื้นหลังของ sidebar */
+            border-radius: 8px; /* เพิ่มมุมโค้งให้กับ sidebar */
+        }
 
-.invoice-container {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
+        .invoice-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
 
-/* .invoice-header {
-    color: #fff;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 20px;
-} */
+    /* .invoice-header {
+        color: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 20px;
+    } */
 
-.customer-details,
-.summary-details {
-    margin-bottom: 20px;
-}
+        .customer-details,
+        .summary-details {
+            margin-bottom: 20px;
+        }
 
-.text-container {
-    margin-bottom: 10px;
-}
+        .text-container {
+            margin-bottom: 10px;
+        }
 
-.view-details-link {
-    color: #3498db;
-    text-decoration: none;
-}
+        .view-details-link {
+            color: #3498db;
+            text-decoration: none;
+        }
 
-.view-details-link:hover {
-    text-decoration: underline;
-}
-.customer-details h4,
-.summary-details h4 {
-    background-color: #3498db; /* สีพื้นหลังของ <h4> */
-    color: #fff; /* สีข้อความของ <h4> */
-    padding: 10px; /* ระยะห่างขอบของ <h4> */
-    border-radius: 8px; /* มุมโค้งของ <h4> */
-    margin-top: 0; /* ลบ margin ด้านบนของ <h4> */
-}
-input[type="submit"]{
-    background-color: #3498db;
-    font-weight:bold;
-    color:white;
-}
-input[type="submit"]:hover{
-    background-color: #2B7EB5;
-}
-input[type="submit"]:focus{
-    background-color: #194969;
-}
+        .view-details-link:hover {
+            text-decoration: underline;
+        }
+        .customer-details h4,
+        .summary-details h4 {
+            background-color: #3498db; /* สีพื้นหลังของ <h4> */
+            color: #fff; /* สีข้อความของ <h4> */
+            padding: 10px; /* ระยะห่างขอบของ <h4> */
+            border-radius: 8px; /* มุมโค้งของ <h4> */
+            margin-top: 0; /* ลบ margin ด้านบนของ <h4> */
+        }
+        input[type="submit"]{
+            background-color:#488978;
+            font-weight:bold;
+            color:white;
+        }
+        input[type="submit"]:hover{
+            background-color: #5E8978;
+        }
+        input[type="submit"]:focus{
+            background-color: #488978;
+        }
+        .backButton {
+            margin-left: 90px;
+        }
+
     </style>
 </head>
 
 <body>
+
+    <div class="backButton">
+        <?php include('./component/backLogIn.php'); ?>
+    </div>
+    <!-------------------------------------------------------------------->
     <form id="profileForm" method="post" action="accessOrder.php">
         <?php
         if (isset($_SESSION['id_username'])) {
@@ -216,6 +225,7 @@ input[type="submit"]:focus{
                 <div class="checkout-step">Step 3: Success</div>
             </div>
 
+            <!-------------------------------------------------------------->
             <div class="flex-container">
                 <!-- Main content -->
                 <div class="checkout-content">
@@ -243,15 +253,10 @@ input[type="submit"]:focus{
                     </div>
                 </div>
 
-                <div class="checkout-sidebar">
                     <!-- Sidebar content -->
                     <?php
                     $cx = mysqli_connect("localhost", "root", "", "shopping");
-                    echo "<div class='invoice-container'>";
-                    echo "<div class='body-container'>";
-                    echo "<div class='invoice-header'>
-                    <h4></h4>
-                    </div>";
+
 
                     if (isset($_POST['id_invoice'])) {
                         $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM receiver 
@@ -260,51 +265,63 @@ input[type="submit"]:focus{
                         $customerId = $uid;
                         $invoiceId = $_POST['id_invoice'];
 
-                        echo "<div class='customer-details'>
-                       
-                        <h4><strong>สรุปการจัดส่ง</strong></h4>
-                    
-                        <div class='text-container'>
-                            <p><strong>Shipping Address</strong></p>
-                            <p><strong>Name:</strong> {$customerDetails['RecvFName']} {$customerDetails['RecvLName']} </p>
-                            <p><strong>Tel:</strong> {$customerDetails['Tel']}</p>
-                            <div class='address-container'>
-                                <p><strong>Address:</strong> {$customerDetails['Address']}</p>
-                            </div>
-                        </div>
-                        
-                        <h4><strong>สรุปการคำสั่งซื้อ</strong></h4>";      
-                        $totalPriceAllItems = 0;
-                        $invoiceDetailsQuery = mysqli_query($cx, "SELECT * , product.ProName FROM invoice_detail
-                        INNER JOIN product ON product.ProID =  invoice_detail.ProID 
-                        INNER JOIN invoice ON invoice.InvID =  invoice_detail.InvID 
-                        WHERE invoice.InvID  = '$inv'");
-                     
-                        while ($invoiceDetails = mysqli_fetch_array($invoiceDetailsQuery)) {
-                            $totalPrice = $invoiceDetails['PricePerUnit'] * $invoiceDetails['Qty'];
-                            $totalPriceAllItems += $totalPrice;
+                        echo '<div class="col-md-4 order-md-2 mb-4">
+                            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted ">Delivery Summary</span>
+                            </h4>
+                            <ul class="list-group mb-3 sticky-top">
+                                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                    <div class="text-success">
+                                        <h6 class="my-0 bg-light ">Shipping Address</h6>
+                                        <small class="text-muted">Name: '.$customerDetails['RecvFName'] . ' ' . $customerDetails['RecvLName'] .'</small><br>
+                                        <small class="text-muted">Tel: '.$customerDetails['Tel'].'</small><br>
+                                        <small class="text-muted">Address: '. $customerDetails['Address'] .'</small>
+                                    </div>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                    <div>';
+                                        $totalPriceAllItems = 0;
+                                        $invoiceDetailsQuery = mysqli_query($cx, "SELECT * , product.ProName FROM invoice_detail
+                                        INNER JOIN product ON product.ProID =  invoice_detail.ProID 
+                                        INNER JOIN invoice ON invoice.InvID =  invoice_detail.InvID 
+                                        WHERE invoice.InvID  = '$inv'");
 
-                            echo "<div class='text-container'>
-                                <p><strong {$invoiceDetails['ProName']}</strong></p>
-                                <p><strong>฿{$invoiceDetails['PricePerUnit']}</strong>     จำนวน {$invoiceDetails['Qty']} ชิ้น</p>
-                            </div>";                         
-                        }
-                        
-                        $tax = $totalPriceAllItems * 0.07;
-                        $totalAmount = $tax + $totalPriceAllItems;
-                       
-                        echo "
-                       <h4>สรุปยอดชำระเงิน</h4>
-                            <div class='text-container'>
-                                <p><strong>VAT:</strong>{$tax}</p>
-                                <p><strong>ราคารวม:</strong>{$totalPriceAllItems}</p>                     
-                            </div>
-                        <hr> 
-                            <div class='text-container'>
-                                <p><strong>ยอดชำระสุทธิ:</strong>{$totalAmount}</p>                              
-                            </div>
-                        <hr>                        
-                    </div>";
+                                        echo '<h6 class="my-0 text-success">Order summary</h6>';
+                                        while ($invoiceDetails = mysqli_fetch_array($invoiceDetailsQuery)) {
+                                            $totalPrice = $invoiceDetails['PricePerUnit'] * $invoiceDetails['Qty'];
+                                            $totalPriceAllItems += $totalPrice;
+
+                                            echo '   
+                                                <small class="text-muted">Name: '.$invoiceDetails['ProName'] . ' ' . $customerDetails['RecvLName'] .'</small><br>
+                                                <small class="text-muted">Quantity: '.$invoiceDetails['Qty'].' piece</small><br>
+                                                <small class="text-muted">Price: '.$invoiceDetails['PricePerUnit'].' ฿ </small><br>
+                                                <hr style="width:370px;">
+                                            ';                         
+                                        }
+                                        $tax = $totalPriceAllItems * 0.07;
+                                        $totalAmount = $tax + $totalPriceAllItems;
+                                    echo '
+                                    </div>
+
+
+                         
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between lh-condensed bg-light">
+                                    <div>                          
+                                        <small class="text-muted">SubTotal</small><br>
+                                        <small class="text-muted">VAT</small><br>
+                                        <span>Total (BATH)</span>
+                                       
+                                    </div>
+                                    <div>
+                                    <span class="text-muted">'.$tax.' ฿</span><br>
+                                    <span class="text-muted">'.$totalPriceAllItems.' ฿</span><br>
+                                    <span class="text-muted">'.$totalAmount.' ฿</span>
+                                    </div>
+                                    
+                                </li>                                          
+                            </ul>
+                        </div>';
                     }
                     ?>
                     <!-- <a href='./invoice.php?id_invoice={$inv}&id_receiver={$row['RecvID']}' class='view-details-link' style='text-decoration: underline; color: #3498db;'>View Full Details</a> -->
@@ -314,11 +331,13 @@ input[type="submit"]:focus{
         </div>
         </div>
     </form>
+
+</body>
+
+</html>
+
     <script>
         // function submit() {
         //     document.querySelector('form').submit();
         // }
     </script>
-</body>
-
-</html>

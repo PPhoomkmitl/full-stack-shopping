@@ -211,7 +211,7 @@ function includeOrders($query) {
     while ($row = mysqli_fetch_array($msresults)) {
         echo '<div class="order">';
         echo "<div class='icon-container'>
-                <form method='post' action='order.php'>
+                <form method='post' action='bill.php'>
                     <input type='hidden' name='id_order' value='{$row['RecID']}'>
                     <button type='submit'>
                         <img src='./image/search-alt.png' alt='Order Icon' width='20'>

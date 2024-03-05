@@ -7,7 +7,7 @@
     <title>Login</title>
     <style>
         .bg-image {
-            background-color: #3b71ca;
+            background-color: #488978;
             height: 280px;
             background-size: cover;
             background-position: center;
@@ -28,8 +28,8 @@
             top: -50px;
             margin-left: -3rem;
         }
-        .btn-primary {
-            background-color: #3498db;
+        .btn-success {
+            background-color: #488978;
             color: #fff;
             padding: 0.75rem;
             border: none;
@@ -134,7 +134,7 @@
              
 
                     <!-- Submit button -->
-                    <button type="submit" class="btn btn-primary btn-block mb-4" id="button-submit">
+                    <button type="submit" class="btn btn-success btn-block mb-4" id="button-submit">
                     Sign up
                     </button>
                 </form>
