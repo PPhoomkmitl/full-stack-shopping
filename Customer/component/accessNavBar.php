@@ -110,7 +110,10 @@
 
     /* Style for the clicked link */
     li a.active {
-        background-color: #d9534f;
+        background-color: #999;
+        border-radius: 50%;
+        justify-content: center;
+        display: flex;
         /* Bootstrap's danger color */
         text-decoration: underline;
         font-weight: bold;
@@ -207,12 +210,15 @@
         transform: scale(1.25);
     }
 
-    .cart-icon-container,
     .user-icon-container,
     .search-icon-container {
         position: relative;
         /* border: 1px solid #000; */
         width: 7%;
+    }
+    .cart-icon-container{
+        width: 15%;
+        position: relative;
     }
 
     .user-icon {
@@ -271,11 +277,8 @@
         <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
             <li><a <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
         <?php endif; ?>
-        <li><a <?php echo isActive('about.php'); ?> href="about.php">About</a></li>
+        <li><a <?php echo isActive('../navbarList/about.php'); ?> href="about.php">About</a></li>
         <li><a <?php echo isActive('contact.php'); ?> href="contact.php">Contact</a></li>
-        <li class="search-icon-container">
-            <a class="search-icon" <?php echo isActive('profile.php'); ?> href="profile.php"><img src="./image/search.png"></a>
-        </li>
         <li class='cart-icon-container'>
             <a <?php echo $cartIconClass; ?> href='cart.php'>
                 <img class='cart-icon' src='./image/cart.webp' alt='Cart'>
