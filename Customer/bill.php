@@ -6,6 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyXYEy4NotmFXFgAj4DQISO2aHkwKbofjM" crossorigin="anonymous">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -89,12 +94,14 @@
             background-color: #219653;
         }
         .order-container {
-            max-width: 1150px;
+            max-width: 1110px;
             margin: 5px auto 50px auto;
-            border: 2px solid #4CAF50;
+            border: 1.5px solid rgba(0, 0, 0, .125);
             background-color: #fff;
+            background-clip: border-box;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: .25rem;
+            /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); */
         }
 
         .order-header {
@@ -158,13 +165,6 @@
             background-color: #2980b9;
         }
 
-        .container_order {
-            /* display: flex;
-            flex-direction: row;
-            justify-content: space-between; */
-        }
-
-
         .item_order {
             width: 400px;
         }
@@ -198,7 +198,7 @@
         .action-buttons {
             display: flex;
             justify-content: space-between;
-            padding-top: 10px;
+        
         }
 
         .action-buttons h1{
@@ -233,11 +233,42 @@
             width: 20px;
             height: 20px; 
         }
+
+        .dot {
+            height: 40px;
+            width: 40px;
+            /* margin-left: 5px;
+            margin-right: 3px; */
+            margin-top: 0px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #9BA4AB;
+            
+        }
+    
+
+        .order-date {
+            color: #999;
+        }
+
+        .connecting-line {
+            flex-grow: 1;
+            height: 3px;
+            background-color: #488978;
+        }
+
+        /* Define different colors for different statuses */
+        .dot.confirm { background-color: #488978; }
+        .dot.pending { background-color: #488978; }
+        .dot.inprogress { background-color: #488978; }
+        .dot.delivered { background-color: #488978; }
     </style>
 </head>
 
 <body>
-    <?php include('./component/backButton.php');?>
+    <?php include('./component/backLogIn.php');?>
     <?php
         if (isset($_POST['id_customer'])) {
             $uid = $_POST['id_customer'];
@@ -248,34 +279,14 @@
             WHERE receiver_detail.CusID = '$uid'";
             $result_address = mysqli_query($cx, $query_address);
             if (mysqli_num_rows($result_address) > 0) {
-                // Fetch a single row from the result set
+
                 $row = mysqli_fetch_assoc($result_address);
             }
         }
-    ?>
-        <div class="checkout-container">
-            <div class="checkout-header">
-                <h2>Checkout</h2>
-            </div>
-
-            <div class="checkout-steps">
-                <div class="checkout-step" >Step 1: Shipping</div>
-                <div class="checkout-step" >Step 2: Payment</div>
-                <div class="checkout-step active" >Step 3: Success</div>
-            </div>
-
-            <div id="successForm" class="checkout-form" style="display: block;">
-                <!-- Success form content -->
-                <h3>Order Placed Successfully!</h3>
-                <p>Your order has been confirmed. Thank you for shopping with us.</p>          
-            </div>
-
-            
-            <?php    
-                $cx =  mysqli_connect("localhost", "root", "", "shopping");
+        $cx =  mysqli_connect("localhost", "root", "", "shopping");
                 $uid = $_SESSION['id_username'];
 
-                echo "<div class='order-container'>";
+        
                 if (isset($_SESSION['cart'])) {
                     $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");  
                     $customerDetails = mysqli_fetch_array($customerDetailsQuery);
@@ -303,123 +314,234 @@
 
 
                 $recQuery = mysqli_query($cx, "SELECT * FROM receive
+                INNER JOIN customer ON customer.cusID = receive.cusID
                 WHERE receive.RecID = '$RecId '");
                 $recResult = mysqli_fetch_array($recQuery);
+    ?>
 
+        <!----------------------------------------Check out Header------------------------------------------------->
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h2>Checkout</h2>
+            </div>
 
-                echo "<div class='container_order'>";
-                echo "<div  id='row-rev' class='invoice-container'>
+            <div class="checkout-steps">
+                <div class="checkout-step" >Step 1: Shipping</div>
+                <div class="checkout-step" >Step 2: Payment</div>
+                <div class="checkout-step active" >Step 3: Success</div>
+            </div>
 
-                <div class='action-buttons'>
-                        <h1 style='display: inline;'>เลขใบเสร็จของท่านคือ :{$recResult['RecID']} </h1>
-                        
-                        <form class='action-button' action='pdf.php' method='post' target='_blank' style='display: inline-block;'>
-                            <input type='hidden' name='id_receive' value='".$RecId."'>
-                            <input type='hidden' name='id_customer' value='". $customerId ."'>
-                            <button type='submit'>
-                                <img src='./image/print.png' alt='print'>
-                            </button>
-                        </form>
+            <div id="successForm" class="checkout-form" style="display: block; margin-left:50px;">
+                <h3>Order Placed Successfully!</h3>
+                <p>Your order has been confirmed. Thank you for shopping with us.</p>          
+            </div>
 
-                    </div>";
-                    
-                    echo "<div class='item_order'>
-                            <h3>บริษัท </h3>
-                            <p>บริษัท: Fastwork ck🤔</p>
-                            <p>ที่ตั้ง: ประเทศลาดกระบัง</p>
-                            
-                    </div>";
-                    echo "<hr>";
-                    echo '<div class="grid-container">
-                        <div class="grid-item">';              
-                            echo "<div class='item_order2'>
-                                <p>ชื่อผู้จ่าย: {$payerResult['PayerFName']} {$payerResult['PayerLName']}</p>
-                                <p>ที่อยู่จัดส่ง : {$payerResult['Tel']}</p>
-                            </div>";
-                            echo "</div>
-                                <div class='grid-item'>
-                                    <div class='item_order2'>
-                                        <p id='Status'>สถานที่จัดส่ง</p>
-                                        <p>ชื่อผู้รับ : {$recevierResult['RecvFName']} {$recevierResult['RecvLName']}</p>
-                                        <p>ที่อยู่จัดส่ง : {$recevierResult['Address']}</p>
-                                        <p>เบอร์โทร : {$recevierResult['Tel']}</p>
-                                    </div>";
-                                
-                            echo "</div>
-                                <div class='grid-item'>
-                                    <div class='item_order2'>
-                                        <p id='Status'>สถานะ : {$recResult['Status']}</p>
-                                        <p>วันที่สั่งซื้อ : {$recResult['OrderDate']}</p>
-                                        <p>วันที่ส่ง : {$recResult['DeliveryDate']}</p>
+        <!----------------------------------------Order Tracking------------------------------------------------->      
+        <div class="container py-3 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex flex-column">
+                                <span class="lead fw-normal">Order Tracking</span>
+                                <span class="text-muted small">by DHFL on <?php echo $recResult['OrderDate']; ?></span>
+                            </div>
                                     </div>
-                                </div>
-                            </div>";
+                                    <hr class="my-4">
+
+                                    <div class="d-flex flex-row justify-content-between align-items-center">
+                                    <?php
+                                        // Define colors for different order statuses
+                                        $statusColors = array(
+                                            'Confirm' => 'confirm',
+                                            'Pending' => 'pending',
+                                            'Inprogress' => 'inprogress',
+                                            'Delivered' => 'delivered'
+                                        );
+
+                                        $delivered = false;
+
+                                        // Loop through each status and display corresponding dot
+                                        foreach ($statusColors as $status => $color) {
+                                            echo '<div class="d-flex flex-column align-items-center">';
+                                            if ($status === $recResult['Status']) {
+                                                if($status === 'Pending'){
+                                                    echo '<div class="dot ' . $color . '"><i class="fas fa-clock text-white" ></i></div>';
+                                                }
+                                                else if($status === 'Inprogress'){
+                                                    echo '<div class="dot inprogress"><i class="fas fa-spinner text-white"></i></div>';
+
+                                                }
+                                                else {
+                                                    echo '<div class="dot delivered"><i class="fas fa-check-circle text-white"></i></div>';
+                                                }
+                                            
+                                                echo '<span class="order-date">' .substr($recResult['OrderDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
+                                    
+                                            } else if ($status === 'Confirm' && in_array($recResult['Status'], ['Confirm', 'Pending', 'Inprogress', 'Delivered'])) {
+                                                // Change color for Confirm status
+                                                echo '<div class="dot confirm"><i class="fas fa-check text-white"></i></div>';
+                                                echo '<span class="order-date">'.substr($recResult['OrderDate'], 0 , 10).'</span><span>' . $status . '</span></div>';  
+
+
+                                            } else if ($status === 'Pending' && in_array($recResult['Status'], ['Pending', 'Inprogress', 'Delivered'])) {
+                                                // Change color for Pending status
+                                                echo '<div class="dot pending"><i class="fas fa-clock text-white"></i></div>';
+                                                echo '<span class="order-date">'.substr($recResult['OrderDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
+                                    
+                                            } else if ($status === 'Inprogress' && in_array($recResult['Status'], ['Inprogress', 'Delivered'])) {
+                                                // Change color for Inprogress status
+                                                echo '<div class="dot inprogress"><i class="fas fa-spinner text-white"></i></div>';
+
+                                                echo '<span class="order-date">'.substr($recResult['DeliveryDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
+                                    
+                                            } else {
+                                                echo '<div class="dot"></div>';
+                                                echo '<span class="order-date">'.substr($recResult['DeliveryDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
+                                            }
+                                        
+
+                                            if ($status === 'Delivered') {
+                                                $delivered = true;
+                                            }
+                                            // Add connecting line for all statuses except the first one
+                                            if ($delivered === false) {
+                                                echo '<div class="connecting-line"></div>';
+                                            }
+                                        }
+                                    ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    <!-- Bootstrap JS and Font Awesome -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!------------------------------------------------------------------------------------------>      
+    <?php
+    echo '<section class="h-100 gradient-custom">
+    <div class="container py-2 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-lg-10 col-xl-12">
+              <div class="card" style="border-radius: 10px;">
+                  <div class="card-header px-4 py-5 d-flex justify-content-between" >
+                      <h5 class="text-muted mb-0">Thanks for your Order,<span style="color: #488978;"> '.$recResult['CusFName'].'!</span></h5>
+                      <div class="action-buttons">
+                       
+                          <form class="action-button" action="pdf.php" method="post" target="_blank" style="display: inline-block;">
+                              <input type="hidden" name="id_receive" value="' . $RecId . '">
+                              <input type="hidden" name="id_customer" value="' . $customerId . '">
+                              <button type="submit">
+                                  <img src="./image/print.png" alt="print">
+                              </button>
+                          </form>
+                      </div>
+                  </div>
+                  <div class="card-body p-4">
+                      <div class="d-flex justify-content-between align-items-center mb-4">
+                          <p class="lead fw-normal mb-0" style="color: #488978;">Receipt</p>
+                          <p class="small text-muted mb-0">Receipt Voucher : ' . $recResult['RecID'] . '</p>
+                      </div>';
+
+
+                        // <?---------        ส่วนของ detail     -------->
+                        if(isset($_POST['id_order'])){
+                            $orderQuery = mysqli_query($cx, "SELECT Product.*, receive_detail.*  , receive.* 
+                                        FROM receive_detail
+                                        INNER JOIN receive ON receive.RecID = receive_detail.RecID
+                                        INNER JOIN Product ON Product.ProID = receive_detail.ProID
                     
-                    
-                    echo "</div>";
+                                        WHERE receive_detail.RecID = '$RecId '");
+                                        
+                            $totalPriceAllItems = 0; 
+                            $detailsDisplayed = false; 
+        
+                            while ($row = mysqli_fetch_array($orderQuery)) {
+                                $totalPrice = $row['PricePerUnit'] * $row['Qty'];
+                                $totalPriceAllItems += $totalPrice;
+    
+                                echo '<div class="card shadow-0 border mb-4">
+                                <div class="card-body">
+                                    <div class="row">       
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center"> 
+                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/13.webp"
+                                            class="img-fluid" alt="Phone">    
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0">'.$row['ProName'].'</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">Qty:'.$row['Qty'].'</p>
+                                        </div>
+                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">price: '.$row['PricePerUnit'].'</p>
+                                        </div>
                         
-                    
-                if(isset($_POST['id_order'])){
-                    // $customerId = $customerDetails['CusID'];
-                    $orderQuery = mysqli_query($cx, "SELECT Product.*, receive_detail.*  , receive.*
-                                FROM receive_detail
-                                INNER JOIN receive ON receive.RecID = receive_detail.RecID
-                                INNER JOIN Product ON Product.ProID = receive_detail.ProID
-                                WHERE receive_detail.RecID = '$RecId '");
-                                
-                    $totalPriceAllItems = 0; 
-                    $detailsDisplayed = false; 
-
-                    while ($row = mysqli_fetch_array($orderQuery)) {
-                        $totalPrice = $row['PricePerUnit'] * $row['Qty'];
-                        $totalPriceAllItems += $totalPrice;
-
-                        if (!$detailsDisplayed) { 
-                            echo "<h3>รายการสินค้าที่คุณซื้อ</h3>";      
-                            echo "<table>
-                                    <thead>
-                                        <tr>
-                                            <th>รายการสินค้า</th>
-                                            <th>จำนวน</th>
-                                            <th>ราคา (บาท)</th>
-                                            <th>รวมทั้งหมด</th>
-                                        </tr>
-                                    </thead>";
-
-                            $detailsDisplayed = true; 
+                                        <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
+                                            <p class="text-muted mb-0 small">'.$totalPrice.'</p>
+                                        </div>
+                                    </div>
+                                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                                    <div class="row d-flex align-items-center"></div>
+                                </div>';
+                        
                         }
 
-                        echo "<tr>
-                                <td>{$row['ProName']}</td>
-                                <td>{$row['Qty']}</td>
-                                <td>{$row['PricePerUnit']} ฿</td>
-                                <td>$totalPrice</td>
-                            </tr>";
                     }
 
                     echo "</table>";
                     $tax = $totalPriceAllItems * 0.07;
                     $totalAmount = $tax + $totalPriceAllItems;
             
-                    echo "<div class='order-total'>
-                            <p>ราคารวม: $totalPriceAllItems ฿</p>
-                            <p>VAT: $tax ฿</p>
-                            <p>ส่วนลด: 0.00 ฿</p>
-                            <p>ยอดสุทธิ: $totalAmount ฿</p>
-                            <hr>
-                        </div>";  
-                        
-                    echo "</div>";
-                    if(isset($_SESSION['guest'])){
-                        unset($_SESSION['guest']);
-                        unset($_SESSION['id_username']);
-                    }
-        
-                    
-                }
-                mysqli_close($cx);
-            ?>
+               
+
+
                 
+                echo '<div class="d-flex justify-content-between pt-2 pb-2">
+                    <p class="fw-bold mb-1 mx-3">Order Details</p>
+                    <p class="text-muted mb-0" style="font-size: 1.2rem;">
+                        <span class="fw-bold" style="margin-right: 17px;">Total</span>
+                        <span class="fw-bold mx-5"> '.$totalPriceAllItems.'฿</span>
+                    </p>
+                </div>';
+
+                echo '<div class="d-flex justify-content-between mb-5" style="margin-top: -10px;">
+                    <div class="flex-col mb-5">
+                        <p class="text-muted mb-0 mx-3">Receipt: <span style="font-weight: bold;">'.$recResult['RecID'].'</span></p>
+                        <p class="text-muted mb-0 mx-3">Order Date: '.$recResult['OrderDate'].'</p>
+                    </div>
+                    <div class="flex-col mb-5">
+                        <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">VAT 7%</span><span class="fw-bold mx-5">'.$tax.'฿</span></p>
+                        <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">Discount</span><span class="fw-bold mx-5">0.00฿</span></p>
+                        <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+                    </div>
+                </div>';
+
+                     
+                       
+                    
+                echo   '<div class="card-footer border-0 px-4 py-5"
+                        style="background-color: #488978; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                        <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
+                        paid: <span class="h2 mb-0 ms-2">'.$totalAmount.' ฿</span></h5>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </section>';
+            mysqli_close($cx);
+        ?>            
         </div>
     <script>
 
