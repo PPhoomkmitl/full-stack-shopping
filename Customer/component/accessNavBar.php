@@ -140,13 +140,59 @@
         display: flex;
         align-items: center;
         margin-left: 2%;
+
     }
+
+    .nav-left img {
+        width: 50px;
+        /* ปรับขนาดของ logo ตามต้องการ */
+        height: auto;
+    }
+
+    .nav-left h-li {
+        width: auto;
+        padding: 10%;
+        /* ปรับขนาดของพื้นที่สำหรับ logo ให้ข้อความไม่ค้างกัน */
+    }
+
 
     .nav-right {
         display: flex;
         align-items: center;
         justify-content: flex-end;
         margin-right: 3%;
+    }
+
+
+    .nav-right li a {
+        font-size: larger;
+        display: block;
+        color: rgba(40, 40, 40, 1);
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        transition: background-color 0.25s ease;
+        position: relative;
+    }
+
+    .nav-right li a:hover {
+        color: rgba(0, 0, 0, 1);
+        text-decoration: underline;
+    }
+
+    .nav-right li a.active {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .nav-right li a.active::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background-color: white;
     }
 
     .cart-icon {
@@ -214,15 +260,19 @@
 <nav class="navCon">
     <div class="nav-left">
         <ul>
-            <h-li><a <?php echo isActive('index.php'); ?> href="index.php">2ND HANDED</a></h-li>
+            <h-li><a <?php echo isActive('index.php'); ?> href="index.php">
+                    <img src="./image/logo.png" class="logo" />
+                </a></h-li>
             <?php $cartIconClass = (basename($_SERVER['PHP_SELF']) == 'cart.php') ? 'class="active"' : ''; ?>
-            <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
-                <li><a <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
-            <?php endif; ?>
         </ul>
     </div>
 
     <ul class="nav-right">
+        <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
+            <li><a <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
+        <?php endif; ?>
+        <li><a <?php echo isActive('about.php'); ?> href="about.php">About</a></li>
+        <li><a <?php echo isActive('contact.php'); ?> href="contact.php">Contact</a></li>
         <li class="search-icon-container">
             <a class="search-icon" <?php echo isActive('profile.php'); ?> href="profile.php"><img src="./image/search.png"></a>
         </li>

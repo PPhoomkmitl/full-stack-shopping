@@ -106,19 +106,19 @@
         <div class="mySlides fade">
             <div class="numbertext">1 / 3</div>
                 <img src="https://www.cultofmac.com/wp-content/uploads/2017/03/Product_Red.jpg" style="width:100%">
-            <div class="text">Caption Text</div>
+            <div class="text"></div>
         </div>
 
         <div class="mySlides fade">
             <div class="numbertext">2 / 3</div>
                 <img src="https://www.apple.com/v/product-red/y/images/meta/product_red__fcz9yyleim2y_og.png?202311271833" style="width:100%">
-            <div class="text">Caption Two</div>
+            <div class="text"></div>
         </div>
 
         <div class="mySlides fade">
                 <div class="numbertext">3 / 3</div>
                 <img src="https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2023%2F02%2Fiphone-15-pro-max-dark-red-color-details-info-001.jpg?cbr=1&q=90" style="width:100%">
-                <div class="text">Caption Three</div>
+                <div class="text"></div>
         </div>
 
         <!-- Next and previous buttons -->

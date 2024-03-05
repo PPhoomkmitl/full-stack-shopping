@@ -205,16 +205,16 @@ $onHandStock = $row['StockQty'] - $row['OnHands'];
 echo " <div class='container-body'>
             <div class='container-1'>
                 <div class='product-image'>
-                    <img src='./image/cart.png' alt='Product Image'>
+                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
                 </div>
                 <div class='product-image'>
-                    <img src='./image/cart.png' alt='Product Image'>
+                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
                 </div>
                 <div class='product-image'>
-                    <img src='./image/cart.png' alt='Product Image'>
+                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
                 </div>
                 <div class='product-image'>
-                    <img src='./image/cart.png' alt='Product Image'>
+                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
                 </div>
             </div>
             <div class='container-2'>
