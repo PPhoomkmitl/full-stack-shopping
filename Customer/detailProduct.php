@@ -194,7 +194,7 @@
 
 </html>
 <?php include('./component/accessNavBar.php'); ?>
-<?php include('./component/backButton.php');
+<?php
 include('./component/getFunction/getProductImages.php');
 ?>
 
@@ -226,7 +226,7 @@ echo " <div class='container-body'>
                     {$row['Description']}
                 </p>
                 <p style='font-size:30px;'>ราคา: {$row['PricePerUnit']} บาท</p>
-                <p style='font-size:20px; color:red;'>จำนวนในสต็อก: {$onHandStock}</p>
+                <p style='font-size:20px; color:grey;'>จำนวนในสต็อก: {$onHandStock}</p>
                 <form method='post' action='accessCart.php' classname='buy-button'>
                     <input type='hidden' name='id_product' value='{$row['ProID']}'>  
                     <div class='button-increase'>

@@ -1,3 +1,4 @@
+<?php include('./component/session.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -148,11 +149,23 @@
             margin-bottom: 10%;
             /* border: 1px solid #333; */
         }
+
+        .footer {
+            height: 200px;
+            background-color: rgb(25, 135, 84);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Set flex direction to column */
+        }
     </style>
 </head>
 
 <body>
-    <?php include('./component/session.php'); ?>
+
+    <?php include('./component/getFunction/getProductImages.php'); ?>
+
     <div class"navCon">
         <?php include('./component/accessNavbar.php'); ?>
     </div>
@@ -171,10 +184,9 @@
     <center>
         <br>
         <br>
-        <h2>Related Products</h2><br><br>
+        <h1>Related Products</h1><br><br>
         <div class="product-container">
             <?php
-            include('./component/getFunction/getProductImages.php');
             $cx = mysqli_connect("localhost", "root", "", "shopping");
             $cur = "SELECT * FROM product";
             $msresults = mysqli_query($cx, $cur);
@@ -197,7 +209,7 @@
             ?>
         </div>
         <!-- About Us Template -->
-        <h2>About Us</h2><br><br>
+        <h1>About Us</h1><br><br>
         <div class="about-us-container">
             <div class="about-us-image">
                 <img src="./image/jeans.jpg" alt="About Us Image">
@@ -213,7 +225,7 @@
         </div>
 
         <!-- Contact Template -->
-        <div>
+        <div class="footer">
             <h2>Contact</h2>
             <p>For any inquiries or assistance, feel free to contact us:</p>
             <p>Email: pumaFastWork@co.th</p>

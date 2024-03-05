@@ -1,4 +1,6 @@
-<?php include('./component/session.php'); ?>
+<?php include('./component/session.php');
+include('./component/getFunction/getProductImages.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,6 +37,7 @@
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
         }
+
         .checkout-header h2 {
             color: #ffff;
             margin-left: 20px;
@@ -97,6 +100,7 @@
         .checkout-button:hover {
             background-color: #219653;
         }
+
         .order-container {
             max-width: 1110px;
             margin: 5px auto 50px auto;
@@ -126,7 +130,8 @@
             margin-top: 10px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: left;
@@ -146,10 +151,11 @@
             font-weight: bold;
             color: #4CAF50;
             width: 150px;
-            
+
         }
 
-        h1, h2 {
+        h1,
+        h2 {
             color: #333;
         }
 
@@ -178,19 +184,22 @@
             width: 280px;
             text-align: left;
         }
-        
+
         center {
             margin-top: 100px;
         }
 
         #Status {
-            font-weight:800;
+            font-weight: 800;
             font-size: large;
         }
+
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 Columns with equal width */
-            grid-gap: 10px; /* Adjust the gap between columns */
+            grid-template-columns: repeat(3, 1fr);
+            /* 3 Columns with equal width */
+            grid-gap: 10px;
+            /* Adjust the gap between columns */
         }
 
         .grid-item {
@@ -202,19 +211,19 @@
         .action-buttons {
             display: flex;
             justify-content: space-between;
-        
+
         }
 
-        .action-buttons h1{
+        .action-buttons h1 {
             margin-top: 0px;
             margin-bottom: 10px;
-         
+
         }
 
 
         .action-button {
             display: inline-block;
-               
+
         }
 
         .action-button button[type='submit'] {
@@ -222,7 +231,7 @@
             cursor: pointer;
             border: none;
             width: 73px;
-            height: 33px; 
+            height: 33px;
         }
 
         .action-button button[type='submit']:hover {
@@ -230,12 +239,12 @@
             cursor: pointer;
             border: none;
             width: 73px;
-            height: 33px; 
+            height: 33px;
         }
 
         .action-button img {
             width: 20px;
-            height: 20px; 
+            height: 20px;
         }
 
         .dot {
@@ -249,9 +258,9 @@
             align-items: center;
             justify-content: center;
             background-color: #9BA4AB;
-            
+
         }
-    
+
 
         .order-date {
             color: #999;
@@ -264,10 +273,21 @@
         }
 
         /* Define different colors for different statuses */
-        .dot.confirm { background-color: #488978; }
-        .dot.pending { background-color: #488978; }
-        .dot.inprogress { background-color: #488978; }
-        .dot.delivered { background-color: #488978; }
+        .dot.confirm {
+            background-color: #488978;
+        }
+
+        .dot.pending {
+            background-color: #488978;
+        }
+
+        .dot.inprogress {
+            background-color: #488978;
+        }
+
+        .dot.delivered {
+            background-color: #488978;
+        }
 
         .backButton {
             margin-left: 90px;
@@ -280,147 +300,138 @@
         <?php include('./component/backButton.php'); ?>
     </div>
     <?php
-        if (isset($_POST['id_customer'])) {
-            $uid = $_POST['id_customer'];
+    if (isset($_POST['id_customer'])) {
+        $uid = $_POST['id_customer'];
 
-            $cx =  mysqli_connect("localhost", "root", "", "shopping");
-            $query_address = "SELECT * FROM receiver 
+        $cx =  mysqli_connect("localhost", "root", "", "shopping");
+        $query_address = "SELECT * FROM receiver 
             INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
             WHERE receiver_detail.CusID = '$uid'";
-            $result_address = mysqli_query($cx, $query_address);
-            if (mysqli_num_rows($result_address) > 0) {
+        $result_address = mysqli_query($cx, $query_address);
+        if (mysqli_num_rows($result_address) > 0) {
 
-                $row = mysqli_fetch_assoc($result_address);
-            }
+            $row = mysqli_fetch_assoc($result_address);
         }
-        $cx =  mysqli_connect("localhost", "root", "", "shopping");
-                $uid = $_SESSION['id_username'];
+    }
+    $cx =  mysqli_connect("localhost", "root", "", "shopping");
+    $uid = $_SESSION['id_username'];
 
-        
-                if (isset($_SESSION['cart'])) {
-                    $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");  
-                    $customerDetails = mysqli_fetch_array($customerDetailsQuery);
-                    $customerId = $customerDetails['CusID'];
-                }
-                else {
-                    $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer WHERE customer.CusID = '$uid'");  
-                    $customerDetails = mysqli_fetch_array($customerDetailsQuery);        
-                    $customerId = $customerDetails['CusID'];
-                }
-                
-                     
-                $RecId = $_POST['id_order'];
 
-                $payerQuery = mysqli_query($cx, "SELECT * FROM receive
+    if (isset($_SESSION['cart'])) {
+        $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
+        $customerDetails = mysqli_fetch_array($customerDetailsQuery);
+        $customerId = $customerDetails['CusID'];
+    } else {
+        $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer WHERE customer.CusID = '$uid'");
+        $customerDetails = mysqli_fetch_array($customerDetailsQuery);
+        $customerId = $customerDetails['CusID'];
+    }
+
+
+    $RecId = $_POST['id_order'];
+
+    $payerQuery = mysqli_query($cx, "SELECT * FROM receive
                     INNER JOIN payer ON receive.TaxID = payer.TaxID
                     WHERE receive.RecID = '$RecId '");
-                $payerResult = mysqli_fetch_array($payerQuery);
+    $payerResult = mysqli_fetch_array($payerQuery);
 
 
-                $recevierQuery = mysqli_query($cx, "SELECT * FROM receive
+    $recevierQuery = mysqli_query($cx, "SELECT * FROM receive
                     INNER JOIN receiver ON receive.RecvID = receiver.RecvID
                     WHERE receive.RecID = '$RecId '");
-                $recevierResult = mysqli_fetch_array($recevierQuery);
+    $recevierResult = mysqli_fetch_array($recevierQuery);
 
 
-                $recQuery = mysqli_query($cx, "SELECT * FROM receive
+    $recQuery = mysqli_query($cx, "SELECT * FROM receive
                 INNER JOIN customer ON customer.cusID = receive.cusID
                 WHERE receive.RecID = '$RecId '");
-                $recResult = mysqli_fetch_array($recQuery);
+    $recResult = mysqli_fetch_array($recQuery);
     ?>
 
-        <!----------------------------------------Check out Header------------------------------------------------->
-        <div class="checkout-container">
-            <div class="checkout-header">
-                <h2>Checkout</h2>
-            </div>
+    <!----------------------------------------Check out Header------------------------------------------------->
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h2>Checkout</h2>
+        </div>
 
-            <div class="checkout-steps">
-                <div class="checkout-step" >Step 1: Shipping</div>
-                <div class="checkout-step" >Step 2: Payment</div>
-                <div class="checkout-step active" >Step 3: Success</div>
-            </div>
+        <div class="checkout-steps">
+            <div class="checkout-step">Step 1: Shipping</div>
+            <div class="checkout-step">Step 2: Payment</div>
+            <div class="checkout-step active">Step 3: Success</div>
+        </div>
 
-            <div id="successForm" class="checkout-form" style="display: block; margin-left:50px;">
-                <h3>Order Placed Successfully!</h3>
-                <p>Your order has been confirmed. Thank you for shopping with us.</p>          
-            </div>
+        <div id="successForm" class="checkout-form" style="display: block; margin-left:50px;">
+            <h3>Order Placed Successfully!</h3>
+            <p>Your order has been confirmed. Thank you for shopping with us.</p>
+        </div>
 
-        <!----------------------------------------Order Tracking------------------------------------------------->      
+        <!----------------------------------------Order Tracking------------------------------------------------->
         <div class="container py-3 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex flex-column">
-                                <span class="lead fw-normal">Order Tracking</span>
-                                <span class="text-muted small">by DHFL on <?php echo $recResult['OrderDate']; ?></span>
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex flex-column">
+                                    <span class="lead fw-normal">Order Tracking</span>
+                                    <span class="text-muted small">by DHFL on <?php echo $recResult['OrderDate']; ?></span>
+                                </div>
                             </div>
-                                    </div>
-                                    <hr class="my-4">
+                            <hr class="my-4">
 
-                                    <div class="d-flex flex-row justify-content-between align-items-center">
-                                    <?php
-                                        // Define colors for different order statuses
-                                        $statusColors = array(
-                                            'Confirm' => 'confirm',
-                                            'Pending' => 'pending',
-                                            'Inprogress' => 'inprogress',
-                                            'Delivered' => 'delivered'
-                                        );
+                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                <?php
+                                // Define colors for different order statuses
+                                $statusColors = array(
+                                    'Confirm' => 'confirm',
+                                    'Pending' => 'pending',
+                                    'Inprogress' => 'inprogress',
+                                    'Delivered' => 'delivered'
+                                );
 
-                                        $delivered = false;
+                                $delivered = false;
 
-                                        // Loop through each status and display corresponding dot
-                                        foreach ($statusColors as $status => $color) {
-                                            echo '<div class="d-flex flex-column align-items-center">';
-                                            if ($status === $recResult['Status']) {
-                                                if($status === 'Pending'){
-                                                    echo '<div class="dot ' . $color . '"><i class="fas fa-clock text-white" ></i></div>';
-                                                }
-                                                else if($status === 'Inprogress'){
-                                                    echo '<div class="dot inprogress"><i class="fas fa-spinner text-white"></i></div>';
-
-                                                }
-                                                else {
-                                                    echo '<div class="dot delivered"><i class="fas fa-check-circle text-white"></i></div>';
-                                                }
-                                            
-                                                echo '<span class="order-date">' .substr($recResult['OrderDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
-                                    
-                                            } else if ($status === 'Confirm' && in_array($recResult['Status'], ['Confirm', 'Pending', 'Inprogress', 'Delivered'])) {
-                                                // Change color for Confirm status
-                                                echo '<div class="dot confirm"><i class="fas fa-check text-white"></i></div>';
-                                                echo '<span class="order-date">'.substr($recResult['OrderDate'], 0 , 10).'</span><span>' . $status . '</span></div>';  
-
-
-                                            } else if ($status === 'Pending' && in_array($recResult['Status'], ['Pending', 'Inprogress', 'Delivered'])) {
-                                                // Change color for Pending status
-                                                echo '<div class="dot pending"><i class="fas fa-clock text-white"></i></div>';
-                                                echo '<span class="order-date">'.substr($recResult['OrderDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
-                                    
-                                            } else if ($status === 'Inprogress' && in_array($recResult['Status'], ['Inprogress', 'Delivered'])) {
-                                                // Change color for Inprogress status
-                                                echo '<div class="dot inprogress"><i class="fas fa-spinner text-white"></i></div>';
-
-                                                echo '<span class="order-date">'.substr($recResult['DeliveryDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
-                                    
-                                            } else {
-                                                echo '<div class="dot"></div>';
-                                                echo '<span class="order-date">'.substr($recResult['DeliveryDate'], 0 , 10).'</span><span>' . $status . '</span></div>';
-                                            }
-                                        
-
-                                            if ($status === 'Delivered') {
-                                                $delivered = true;
-                                            }
-                                            // Add connecting line for all statuses except the first one
-                                            if ($delivered === false) {
-                                                echo '<div class="connecting-line"></div>';
-                                            }
+                                // Loop through each status and display corresponding dot
+                                foreach ($statusColors as $status => $color) {
+                                    echo '<div class="d-flex flex-column align-items-center">';
+                                    if ($status === $recResult['Status']) {
+                                        if ($status === 'Pending') {
+                                            echo '<div class="dot ' . $color . '"><i class="fas fa-clock text-white" ></i></div>';
+                                        } else if ($status === 'Inprogress') {
+                                            echo '<div class="dot inprogress"><i class="fas fa-spinner text-white"></i></div>';
+                                        } else {
+                                            echo '<div class="dot delivered"><i class="fas fa-check-circle text-white"></i></div>';
                                         }
-                                    ?>
+
+                                        echo '<span class="order-date">' . substr($recResult['OrderDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                    } else if ($status === 'Confirm' && in_array($recResult['Status'], ['Confirm', 'Pending', 'Inprogress', 'Delivered'])) {
+                                        // Change color for Confirm status
+                                        echo '<div class="dot confirm"><i class="fas fa-check text-white"></i></div>';
+                                        echo '<span class="order-date">' . substr($recResult['OrderDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                    } else if ($status === 'Pending' && in_array($recResult['Status'], ['Pending', 'Inprogress', 'Delivered'])) {
+                                        // Change color for Pending status
+                                        echo '<div class="dot pending"><i class="fas fa-clock text-white"></i></div>';
+                                        echo '<span class="order-date">' . substr($recResult['OrderDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                    } else if ($status === 'Inprogress' && in_array($recResult['Status'], ['Inprogress', 'Delivered'])) {
+                                        // Change color for Inprogress status
+                                        echo '<div class="dot inprogress"><i class="fas fa-spinner text-white"></i></div>';
+
+                                        echo '<span class="order-date">' . substr($recResult['DeliveryDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                    } else {
+                                        echo '<div class="dot"></div>';
+                                        echo '<span class="order-date">' . substr($recResult['DeliveryDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                    }
+
+
+                                    if ($status === 'Delivered') {
+                                        $delivered = true;
+                                    }
+                                    // Add connecting line for all statuses except the first one
+                                    if ($delivered === false) {
+                                        echo '<div class="connecting-line"></div>';
+                                    }
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -432,20 +443,20 @@
 
 
 
-    <!-- Bootstrap JS and Font Awesome -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Bootstrap JS and Font Awesome -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!------------------------------------------------------------------------------------------>      
-    <?php
-    echo '<section class="h-100 gradient-custom">
+        <!------------------------------------------------------------------------------------------>
+        <?php
+        echo '<section class="h-100 gradient-custom">
     <div class="container py-2 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-lg-10 col-xl-12">
               <div class="card" style="border-radius: 10px;">
                   <div class="card-header px-4 py-5 d-flex justify-content-between" >
-                      <h5 class="text-muted mb-0">Thanks for your Order,<span style="color: #488978;"> '.$recResult['CusFName'].'!</span></h5>
+                      <h5 class="text-muted mb-0">Thanks for your Order,<span style="color: #488978;"> ' . $recResult['CusFName'] . '!</span></h5>
                       <div class="action-buttons">
                        
                           <form class="action-button" action="pdf.php" method="post" target="_blank" style="display: inline-block;">
@@ -464,102 +475,98 @@
                       </div>';
 
 
-                        // <?---------        ส่วนของ detail     -------->
-                        if(isset($_POST['id_order'])){
-                            $orderQuery = mysqli_query($cx, "SELECT Product.*, receive_detail.*  , receive.* 
+        // <?---------        ส่วนของ detail     -------->
+        if (isset($_POST['id_order'])) {
+            $orderQuery = mysqli_query($cx, "SELECT Product.*, receive_detail.*  , receive.* 
                                         FROM receive_detail
                                         INNER JOIN receive ON receive.RecID = receive_detail.RecID
                                         INNER JOIN Product ON Product.ProID = receive_detail.ProID
                     
                                         WHERE receive_detail.RecID = '$RecId '");
-                                        
-                            $totalPriceAllItems = 0; 
-                            $detailsDisplayed = false; 
-        
-                            while ($row = mysqli_fetch_array($orderQuery)) {
-                                $totalPrice = $row['PricePerUnit'] * $row['Qty'];
-                                $totalPriceAllItems += $totalPrice;
-    
-                                echo '<div class="card shadow-0 border mb-4">
+
+            $totalPriceAllItems = 0;
+            $detailsDisplayed = false;
+
+            while ($row = mysqli_fetch_array($orderQuery)) {
+                $totalPrice = $row['PricePerUnit'] * $row['Qty'];
+                $totalPriceAllItems += $totalPrice;
+
+                echo '<div class="card shadow-0 border mb-4">
                                 <div class="card-body">
                                     <div class="row">       
                                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center"> 
-                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/13.webp"
-                                            class="img-fluid" alt="Phone">    
+                                        <img class="img-fluid" src="' . getProductImage($row['ProID']) . '">
                                         </div>
                                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0">'.$row['ProName'].'</p>
+                                            <p class="text-muted mb-0">' . $row['ProName'] . '</p>
                                         </div>
                                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0 small">Qty:'.$row['Qty'].'</p>
+                                            <p class="text-muted mb-0 small">Qty:' . $row['Qty'] . '</p>
                                         </div>
                                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0 small">price: '.$row['PricePerUnit'].'</p>
+                                            <p class="text-muted mb-0 small">price: ' . $row['PricePerUnit'] . '</p>
                                         </div>
                         
                                         <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0 small">'.$totalPrice.'</p>
+                                            <p class="text-muted mb-0 small">' . $totalPrice . '</p>
                                         </div>
                                     </div>
                                     <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
                                     <div class="row d-flex align-items-center"></div>
                                 </div>';
-                        
-                        }
+            }
+        }
 
-                    }
-
-                    echo "</table>";
-                    $tax = $totalPriceAllItems * 0.07;
-                    $totalAmount = $tax + $totalPriceAllItems;
-            
-               
+        echo "</table>";
+        $tax = $totalPriceAllItems * 0.07;
+        $totalAmount = $tax + $totalPriceAllItems;
 
 
-                
-                echo '<div class="d-flex justify-content-between pt-2 pb-2">
+
+
+
+        echo '<div class="d-flex justify-content-between pt-2 pb-2">
                     <p class="fw-bold mb-1 mx-3">Order Details</p>
                     <p class="text-muted mb-0" style="font-size: 1.2rem;">
                         <span class="fw-bold" style="margin-right: 17px;">Total</span>
-                        <span class="fw-bold mx-5"> '.$totalPriceAllItems.'฿</span>
+                        <span class="fw-bold mx-5"> ' . $totalPriceAllItems . '฿</span>
                     </p>
                 </div>';
 
-                echo '<div class="d-flex justify-content-between mb-5" style="margin-top: -10px;">
+        echo '<div class="d-flex justify-content-between mb-5" style="margin-top: -10px;">
                     <div class="flex-col mb-5">
-                        <p class="text-muted mb-0 mx-3">Receipt: <span style="font-weight: bold;">'.$recResult['RecID'].'</span></p>
-                        <p class="text-muted mb-0 mx-3">Order Date: '.$recResult['OrderDate'].'</p>
+                        <p class="text-muted mb-0 mx-3">Receipt: <span style="font-weight: bold;">' . $recResult['RecID'] . '</span></p>
+                        <p class="text-muted mb-0 mx-3">Order Date: ' . $recResult['OrderDate'] . '</p>
                     </div>
                     <div class="flex-col mb-5">
-                        <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">VAT 7%</span><span class="fw-bold mx-5">'.$tax.'฿</span></p>
+                        <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">VAT 7%</span><span class="fw-bold mx-5">' . $tax . '฿</span></p>
                         <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">Discount</span><span class="fw-bold mx-5">0.00฿</span></p>
                         <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
                     </div>
                 </div>';
 
-                     
-                       
-                    
-                echo   '<div class="card-footer border-0 px-4 py-5"
+
+
+
+        echo   '<div class="card-footer border-0 px-4 py-5"
                         style="background-color: #488978; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
                         <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
-                        paid: <span class="h2 mb-0 ms-2">'.$totalAmount.' ฿</span></h5>
+                        paid: <span class="h2 mb-0 ms-2">' . $totalAmount . ' ฿</span></h5>
                     </div>
                     </div>
                 </div>
                 </div>
             </div>
             </section>';
-            if (isset($_SESSION['guest'])) {
-                // Unset session ที่คุณต้องการ
-                unset($_SESSION['guest']);
-                unset($_SESSION['id_username']);
-            }
-            mysqli_close($cx);
-        ?>            
-        </div>
+        if (isset($_SESSION['guest'])) {
+            // Unset session ที่คุณต้องการ
+            unset($_SESSION['guest']);
+            unset($_SESSION['id_username']);
+        }
+        mysqli_close($cx);
+        ?>
+    </div>
     <script>
-
         function getFormId(step) {
             // Map step number to form ID
             return (step === 1) ? 'shippingForm' :

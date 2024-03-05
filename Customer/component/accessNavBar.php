@@ -10,7 +10,7 @@
     }
 
     nav {
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(25, 135, 84, 0.9);
         /* Light red color with transparency */
         padding: 10px;
         position: fixed;
