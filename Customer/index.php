@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,6 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-
-        center {
-            display: flex;
-            justify-content: center;
         }
 
         .product-container {
@@ -22,7 +16,7 @@
             max-width: 1550px;
             display: flex;
             flex-wrap: wrap;
-            margin-top: 35px;
+            margin-top: 5%;
         }
 
         .product-card {
@@ -41,8 +35,8 @@
         }
 
         .product-image {
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
             margin-bottom: 10px;
         }
 
@@ -67,36 +61,89 @@
         .buy-button:hover {
             background-color: #2980b9;
         }
+
+        .Slide-Container {
+            width: 100%;
+            max-width: 100%;
+            height: 500px;
+            /* ปรับความสูงตามที่ต้องการ */
+            margin-top: 125px;
+            /* border: 1px solid #333; */
+            overflow: hidden;
+            z-index: -100;
+        }
+
+        #slideshow {
+            width: 100%;
+            overflow: hidden;
+            left: 0;
+            right: 0;
+        }
+
+        #slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* ถ้าต้องการให้รูปภาพเต็มจอแนะนำให้ใช้ width: 100vw; และ height: 100vh; */
+        .slide img {
+            width: 100%;
+            height: 100%;
+            /* ปรับเป็น 100% ของความสูงของ .Slide-Container */
+            object-fit: cover;
+            /* ป้องกันการเอียงภาพและตัดเรียงซ้อน */
+        }
+
+
+        .navCon {
+            z-index: 100;
+            margin-bottom: 10%;
+            /* border: 1px solid #333; */
+        }
     </style>
 </head>
+
 <body>
-    <?php include('./component/session.php');?>
-    <?php include('./component/accessNavbar.php');?>
+    <?php include('./component/session.php'); ?>
+    <div class"navCon">
+        <?php include('./component/accessNavbar.php'); ?>
+    </div>
+
+    <div class="Slide-Container">
+        <?php include('./component/slideShow.php'); ?>
+
+    </div>
     <center>
         <div class="product-container">
             <?php
-                $cx =  mysqli_connect("localhost", "root", "", "shopping");
-                $cur = "SELECT * FROM product";
-                $msresults = mysqli_query($cx, $cur);
-                if(mysqli_num_rows($msresults) > 0){
-                    while ($row = mysqli_fetch_array($msresults)) {
+            include('./component/getFunction/getProductImages.php');
+            $cx = mysqli_connect("localhost", "root", "", "shopping");
+            $cur = "SELECT * FROM product";
+            $msresults = mysqli_query($cx, $cur);
+
+            if (mysqli_num_rows($msresults) > 0) {
+                while ($row = mysqli_fetch_array($msresults)) {
                     echo "<div class='product-card'>
-                                <img class='product-image' src='./image/cart.png'>
-                                <p class='product-name'>{$row['ProName']}</p>
-                                <p class='product-price'>ราคา {$row['PricePerUnit']}</p>
-                                <form method='post' action='detailProduct.php'>
-                                    <input type='hidden' name='id_product' value='{$row['ProID']}'>
-                                    <input class='buy-button' type='submit' value='ซื้อสินค้า'>
-                                </form>
-                        </div>";
-                    }
+                        <img class='product-image' src='" . getProductImage($row['ProID']) . "'>
+                        <p class='product-name'>{$row['ProName']}</p>
+                        <p class='product-price'>ราคา {$row['PricePerUnit']}</p>
+                        <form method='post' action='detailProduct.php'>
+                            <input type='hidden' name='id_product' value='{$row['ProID']}'>
+                            <input class='buy-button' type='submit' value='ซื้อสินค้า'>
+                        </form>
+                    </div>";
                 }
-                else {
-                    echo "<center><h1>ไม่มีสินค้า</h1></center>";
-                }
+            } else {
+                echo "<center><h1>ไม่มีสินค้า</h1></center>";
+            }
             ?>
         </div>
     </center>
 </body>
-</html>
 
+</html>
