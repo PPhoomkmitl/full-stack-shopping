@@ -18,12 +18,11 @@
         }
 
         .product-container {
-            display: flex;
-            justify-content: center;
             align-items: center;
             width: 100%;
             display: flex;
             flex-wrap: wrap;
+            padding: 3%;
         }
 
         .product-card {
@@ -31,21 +30,43 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin: 10px;
             flex: 0 1 calc(25% - 20px);
-            padding: 30px 10px;
+            padding: 3%;
             text-align: center;
             background-color: #fff;
             transition: transform 0.3s;
+            height: 300px;
+            max-width: 250px;
+            /* Set a fixed height for the cards */
         }
 
         .product-card:hover {
             transform: scale(1.05);
         }
 
+        .product-image-container {
+            max-height: 200px;
+            /* Set a maximum height for the image container */
+            overflow: hidden;
+            /* Hide overflowing content */
+        }
+
         .product-image {
-            width: 300px;
-            height: 280px;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Maintain aspect ratio and cover the entire container */
             margin-bottom: 10px;
         }
+
+        .product-info {
+            margin-top: auto;
+            /* Push the product-info to the bottom */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
 
         .product-name {
             font-weight: bold;
@@ -257,14 +278,19 @@
             if (mysqli_num_rows($msresults) > 0) {
                 while ($row = mysqli_fetch_assoc($msresults)) {
                     echo "<div class='product-card'>
-                            <img class='product-image' src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>
-                            <p class='product-name'>{$row['ProName']}</p>
-                            <p class='product-price'>ราคา {$row['PricePerUnit']}</p>
-                            <form method='post' action='detailProduct.php'>
-                                <input type='hidden' name='id_product' value='{$row['ProID']}'>
-                                <input class='buy-button' type='submit' value='ซื้อสินค้า'>
-                            </form>
-                        </div>";
+                            <div class='product-image-container'>
+                                <img class='product-image' src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>
+                            </div>
+                            <div class='product-info'>
+                                <p class='product-name'>{$row['ProName']}</p>
+                                <p class='product-price'>ราคา {$row['PricePerUnit']}</p>
+                                <form method='post' action='detailProduct.php'>
+                                    <input type='hidden' name='id_product' value='{$row['ProID']}'>
+                                    <input class='buy-button' type='submit' value='ซื้อสินค้า'>
+                                </form>
+                            </div>
+                    </div>
+                    ";
                 }
             } else {
                 echo "<center><h1>ไม่มีสินค้า</h1></center>";
