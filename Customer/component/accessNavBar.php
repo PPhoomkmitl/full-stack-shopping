@@ -1,7 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/component/CSS/navStyles.css" />
-    <title>Webleb</title>
+    <title>HomePage</title>
 </head>
 <body>
     <nav>

@@ -5,12 +5,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Display</title>
+    <title>HomePage</title>
+    <link rel="icon" href="image/logo.png" type="image/x-icon">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             height: 100%;
+        }
+
+        .container h1{
+            font-size: 40px;
+            color:black;
         }
 
         .container {
@@ -71,6 +77,7 @@
         }
 
         .product-name {
+            color: black;
             font-weight: bold;
             margin-bottom: 5px;
         }
@@ -354,7 +361,11 @@
         flex: 1.8;
         text-align: left;
         flex-direction: column;
+        color: #333;
 
+    }
+    .about-us-details h2 {
+        color:#333;
     }
 
 
