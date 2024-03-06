@@ -14,9 +14,10 @@
             height: 100%;
         }
 
-        .container h1{
+        .container h1 {
             font-size: 40px;
-            color:black;
+            color: black;
+            font-weight: bold;
         }
 
         .container {
@@ -199,6 +200,7 @@
         }
 
         .overlay-text {
+            color: #fff;
             height: auto;
             width: auto;
             font-weight: bold;
@@ -315,10 +317,10 @@
                     <div class="about-us-details">
                         <div class="about-us-details-body">
                             <h2>Why Puma Fast-Shirt​</h2>
-                            <h2>ลดค่าใช้จ่ายของคุณจากการซื้อสินค้าแพงๆทุกปีมาซื้อเป็นสินค้ามือสองที่ยังคงเป็นที่ต้องการในยุคนี้​</h2>
-                            <h2>เสื้อผ้า/ รองเท้า มือสอง
+                            <h3>ลดค่าใช้จ่ายของคุณจากการซื้อสินค้าแพงๆทุกปีมาซื้อเป็นสินค้ามือสองที่ยังคงเป็นที่ต้องการในยุคนี้​</h3>
+                            <h3>เสื้อผ้า/ รองเท้า มือสอง
                                 สภาพดี เกรด A
-                                ปี 70s - 90s​</h2>
+                                ปี 70s - 90s​</h3>
                         </div>
                         <!-- Add more content as needed -->
                     </div>
@@ -349,12 +351,24 @@
         padding: 10px 0px;
         border: #5E8978 solid 1px;
         border-radius: 10px;
+        overflow: hidden;
     }
 
     .about-us-image {
         flex: 1;
         margin-right: 5%;
         margin-left: 10%;
+        max-width: 100%;
+        /* Ensure the image doesn't exceed its container */
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .about-us-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Maintain aspect ratio and cover the entire container */
     }
 
     .about-us-details {
@@ -364,20 +378,26 @@
         color: #333;
 
     }
+
     .about-us-details h2 {
-        color:#333;
+        color: #333;
     }
 
 
     .about-us-details-body {
+        margin-top: 10%;
         width: 700px;
 
     }
 
-    .about-us-image img {
-        width: 100%;
-        height: 100%;
-        /* Optional: Add rounded corners to the image */
+    .about-us-details-body h2 {
+        font-weight: bold;
+
+    }
+
+    .about-us-details-body h3 {
+        font-weight: inherit;
+
     }
 </style>
 
