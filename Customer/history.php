@@ -1,6 +1,7 @@
 <?php include('./component/session.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,7 @@
 
         .container {
             max-width: 800px;
-            margin: 100px auto auto auto ;
+            margin: 100px auto auto auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -53,36 +54,36 @@
 
         #Paid {
             padding: 3px 8px;
-            background-color:#06D6B1;      
+            background-color: #06D6B1;
         }
 
         #Unpaid {
             padding: 3px 8px;
-            background-color:#F0476F;
+            background-color: #F0476F;
         }
 
         #Pending {
             padding: 3px 8px;
-            background-color:#FFA500;
-            margin-top:5px;
+            background-color: #FFA500;
+            margin-top: 5px;
         }
 
         #Inprogress {
             padding: 3px 8px;
-            background-color:#7c6bff;
-            margin-top:5px;
+            background-color: #7c6bff;
+            margin-top: 5px;
         }
 
         #Delivered {
             padding: 3px 8px;
-            background-color:#06D6B1;
-            margin-top:5px;
+            background-color: #06D6B1;
+            margin-top: 5px;
         }
 
-        #Canceled{
+        #Canceled {
             padding: 3px 8px;
-            background-color:#F0476F;
-            margin-top:5px;
+            background-color: #F0476F;
+            margin-top: 5px;
         }
 
 
@@ -97,7 +98,8 @@
 
         .tab {
             overflow: hidden;
-            border: 1px solid #fff; /* Added border bottom */
+            border: 1px solid #fff;
+            /* Added border bottom */
             margin-bottom: 10px;
         }
 
@@ -109,7 +111,8 @@
             cursor: pointer;
             padding: 14px 16px;
             transition: 0.3s;
-            border-bottom: 2px solid transparent; /* Added transparent border */
+            border-bottom: 2px solid transparent;
+            /* Added transparent border */
         }
 
         .tab button:hover {
@@ -118,7 +121,8 @@
 
         .tab button.active {
             background-color: #ccc;
-            border-bottom: 2px solid #3498db; /* Underline color */
+            border-bottom: 2px solid #3498db;
+            /* Underline color */
         }
 
         .tabcontent {
@@ -127,12 +131,19 @@
             border: 1px solid #ccc;
             border-top: none;
         }
-        
+
+        .navCon {
+            z-index: 100;
+            border: 1px solid #333;
+        }
     </style>
 </head>
 <!-- <?php include('./component/backButton.php'); ?> -->
+
 <body>
-    <?php include('./component/accessNavbar.php')?>
+    <div class="navCon">
+        <?php include('./component/accessNavbar.php'); ?>
+    </div>
     <div class="container">
         <h1>History</h1>
         <!-- Tab buttons -->
@@ -141,9 +152,9 @@
             <button class="tablinks" onclick="openTab(event, 'orders')">Orders</button>
         </div>
         <?php
-            $uid = $_SESSION['id_username'];
+        $uid = $_SESSION['id_username'];
         ?>
-        
+
         <!-- Tab content -->
         <div id="invoice" class="tabcontent">
             <?php includeInvoice("SELECT * FROM invoice WHERE CusID = '$uid'"); ?>
@@ -174,12 +185,13 @@
 </html>
 
 <?php
-function includeInvoice($query) {
-    $conn=  mysqli_connect("localhost", "root", "", "shopping");
+function includeInvoice($query)
+{
+    $conn =  mysqli_connect("localhost", "root", "", "shopping");
     $msresults = mysqli_query($conn, $query);
     while ($row = mysqli_fetch_array($msresults)) {
-    
-        if($row['Status'] == 'Unpaid') {
+
+        if ($row['Status'] == 'Unpaid') {
             echo '<div class="order">';
             echo "<div class='icon-container'>
                     <form method='post' action='paymentForm.php'>
@@ -193,10 +205,9 @@ function includeInvoice($query) {
             echo "<pf>Invoice ID: {$row['InvID']}</pf>";
             echo "<p>Order Date: {$row['Period']}</p>";
             echo "<p>Total Amount: {$row['TotalPrice']} ฿</p>";
-            if($row['Status'] == 'Paid') {
+            if ($row['Status'] == 'Paid') {
                 echo "<pl id='Paid'>Status: {$row['Status']}</pl>";
-            }
-            else {
+            } else {
                 echo "<pl id='Unpaid'>Status: {$row['Status']}</pl>";
             }
             echo '</div>';
@@ -204,8 +215,9 @@ function includeInvoice($query) {
     }
 }
 
-function includeOrders($query) {
-    include_once '../dbConfig.php'; 
+function includeOrders($query)
+{
+    include_once '../dbConfig.php';
 
     $msresults = mysqli_query($conn, $query);
     while ($row = mysqli_fetch_array($msresults)) {
@@ -219,21 +231,18 @@ function includeOrders($query) {
                 </form>
             </div>";
         echo "<pf>Order ID: {$row['RecID']}</pf>";
-        echo "<p>Total Amount: {$row['TotalPrice']} ฿</p>";    
+        echo "<p>Total Amount: {$row['TotalPrice']} ฿</p>";
         echo "<p>Order Date: {$row['OrderDate']}</p>";
         if ($row['DeliveryDate'] != null) {
             echo "<p>Delivery Date: {$row['DeliveryDate']}</p>";
         }
-        if($row['Status'] == 'Pending') {
+        if ($row['Status'] == 'Pending') {
             echo "<pl id='Pending'>Status: {$row['Status']}</pl>";
-        }
-        else if($row['Status'] == 'Inprogress') {
+        } else if ($row['Status'] == 'Inprogress') {
             echo "<pl id='Inprogress'>Status: {$row['Status']}</pl>";
-        }
-        else if($row['Status'] == 'Delivered') {
+        } else if ($row['Status'] == 'Delivered') {
             echo "<pl id='Delivered'>Status: {$row['Status']}</pl>";
-        }
-        else if($row['Status'] == 'Canceled') {
+        } else if ($row['Status'] == 'Canceled') {
             echo "<pl id='Canceled'>Status: {$row['Status']}</pl>";
         }
         echo '</div>';

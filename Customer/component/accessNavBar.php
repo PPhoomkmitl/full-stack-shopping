@@ -3,16 +3,20 @@
     <link rel="stylesheet" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/component/CSS/navStyles.css" />
     <title>HomePage</title>
 </head>
+
 <body>
     <nav>
         <div class="logo" style="display: flex; align-items: center;">
             <?php $cartIconClass = (basename($_SERVER['PHP_SELF']) == 'cart.php') ? 'class="active"' : ''; ?>
-            <span style="color: #FFF; font-size: 26px; font-weight: bold; letter-spacing: 1px; margin-left: 20px;">DEADSTOCK</span>
+            <a href="index.php" style="text-decoration: none; color: inherit;">
+                <span style="color: #FFF; font-size: 26px; font-weight: bold; letter-spacing: 1px; margin-left: 20px;">DEADSTOCK</span>
+            </a>
         </div>
+
 
         <ul class="nav-links">
             <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
-                <li><a style="color: #FFF;" <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
+                <li><a class="hover" style="color: #FFF;" <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
             <?php endif; ?>
 
             <li><a <?php echo $cartIconClass; ?> href="cart.php">
@@ -39,7 +43,7 @@
                 <li><a class="user-icon" <?php echo isActive('profile.php'); ?> href="profile.php"><img src="./image/icons8-customer-90.png"></a></li>
                 <li><a style="color: #FFF;" class="login-button" <?php echo isActive('logoutProcess.php'); ?> href="logoutProcess.php">Logout</a></li>
             <?php else : ?>
-                <li><a class="login-button" <?php echo isActive('login.php'); ?> href="login.php">Login</a></li>
+                <li><a style="color: #FFF;" class="login-button" <?php echo isActive('login.php'); ?> href="login.php">Login</a></li>
             <?php endif; ?>
         </ul>
     </nav>
