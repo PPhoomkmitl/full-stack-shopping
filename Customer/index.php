@@ -26,11 +26,12 @@
         }
 
         .product-container {
+            display: flex;
+            justify-content: center;
             align-items: center;
             width: 100%;
             display: flex;
             flex-wrap: wrap;
-            padding: 3%;
         }
 
         .product-card {
@@ -271,14 +272,14 @@
         <a2 href="#">
             <img src="./image/clothes.jpg">
             <div class="overlay">
-                <h1 class="overlay-text">เสื้อผ้ามือสอง</h1>
-                <h3 class="overlay-text">ขายเสื้อผ้า / รองเท้า มือสอง​ จากทั่วทุกมุมโลก</h3>
+                <h1 class="overlay-text">second hand clothes</h1>
+                <h3 class="overlay-text">Sell ​​second hand clothes / shoes from all over the world.</h3>
 
             </div>
         </a2>
     </div>
     <div class="container">
-        <h1>Related Products</h1>
+        <h1>New Arrival</h1>
         <div class="product-container">
             <?php
             $cur = "SELECT * FROM product";
@@ -292,10 +293,10 @@
                             </div>
                             <div class='product-info'>
                                 <p class='product-name'>{$row['ProName']}</p>
-                                <p class='product-price'>ราคา {$row['PricePerUnit']}</p>
+                                <p class='product-price'>Price {$row['PricePerUnit']} ฿</p>
                                 <form method='post' action='detailProduct.php'>
                                     <input type='hidden' name='id_product' value='{$row['ProID']}'>
-                                    <input class='buy-button' type='submit' value='ซื้อสินค้า'>
+                                    <input class='buy-button' type='submit' value='Click'>
                                 </form>
                             </div>
                     </div>
@@ -317,8 +318,8 @@
                     <div class="about-us-details">
                         <div class="about-us-details-body">
                             <h2>Why Puma Fast-Shirt​</h2>
-                            <h3>ลดค่าใช้จ่ายของคุณจากการซื้อสินค้าแพงๆทุกปีมาซื้อเป็นสินค้ามือสองที่ยังคงเป็นที่ต้องการในยุคนี้​</h3>
-                            <h3>เสื้อผ้า/ รองเท้า มือสอง
+                            <h3>Reduce your expenses from buying expensive products every year to buy second-hand products that are still in demand in this era.​​</h3>
+                            <h3>เสื้อผ้า/ รองเท้า มือสอง 
                                 สภาพดี เกรด A
                                 ปี 70s - 90s​</h3>
                         </div>

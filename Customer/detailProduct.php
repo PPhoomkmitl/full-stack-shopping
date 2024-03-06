@@ -161,6 +161,11 @@
         .close-button:hover {
             background-color: #2980b9;
         }
+
+        .navCon {
+            z-index: 100;
+            border: 1px solid #333;
+        }
     </style>
 </head>
 <script>
@@ -193,7 +198,9 @@
 </body>
 
 </html>
-<?php include('./component/accessNavBar.php'); ?>
+<div class="navCon">
+    <?php include('./component/accessNavBar.php'); ?>
+</div>
 <?php include('./component/getFunction/getProductImages.php');?>
 
 <?php
@@ -220,11 +227,12 @@ echo " <div class='container-body'>
             </div>
             <div class='container-2'>
                 <p><strong>{$row['ProName']}</strong></p>
+                <p style='font-size:20px;'>detail product</p>
                 <p style='font-size:20px;'>
                     {$row['Description']}
                 </p>
-                <p style='font-size:30px;'>ราคา: {$row['PricePerUnit']} บาท</p>
-                <p style='font-size:20px; color:grey;'>จำนวนในสต็อก: {$onHandStock}</p>
+                <p style='font-size:30px;'>Price: {$row['PricePerUnit']} ฿</p>
+                <p style='font-size:20px; color:grey;'>in stock: {$onHandStock}</p>
                 <form method='post' action='accessCart.php' classname='buy-button'>
                     <input type='hidden' name='id_product' value='{$row['ProID']}'>  
                     <div class='button-increase'>
@@ -235,9 +243,9 @@ echo " <div class='container-body'>
                     <br><br>
                     ";
 if ($onHandStock <= 0) {
-    echo "<input class='buy-button' type='submit' style='background-color:gray;' name='add_to_cart' value='เพิ่มลงตะกร้า' disabled>";
+    echo "<input class='buy-button' type='submit' style='background-color:gray;' name='add_to_cart' value='add to cart' disabled>";
 } else {
-    echo "<input class='buy-button' type='submit' name='add_to_cart' value='เพิ่มลงตะกร้า'>";
+    echo "<input class='buy-button' type='submit' name='add_to_cart' value='add to cart'>";
 }
 echo "         
                 </form>

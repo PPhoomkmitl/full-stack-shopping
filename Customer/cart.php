@@ -246,7 +246,7 @@ include('./component/getFunction/getProductImages.php');
             echo "<div class='buy-button-container'>
                 <form method='post' action='addressForm.php'>
                     <input type='hidden' name='id_customer' value='$uid'>
-                    <input class='buy-button' type='submit' value='ซื้อสินค้า'>
+                    <input class='buy-button' type='submit' value='Check out'>
                 </form>
                 </div>";
         }
@@ -299,7 +299,7 @@ include('./component/getFunction/getProductImages.php');
             echo "<div class='buy-button-container'>
                     <form method='post' action='addressForm.php'>
                         <input type='hidden' name='cart' value='" . json_encode($_SESSION['cart']) . "'>
-                        <input class='buy-button' type='submit' value='ซื้อสินค้า'>
+                        <input class='buy-button' type='submit' value='Check out'>
                     </form>
                 </div>";
         }
