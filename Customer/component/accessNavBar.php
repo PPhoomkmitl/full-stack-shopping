@@ -15,7 +15,6 @@
                 <li><a <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
             <?php endif; ?>
 
-            <li><a href="https://www.web-leb.com/code">Products</a></li>
             <li><a <?php echo $cartIconClass; ?> href="cart.php">
                     <img class='cart-icon' src='./image/cart.webp' alt='Cart'>
                     <?php if (isset($_SESSION['cart'])) : ?>
