@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
+            background-color: grey;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #343a40;
         }
@@ -18,7 +18,7 @@
             height: 90vh;
             margin: 0 auto;
             padding: 20px;
-            background-color: #ffffff;
+            background-color: #F2F4F1;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
             margin-top: 20px;
@@ -64,19 +64,19 @@
             color: #343a40;
         }
         #card-1 {
-            background-color: rgb(229, 225, 255);
+            background-color: #D2E9E9;
         }
         #card-2 {
-            background-color: rgb(210, 237, 246);
+            background-color: #D2E9E9;
         }
         #card-3 {
-            background-color: rgb(252, 242, 218);
+            background-color: #D2E9E9;
         }
         #card-4 {
-            background-color: rgb(219, 233, 255);
+            background-color: #D2E9E9;
         }
         #card-5 {
-            background-color: rgb(205, 247, 236);
+            background-color: #C4DFDF;
         }
 
         table {
@@ -95,16 +95,16 @@
             background-color: #f8f9fa;
         }
         #PQ {
-            color:rgb(124, 107, 255) ;
+            color:#323837 ;
         }
         #PR {
-            color:rgb(30, 166, 211) ;
+            color:#323837 ;
         }
         #BSP {
-            color:rgb(250, 190, 70) ;
+            color:#323837 ;
         }
         #Re {
-            color: rgb(75, 147, 255);
+            color: #323837;
         }
 
         #card-4 h1 {

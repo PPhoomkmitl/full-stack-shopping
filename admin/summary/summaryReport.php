@@ -39,7 +39,7 @@
             flex-grow: 1;
             flex-basis: calc(50% - 20px);
             margin: 0 10px 20px;
-            background-color: #ffffff;
+            background-color: #E3F4F4;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -66,11 +66,11 @@
         th, td {
             padding: 8px;
             text-align: center;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid #C4DFDF;
         }
 
         th {
-            background-color: #f8f9fa;
+            background-color: #C4DFDF;
         }
 
         #card-4 h1 {

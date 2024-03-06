@@ -19,7 +19,7 @@
         .container {
             display: flex;
             justify-content: space-between;
-            background-color: #f3f6f9;
+            background-color: #C4DFDF;
             padding: 20px;
         }
 
@@ -65,17 +65,20 @@
             margin: auto;
             text-align: center;
             border-collapse: collapse;
-            border: 1px solid #ccc;
+            border: 1px solid #C4DFDF;
         }
 
         th {
-            background-color: #f5f6f6;
+            background-color: #D2E9E9;
             padding: 10px;
         }
 
         td {
             padding: 5px;
-            border-bottom: 1px solid #ccc;
+        }
+        .user-row{
+            background-color: #E3F4F4;
+            border: 1px solid #C4DFDF;
         }
 
         .navbar {

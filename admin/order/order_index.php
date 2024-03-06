@@ -19,7 +19,7 @@
         .container {
             display: flex;
             justify-content: space-between;
-            background-color: #f3f6f9;
+            background-color: #C4DFDF;
             padding: 20px;
         }
 
@@ -69,13 +69,17 @@
         }
 
         th {
-            background-color: #f5f6f6;
+            background-color: #D2E9E9;
             padding: 10px;
         }
 
         td {
+            background-color: #E3F4F4;
             padding: 5px;
-            border-bottom: 1px solid #ccc;
+            /* border-bottom: 1px solid #ccc; */
+        }
+        .user-row{
+            border-bottom: 1px solid #C4DFDF;
         }
 
         .action-buttons {
