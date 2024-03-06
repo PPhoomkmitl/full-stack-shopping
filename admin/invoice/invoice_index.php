@@ -76,7 +76,8 @@
         td {
             padding: 5px;
         }
-        .user-row{
+
+        .user-row {
             background-color: #E3F4F4;
             border: 1px solid #C4DFDF;
         }
@@ -91,7 +92,7 @@
 
         .action-button input[type='image'] {
             width: 30px;
-            height: 30px; 
+            height: 30px;
         }
     </style>
 </head>
@@ -103,7 +104,7 @@
         <div>
             <input type="checkbox" id="checkAll" onchange="checkAll()">
             <label class="check-all-label">Check All</label>
-            <form  id='deleteForm' class="delete-form" action="invoice_delete_confirm.php" method="post">
+            <form id='deleteForm' class="delete-form" action="invoice_delete_confirm.php" method="post">
                 <input type="hidden" name="list_id_invoice" id="selectedValues" value="">
                 <input type="hidden" name="total_id_invoice" id="selectedTotal" value="">
                 <input type="submit" id="deleteButton" value="Delete Invoice" disabled>
@@ -120,18 +121,22 @@
             <br>
         </div>
     </div>
-    
+
     <?php
     $cx =  mysqli_connect("localhost", "root", "", "shopping");
-    $cur = "SELECT invoice.* , customer.CusFName , customer.CusLName
-    FROM 
-        invoice
-    JOIN
-        customer ON invoice.CusID = customer.CusID
-    JOIN 
-        invoice_detail ON invoice.InvID = invoice_detail.InvID
-    JOIN
-        product ON invoice_detail.ProID = product.proID";
+    $cur = "SELECT DISTINCT
+    invoice.*,
+    customer.CusFName,
+    customer.CusLName
+FROM
+    invoice
+JOIN
+    customer ON invoice.CusID = customer.CusID
+JOIN
+    invoice_detail ON invoice.InvID = invoice_detail.InvID
+JOIN
+    product ON invoice_detail.ProID = product.proID;
+";
 
     $msresults = mysqli_query($cx, $cur);
     echo "<center>";
@@ -158,57 +163,57 @@
                     <td>{$row['TotalPrice']}</td>";
 
 
-                    // echo "<td><div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";                
-                    // if ($row['Status'] == 'Unpaid') {
-                    //     echo '#FFA500;';
-                    // } elseif ($row['Status'] == 'Paid') {
-                    //     echo '#06D6B1;';
-                    // } else if ($row['Status'] == 'Canceled'){
-                    //     echo '#FF0000;';
-                    // } else {
-                    //     echo '#06D6B1;'; 
-                    // }                 
-                    // echo "'><span style='color: #ffff;'>{$row['Status']}</span></div></td>";
-
-
-                    
-
-
-                    echo "<td>";
-                    echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
-
-                    // เงื่อนไขตรวจสอบค่า Status และกำหนดสีให้กับ background-color
-                    if ($row['Status'] == 'Unpaid') {
-                        echo '#FFA500;';
-                    } elseif ($row['Status'] == 'Paid') {
-                        echo '#06D6B1;';
-                    } else if ($row['Status'] == 'Canceled'){
-                        echo '#FF0000;';
-                    } else {
-                        echo '#06D6B1;'; 
-                    }       
-
-                    echo "'>";
-                    echo "<select id='select_$index' data-recid='{$row['InvID']}' style='background-color: inherit; color: #ffff;' required>";
-
-                    $statusCompare = ['Unpaid', 'Paid', 'Canceled'];
-
-                    foreach ($statusCompare as $value) {
-                        $selected = ($value == $row['Status']) ? 'selected' : '';
- 
-
-                        echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
-                    }
-
-                    echo "</select>";
-                    echo "</div></td>";
+            // echo "<td><div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";                
+            // if ($row['Status'] == 'Unpaid') {
+            //     echo '#FFA500;';
+            // } elseif ($row['Status'] == 'Paid') {
+            //     echo '#06D6B1;';
+            // } else if ($row['Status'] == 'Canceled'){
+            //     echo '#FF0000;';
+            // } else {
+            //     echo '#06D6B1;'; 
+            // }                 
+            // echo "'><span style='color: #ffff;'>{$row['Status']}</span></div></td>";
 
 
 
 
 
+            echo "<td>";
+            echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
 
-                    echo "<td class='action-buttons'>
+            // เงื่อนไขตรวจสอบค่า Status และกำหนดสีให้กับ background-color
+            if ($row['Status'] == 'Unpaid') {
+                echo '#FFA500;';
+            } elseif ($row['Status'] == 'Paid') {
+                echo '#06D6B1;';
+            } else if ($row['Status'] == 'Canceled') {
+                echo '#FF0000;';
+            } else {
+                echo '#06D6B1;';
+            }
+
+            echo "'>";
+            echo "<select id='select_$index' data-recid='{$row['InvID']}' style='background-color: inherit; color: #ffff;' required>";
+
+            $statusCompare = ['Unpaid', 'Paid', 'Canceled'];
+
+            foreach ($statusCompare as $value) {
+                $selected = ($value == $row['Status']) ? 'selected' : '';
+
+
+                echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+            }
+
+            echo "</select>";
+            echo "</div></td>";
+
+
+
+
+
+
+            echo "<td class='action-buttons'>
                         <form class='action-button' action='invoice_update.php' method='post'>  
                             <input type='hidden' name='id_invoice' value={$row['InvID']}>
                             <input type='image' alt='update' src='../img/pencil.png'>
@@ -219,14 +224,14 @@
                         </form>
                     </td>
                 </tr>";
-                $index++;
+            $index++;
         }
     }
     echo "</table></div>";
     echo "</center>";
     mysqli_close($cx);
     ?>
-<script>
+    <script>
         function updateDeleteButtonStatus() {
             var checkboxes = document.getElementsByName('checkbox[]');
             var deleteButton = document.getElementById('deleteButton');
@@ -244,7 +249,7 @@
 
         var individualCheckboxes = document.getElementsByName('checkbox[]');
         for (var i = 0; i < individualCheckboxes.length; i++) {
-            individualCheckboxes[i].addEventListener('change', function () {
+            individualCheckboxes[i].addEventListener('change', function() {
                 updateDeleteButtonStatus(); // Update deleteButton's status
             });
         }
@@ -270,14 +275,14 @@
             deleteButton.disabled = !enableDeleteButton;
         }
         /* Fillter */
-    function updateTable(filterKeyword) {
+        function updateTable(filterKeyword) {
             var tableRows = document.querySelectorAll('.user-row');
 
-            tableRows.forEach(function (row) {
+            tableRows.forEach(function(row) {
                 var containsKeyword = false;
 
                 // Loop through all columns (td elements) in the current row
-                row.querySelectorAll('td').forEach(function (cell, index) {
+                row.querySelectorAll('td').forEach(function(cell, index) {
                     var cellText = cell.innerText.toLowerCase();
 
                     // Check if the cell contains the filter keyword (string comparison)
@@ -314,61 +319,62 @@
             updateTable(filterKeyword);
         });
     </script>
-<script>
-   document.addEventListener('DOMContentLoaded', function () {
-    // Loop through all select elements and attach event listeners
-    for (var i = 1; i <= <?php echo $index; ?>; i++) {
-        var selectElement = document.getElementById('select_' + i);
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Loop through all select elements and attach event listeners
+            for (var i = 1; i <= <?php echo $index; ?>; i++) {
+                var selectElement = document.getElementById('select_' + i);
 
-        if (selectElement) {
-            selectElement.addEventListener('change', function () {
-                var selectedValue = this.value;
-                var selectDiv = this.parentElement;
-                var recID = this.getAttribute('data-recid');
+                if (selectElement) {
+                    selectElement.addEventListener('change', function() {
+                        var selectedValue = this.value;
+                        var selectDiv = this.parentElement;
+                        var recID = this.getAttribute('data-recid');
 
-                switch (selectedValue) {
-                    case 'Unpaid':
-                        selectDiv.style.backgroundColor = '#FFA500';
-                        break;
-                    case 'Paid':
-                        selectDiv.style.backgroundColor = '#06D6B1';
-                        break;
-                    case 'Canceled':
-                        selectDiv.style.backgroundColor = '#FF0000';
-                        break;
-                    default:
-                        selectDiv.style.backgroundColor = '#06D6B1';
-                }
+                        switch (selectedValue) {
+                            case 'Unpaid':
+                                selectDiv.style.backgroundColor = '#FFA500';
+                                break;
+                            case 'Paid':
+                                selectDiv.style.backgroundColor = '#06D6B1';
+                                break;
+                            case 'Canceled':
+                                selectDiv.style.backgroundColor = '#FF0000';
+                                break;
+                            default:
+                                selectDiv.style.backgroundColor = '#06D6B1';
+                        }
 
-                console.log(recID , selectedValue );
-                // Update the status using AJAX
-                updateStatus(recID, selectedValue);
-            });
-        }
-    }
-
-    function updateStatus(invID, newStatus) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'invoice_update_status.php', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-        console.log(invID , newStatus )
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    // Handle successful response
-                    console.log('Status updated successfully');
-                } else {
-                    // Handle error
-                    console.error('Error updating status');
+                        console.log(recID, selectedValue);
+                        // Update the status using AJAX
+                        updateStatus(recID, selectedValue);
+                    });
                 }
             }
-        };
-        xhr.send('InvID=' + encodeURIComponent(invID) + '&newStatus=' + encodeURIComponent(newStatus));
 
-    }
-    });
-</script>
+            function updateStatus(invID, newStatus) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'invoice_update_status.php', true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                console.log(invID, newStatus)
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            // Handle successful response
+                            console.log('Status updated successfully');
+                        } else {
+                            // Handle error
+                            console.error('Error updating status');
+                        }
+                    }
+                };
+                xhr.send('InvID=' + encodeURIComponent(invID) + '&newStatus=' + encodeURIComponent(newStatus));
+
+            }
+        });
+    </script>
 </body>
+
 </html>
