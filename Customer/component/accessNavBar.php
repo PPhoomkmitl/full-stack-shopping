@@ -12,11 +12,11 @@
 
         <ul class="nav-links">
             <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
-                <li><a <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
+                <li><a style="color: #FFF;" <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
             <?php endif; ?>
 
             <li><a <?php echo $cartIconClass; ?> href="cart.php">
-                    <img class='cart-icon' src='./image/cart.webp' alt='Cart'>
+                    <img class='cart-icon' src='./image/icons8-cart-96.png' alt='Cart'>
                     <?php if (isset($_SESSION['cart'])) : ?>
                         <?php $cartIconCount = (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0) ? count($_SESSION['cart']) : 0; ?>
 
@@ -36,8 +36,8 @@
                     <?php endif; ?>
                 </a></li>
             <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) && $_SESSION['status'] === true) : ?>
-                <li><a class="user-icon" <?php echo isActive('profile.php'); ?> href="profile.php"><img src="./image/userTheme.png"></a></li>
-                <li><a class="login-button" <?php echo isActive('logoutProcess.php'); ?> href="logoutProcess.php">Logout</a></li>
+                <li><a class="user-icon" <?php echo isActive('profile.php'); ?> href="profile.php"><img src="./image/icons8-customer-90.png"></a></li>
+                <li><a style="color: #FFF;" class="login-button" <?php echo isActive('logoutProcess.php'); ?> href="logoutProcess.php">Logout</a></li>
             <?php else : ?>
                 <li><a class="login-button" <?php echo isActive('login.php'); ?> href="login.php">Login</a></li>
             <?php endif; ?>

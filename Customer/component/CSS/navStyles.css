@@ -1,7 +1,7 @@
 * {
     margin: 0;
     padding: 0;
-    color: #f2f5f7;
+    color: #131418;
     font-family: sans-serif;
     letter-spacing: 1px;
     font-weight: 300;
@@ -78,9 +78,9 @@ nav {
 }
 
 .nav-links li a .cart-icon {
-    height: 50px;
+    height: 40px;
     /* ปรับความสูงตามที่ต้องการ */
-    width: 50px;
+    width: 40px;
     /* ปรับความกว้างตามที่ต้องการ */
     transition: transform 0.3s;
 }
@@ -90,8 +90,8 @@ nav {
 }
 
 .user-icon {
-    height: 20px;
-    width: 20px;
+    height: 30px;
+    width: 30px;
     transition: transform 0.3s;
 }
 

@@ -1,7 +1,7 @@
 <?php
 include('./component/session.php');
 
-include_once '../dbConfig.php'; 
+include_once '../dbConfig.php';
 
 $query = "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE  customer.CusID = '$uid'";
 $result = mysqli_query($conn, $query);
@@ -76,9 +76,12 @@ mysqli_close($conn);
             padding: 20px 60px 70px 60px;
             text-align: left;
             width: 800px;
-            background-color: #fff; /* Added background color */
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Added box-shadow */
-            border-radius: 8px; /* Added border-radius for a rounded appearance */
+            background-color: #fff;
+            /* Added background color */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            /* Added box-shadow */
+            border-radius: 8px;
+            /* Added border-radius for a rounded appearance */
             margin-top: 2rem;
         }
 
@@ -123,8 +126,9 @@ mysqli_close($conn);
         button:hover {
             background-color: #3498db;
         }
-         /* Overlay styles */
-         .overlay {
+
+        /* Overlay styles */
+        .overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -144,6 +148,7 @@ mysqli_close($conn);
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
+
         span {
             color: red;
         }
@@ -152,20 +157,24 @@ mysqli_close($conn);
             border: 1px solid #ccc;
             padding: 10px;
             margin: 10px;
-            width: 200px; /* ปรับขนาดตามต้องการ */
+            width: 200px;
+            /* ปรับขนาดตามต้องการ */
             cursor: pointer;
         }
 
         .user-card:hover {
-            background-color: #f0f0f0; /* สีเวลา hover */
+            background-color: #f0f0f0;
+            /* สีเวลา hover */
         }
 
-         /* สไตล์ของปุ่ม */
+        /* สไตล์ของปุ่ม */
         .long-button {
             display: inline-block;
             padding: 5px 50px;
-            background-color: #3498db; /* สีพื้นหลัง */
-            color: #fff; /* สีตัวอักษร */
+            background-color: #3498db;
+            /* สีพื้นหลัง */
+            color: #fff;
+            /* สีตัวอักษร */
             border: none;
             /* border-radius: 20px;  */
             cursor: pointer;
@@ -176,8 +185,10 @@ mysqli_close($conn);
         .circle-icon {
             width: 24px;
             height: 24px;
-            background-color: #fff; /* สีพื้นหลัง */
-            border-radius: 50%; /* รัศมีของวงกลม */
+            background-color: #fff;
+            /* สีพื้นหลัง */
+            border-radius: 50%;
+            /* รัศมีของวงกลม */
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -190,7 +201,8 @@ mysqli_close($conn);
             content: '';
             width: 12px;
             height: 2px;
-            background-color: #3498db; /* สีของเส้นสัญลักษณ์ */
+            background-color: #3498db;
+            /* สีของเส้นสัญลักษณ์ */
             position: absolute;
             top: 50%;
             left: 50%;
@@ -204,12 +216,19 @@ mysqli_close($conn);
         .address-container {
             margin-top: 50px;
         }
+
+        .navCon {
+            z-index: 100;
+            border: 1px solid #333;
+        }
     </style>
 </head>
 
 <body>
+    <div class="navCon">
+        <?php include('./component/accessNavbar.php'); ?>
+    </div>
     <div class="body-container">
-        <?php include('./component/accessNavbar.php')?>
         <div class="container">
             <p id='head-text'>Edit Profile</p>
             <p id='text-1'>Change your basic account here. You may also want to edit your profile</p>
@@ -217,7 +236,7 @@ mysqli_close($conn);
             <form id="profileForm" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 
                 <input type="hidden" name="id_customer" value="<?php echo $user_data['CusID'] ?>">
-                
+
                 <label for="username">Username:</label>
                 <input type="text" name="username" value="<?php echo $user_data['Username'] ?>">
 
@@ -225,31 +244,31 @@ mysqli_close($conn);
                 <input type="password" name="password" value="<?php echo $user_data['Password'] ?>" readonly>
 
                 <label for="tel">Tel:<span>*</span></label>
-                <input type="tel" name="tel" value="<?php echo $user_data['Tel']?>" required>
+                <input type="tel" name="tel" value="<?php echo $user_data['Tel'] ?>" required>
 
                 <button type="submit" onclick="showOverlay()">บันทึกข้อมูล</button>
             </form>
 
             <div class="address-container">
-                <label for="address" >Address:<span>*</span></label>
+                <label for="address">Address:<span>*</span></label>
                 <?php
-                    $user_address = mysqli_fetch_array($result_address);
-                    while ($user_address) {
-                        $recvID = $user_address['RecvID'];
-                        echo '<div class="user-card" onclick="submitForm(\'' . $recvID . '\')">
+                $user_address = mysqli_fetch_array($result_address);
+                while ($user_address) {
+                    $recvID = $user_address['RecvID'];
+                    echo '<div class="user-card" onclick="submitForm(\'' . $recvID . '\')">
                                 <p>' . $user_address['RecvFName'] . '</p>
                                 <p>' . $user_address['RecvLName'] . '</p>
                                 <p>' . $user_address['Tel'] . '</p>
                                 <p>' . $user_address['Address'] . '</p>              
                             </div>';
-                        echo   '<form method="post" action="./accessAddressProfile.php">
+                    echo   '<form method="post" action="./accessAddressProfile.php">
                                     <input type="hidden" name="delete_id_customer" value="' . $uid . '">
-                                    <input type="hidden" name="delete_id_receiver" id="id_receiver" value="'.$recvID.'">
+                                    <input type="hidden" name="delete_id_receiver" id="id_receiver" value="' . $recvID . '">
                                     <button type="submit">ลบ</button>
-                            </form>'; 
+                            </form>';
 
-                        $user_address = mysqli_fetch_array($result_address); // Update $user_address
-                    }
+                    $user_address = mysqli_fetch_array($result_address); // Update $user_address
+                }
                 ?>
                 <!-- Add the hidden form outside the loop -->
                 <form id="addressForm" method="post" action="./profileAddress.php">
@@ -265,61 +284,61 @@ mysqli_close($conn);
                             <div class="plus-icon"></div>
                         </div>
                     </button>
-                <form>
-            <div>
+                    <form>
+                        <div>
 
-        </div>
-    </div>
+                        </div>
+            </div>
 
-    <!-- Overlay -->
-    <div class="overlay" id="overlay" >
-        <div class="overlay-content">
-            <p>บันทึกข้อมูลสำเร็จ!</p>
-            <button onclick="hideOverlay()">ตกลง</button>
-        </div>
-    </div>
+            <!-- Overlay -->
+            <div class="overlay" id="overlay">
+                <div class="overlay-content">
+                    <p>บันทึกข้อมูลสำเร็จ!</p>
+                    <button onclick="hideOverlay()">ตกลง</button>
+                </div>
+            </div>
 
-    <script>
-        // Function to submit the form with the specified receiver ID
-        function submitForm(id_receiver) {
-            // Set the value of the hidden input in the form
-            document.getElementById('id_receiver').value = id_receiver;
+            <script>
+                // Function to submit the form with the specified receiver ID
+                function submitForm(id_receiver) {
+                    // Set the value of the hidden input in the form
+                    document.getElementById('id_receiver').value = id_receiver;
 
-            // Submit the form
-            document.getElementById('addressForm').submit();
-        }
-        
-    document.getElementById('profileForm').addEventListener('submit', function (event) {
-        event.preventDefault();
+                    // Submit the form
+                    document.getElementById('addressForm').submit();
+                }
 
-        var formData = new FormData(this);
+                document.getElementById('profileForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', this.action, true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                // Form submitted successfully
-                showOverlay();
-            } else {
-                // Handle error
-                console.error('Error submitting form');
-            }
-        };
-        xhr.send(formData);
-    });
+                    var formData = new FormData(this);
 
-    function showOverlay() {
-        document.getElementById('overlay').style.display = 'flex';
-        // Delay the hideOverlay function
-        setTimeout(hideOverlay, 1000); // Adjust the time (in milliseconds) as needed
-    }
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', this.action, true);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            // Form submitted successfully
+                            showOverlay();
+                        } else {
+                            // Handle error
+                            console.error('Error submitting form');
+                        }
+                    };
+                    xhr.send(formData);
+                });
 
-    function hideOverlay() {
-        document.getElementById('overlay').style.display = 'none';
-        // Redirect to profileAddress.php after hiding the overlay
-        // window.location.href = './profile.php';
-    }
-</script>
+                function showOverlay() {
+                    document.getElementById('overlay').style.display = 'flex';
+                    // Delay the hideOverlay function
+                    setTimeout(hideOverlay, 1000); // Adjust the time (in milliseconds) as needed
+                }
+
+                function hideOverlay() {
+                    document.getElementById('overlay').style.display = 'none';
+                    // Redirect to profileAddress.php after hiding the overlay
+                    // window.location.href = './profile.php';
+                }
+            </script>
 </body>
 
 </html>
