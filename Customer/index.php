@@ -11,6 +11,7 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
+
         .container {
             margin-top: 70px;
             text-align: center;
@@ -29,7 +30,7 @@
             border: 1px solid #ddd;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin: 10px;
-            flex: 0 1 calc(25% - 20px);   
+            flex: 0 1 calc(25% - 20px);
             padding: 30px 10px;
             text-align: center;
             background-color: #fff;
@@ -122,10 +123,11 @@
             background-color: #2980b9;
         } */
 
-        .main-about-us-container{
+        .main-about-us-container {
             margin-top: 80px;
         }
-        .main-about-us-container h1{
+
+        .main-about-us-container h1 {
             margin-bottom: 40px;
         }
 
@@ -220,7 +222,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column; /* Set flex direction to column */
+            flex-direction: column;
+            /* Set flex direction to column */
         }
     </style>
 </head>
@@ -270,33 +273,36 @@
         </div>
         <!-- About Us Template -->
         <div class="main-about-us-container">
-            <h1>About Us</h1>
-            <div class="about-us-container">
-                <div class="about-us-image">
-                    <img src="./image/jeans.jpg" alt="About Us Image">
-                </div>
-                <div class="about-us-details">
-                    <div class="about-us-details-body">
-                        <h2>Why Puma Fast-Shirt​</h2>
-                        <h2>ลดค่าใช้จ่ายของคุณจากการซื้อสินค้าแพงๆทุกปีมาซื้อเป็นสินค้ามือสองที่ยังคงเป็นที่ต้องการในยุคนี้​</h2>
-                        <h2>เสื้อผ้า/ รองเท้า มือสอง
-                            สภาพดี เกรด A
-                            ปี 70s - 90s​</h2>
+            <section id="about">
+                <h1>About Us</h1>
+                <div class="about-us-container">
+                    <div class="about-us-image">
+                        <img src="./image/jeans.jpg" alt="About Us Image">
                     </div>
+                    <div class="about-us-details">
+                        <div class="about-us-details-body">
+                            <h2>Why Puma Fast-Shirt​</h2>
+                            <h2>ลดค่าใช้จ่ายของคุณจากการซื้อสินค้าแพงๆทุกปีมาซื้อเป็นสินค้ามือสองที่ยังคงเป็นที่ต้องการในยุคนี้​</h2>
+                            <h2>เสื้อผ้า/ รองเท้า มือสอง
+                                สภาพดี เกรด A
+                                ปี 70s - 90s​</h2>
+                        </div>
+                        <!-- Add more content as needed -->
+                    </div>
+                </div>
+                <div>
+            </section>
+            <!-- Contact Template -->
+            <section id="footer">
+                <div class="footer">
+                    <h2>Contact</h2>
+                    <p>For any inquiries or assistance, feel free to contact us:</p>
+                    <p>Email: pumaFastWork@co.th</p>
+                    <p>Phone: +66 88 101 9863</p>
                     <!-- Add more content as needed -->
                 </div>
-            </div>
-        <div>
-
-        <!-- Contact Template -->
-        <div class="footer">
-            <h2>Contact</h2>
-            <p>For any inquiries or assistance, feel free to contact us:</p>
-            <p>Email: pumaFastWork@co.th</p>
-            <p>Phone: +66 88 101 9863</p>
-            <!-- Add more content as needed -->
+            </section>
         </div>
-    </div>
 </body>
 
 <style>
@@ -322,7 +328,7 @@
         flex: 1.8;
         text-align: left;
         flex-direction: column;
-        
+
     }
 
 

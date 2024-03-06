@@ -277,8 +277,8 @@
         <?php if (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
             <li><a <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
         <?php endif; ?>
-        <li><a <?php echo isActive('../navbarList/about.php'); ?> href="about.php">About</a></li>
-        <li><a <?php echo isActive('contact.php'); ?> href="contact.php">Contact</a></li>
+        <li><a <?php echo isActive('../navbarList/about.php'); ?> href="index.php/#about">About</a></li>
+        <li><a <?php echo isActive('contact.php'); ?> href="index.php/#footer">Contact</a></li>
         <li class='cart-icon-container'>
             <a <?php echo $cartIconClass; ?> href='cart.php'>
                 <img class='cart-icon' src='./image/cart.webp' alt='Cart'>
