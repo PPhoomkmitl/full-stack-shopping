@@ -10,6 +10,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            height: 100%;
         }
 
         .container {
@@ -35,7 +36,9 @@
             background-color: #fff;
             transition: transform 0.3s;
             height: 300px;
-            max-width: 250px;
+            max-width: 200px;
+            display: flex;
+            flex-direction: column;
             /* Set a fixed height for the cards */
         }
 
@@ -59,14 +62,13 @@
         }
 
         .product-info {
-            margin-top: auto;
-            /* Push the product-info to the bottom */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
+            margin-top: auto;
+            /* Push the product-info to the bottom */
         }
-
 
         .product-name {
             font-weight: bold;
@@ -155,8 +157,8 @@
         .Slide-Container {
             width: 100%;
             max-width: 100%;
-            height: 500px;
-            margin-top: 109px;
+            height: 800px;
+            margin-top: 3%;
             overflow: hidden;
             position: relative;
         }
@@ -232,8 +234,7 @@
 
         .navCon {
             z-index: 100;
-            margin-bottom: 10%;
-            /* border: 1px solid #333; */
+            border: 1px solid #333;
         }
 
         .footer {
@@ -252,8 +253,7 @@
 <body>
 
     <?php include('./component/getFunction/getProductImages.php'); ?>
-
-    <div class"navCon">
+    <div class="navCon">
         <?php include('./component/accessNavbar.php'); ?>
         <?php include_once '../dbConfig.php';  ?>
     </div>

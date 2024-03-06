@@ -115,6 +115,11 @@ include('./component/getFunction/getProductImages.php');
         #change-amount.clicked {
             background-color: #030000;
         }
+
+        .navCon {
+            z-index: 100;
+            border: 1px solid #333;
+        }
     </style>
     <script>
         function updateTotalPrice() {
@@ -179,15 +184,18 @@ include('./component/getFunction/getProductImages.php');
 </head>
 
 <body>
-    <?php include('./component/accessNavbar.php') ?>
-    
+
+    <div class="navCon">
+        <?php include('./component/accessNavbar.php') ?>
+    </div>
+
     <div class="container">
         <h1>Your Cart</h1>
         <?php
         $totalPriceAllItems = 0;
         $index = 0;
-           
-        include_once '../dbConfig.php'; 
+
+        include_once '../dbConfig.php';
         /* สำหรับ User */
         if (isset($_SESSION['id_username']) && isset($_SESSION['status'])) {
 
