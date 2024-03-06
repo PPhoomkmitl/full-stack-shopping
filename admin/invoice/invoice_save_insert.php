@@ -2,7 +2,7 @@
     // Assuming you've posted the form to this page using method="post"
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        $conn = mysqli_connect("localhost", "root", "", "shopping"); 
+        include_once '../../dbConfig.php';  
 
         $selectedProductsJSON = $_POST['selectedProducts'] ?? '';
         $selectedProducts = json_decode($selectedProductsJSON, true);

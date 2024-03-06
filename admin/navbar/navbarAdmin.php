@@ -12,7 +12,7 @@
         }
 
         nav {
-            background-color: rgba(255, 99, 71, 0.8);
+            background-color: #28A745;
             padding: 10px;
             position: fixed;
             width: 100%;
@@ -51,11 +51,11 @@
         }
 
         li a:hover {
-            background-color: rgba(255, 99, 71, 1);
+            background-color: #5E8978;
         }
 
         li a.active {
-            background-color: #d9534f;
+            background-color: #488978;
         }
 
         li a.active::after {

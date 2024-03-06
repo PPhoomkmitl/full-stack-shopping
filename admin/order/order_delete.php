@@ -1,6 +1,6 @@
 <?php
 // get connection
-$conn = mysqli_connect("localhost", "root", "", "shopping");
+include_once '../../dbConfig.php'; 
 
 if (isset($_POST['total_id_order'])) {
     $code = $_POST['total_id_order'];

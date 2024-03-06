@@ -1,9 +1,10 @@
 <?php /* POST connection */
     // header( "location: ./customer_index.php");
-    $conn = mysqli_connect("localhost", "root", "", "shopping");
+    include_once '../../dbConfig.php'; 
     if (isset($_POST['id_customer'])){
         $code = $_POST['id_customer'];
         $recvID = $_POST['id_receiver'];
+
         /* run delete */
         /* run delete queries */
         $stmt_receiver_detail = mysqli_query($conn, "DELETE FROM receiver_detail WHERE CusID='$code'");

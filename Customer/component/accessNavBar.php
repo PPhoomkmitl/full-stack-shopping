@@ -288,13 +288,13 @@
                 <?php elseif (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
                     <?php
                     // echo 'TEST123456';
-                    $cx =  mysqli_connect("localhost", "root", "", "shopping");
+                    $conn=  mysqli_connect("localhost", "root", "", "shopping");
                     $uid = (isset($_SESSION['id_username'])) ? $_SESSION['id_username'] : '';
                     $cur = "SELECT * FROM cart WHERE CusID = '$uid'";
-                    $msresults = mysqli_query($cx, $cur);
+                    $msresults = mysqli_query($conn, $cur);
 
                     $cartIconCount = (mysqli_num_rows($msresults) > 0) ? mysqli_num_rows($msresults) : 0;
-                    mysqli_close($cx);
+                    mysqli_close($conn);
                     ?>
                 <?php endif; ?>
                 <?php if (!empty($cartIconCount)) : ?>

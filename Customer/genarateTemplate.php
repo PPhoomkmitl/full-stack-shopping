@@ -89,8 +89,8 @@
         $invoiceId = $_POST['id_invoice'];
 
 
-        $cx =  mysqli_connect("localhost", "root", "", "shopping");
-        $invoiceQuery = mysqli_query($cx, "SELECT * FROM Customer WHERE CusID = '$customerId'");
+        $conn=  mysqli_connect("localhost", "root", "", "shopping");
+        $invoiceQuery = mysqli_query($conn, "SELECT * FROM Customer WHERE CusID = '$customerId'");
         $row_customer = mysqli_fetch_array($invoiceQuery);
         $customerName = $row_customer['CusFName'] . $row_customer['CusLName'];
         $customerTel = $row_customer['Tel'];
@@ -102,7 +102,7 @@
         $invoiceStatus = "";
         $invoiceItems = array();
 
-        $invoiceQuery = mysqli_query($cx, "SELECT invoice.* , invoice_detail.*, product.* , (product.PricePerUnit * invoice_detail.Qty ) AS SubTotal
+        $invoiceQuery = mysqli_query($conn, "SELECT invoice.* , invoice_detail.*, product.* , (product.PricePerUnit * invoice_detail.Qty ) AS SubTotal
         FROM invoice
         INNER JOIN invoice_detail ON invoice.InvID = invoice_detail.InvID
         INNER JOIN Product ON invoice_detail.ProID = Product.ProID
@@ -123,7 +123,7 @@
       
         $invoiceVat = $invoiceSubTotal * 0.07;
         $invoiceTotal = $invoiceSubTotal + $invoiceVat;
-        mysqli_close($cx);
+        mysqli_close($conn);
 
         // Create PDF
         $pdf = new PDF();

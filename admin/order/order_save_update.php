@@ -2,7 +2,7 @@
     header( "location: ./order_index.php");  
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        $conn = mysqli_connect("localhost", "root", "", "shopping"); 
+        include_once '../../dbConfig.php';  
         $RecID = $_POST['RecID'];
         $RecvID = $_POST['id_receiver'];
         $TaxID = $_POST['id_payer'];

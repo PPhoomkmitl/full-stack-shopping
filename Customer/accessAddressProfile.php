@@ -1,15 +1,15 @@
 <?php
 include('./component/session.php');
 
-$cx = mysqli_connect("localhost", "root", "", "shopping");
+include_once '../dbConfig.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['delete_id_customer'])) {
         $uid = $_POST['delete_id_customer'];
         $recvId = $_POST['delete_id_receiver'];
 
-        $delete_result_detail_detail = mysqli_query($cx, "DELETE FROM receiver_detail WHERE RecvID = '$recvId' AND CusID = '$uid'");
-        $delete_result_detail_head = mysqli_query($cx, "DELETE FROM receiver WHERE RecvID = '$recvId'");
+        $delete_result_detail_detail = mysqli_query($conn, "DELETE FROM receiver_detail WHERE RecvID = '$recvId' AND CusID = '$uid'");
+        $delete_result_detail_head = mysqli_query($conn, "DELETE FROM receiver WHERE RecvID = '$recvId'");
 
         header("Location: ./profile.php");
         exit();
@@ -27,14 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $query_address = "SELECT * FROM receiver 
                 INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
                 WHERE receiver_detail.CusID = '$uid' AND receiver.RecvID = '$recv_id'";
-            $result_address = mysqli_query($cx, $query_address);
+            $result_address = mysqli_query($conn, $query_address);
 
             if (mysqli_num_rows($result_address) > 0) {
                 $update_query = "UPDATE receiver SET RecvFName = '$new_fname', RecvLName = '$new_lname' ,Tel = '$new_tel' , Address = '$new_address' WHERE RecvID = '$recv_id'";
-                $update_result = mysqli_query($cx, $update_query);
+                $update_result = mysqli_query($conn, $update_query);
 
                 $update_query = "UPDATE  receiver_detail SET CusID = '$uid' , RecvID = '$recv_id' WHERE CusID = '$uid'";
-                $update_result = mysqli_query($cx, $update_query);
+                $update_result = mysqli_query($conn, $update_query);
 
                 header("Location: ./profile.php");
             } else {
@@ -50,16 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $insert_query_head = "INSERT INTO receiver (RecvFName , RecvLName  , Tel , Address) 
                 VALUES('$new_fname', '$new_lname', '$new_tel' , '$new_address')";
-            $insert_result_head = mysqli_query($cx, $insert_query_head);
+            $insert_result_head = mysqli_query($conn, $insert_query_head);
 
             if ($insert_result_head) {
-                $recv_id = mysqli_insert_id($cx);
+                $recv_id = mysqli_insert_id($conn);
             } else {
-                die("Error inserting into receiver: " . mysqli_error($cx));
+                die("Error inserting into receiver: " . mysqli_error($conn));
             }
 
             // Generate new NumID
-            $resultDetail = mysqli_query($cx, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM receiver_detail WHERE CusID = '$uid'");
+            $resultDetail = mysqli_query($conn, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM receiver_detail WHERE CusID = '$uid'");
             $latestID = mysqli_fetch_assoc($resultDetail);
             $lastID = $latestID['num_id'];
 
@@ -73,10 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo $recv_id;
 
             $insert_query_detail = "INSERT INTO receiver_detail (CusID, RecvID, NumID) VALUES('$uid', '$recv_id', '$NumID')";
-            $insert_result_detail = mysqli_query($cx, $insert_query_detail);
+            $insert_result_detail = mysqli_query($conn, $insert_query_detail);
 
             if (!$insert_result_detail) {
-                die("Error inserting receiver_detail: " . mysqli_error($cx));
+                die("Error inserting receiver_detail: " . mysqli_error($conn));
             }
 
             header("Location: ./profile.php");
@@ -84,5 +84,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-mysqli_close($cx);
+mysqli_close($conn);
 ?>

@@ -1,7 +1,7 @@
 <?php
 include('./component/session.php');
 
-$cx = mysqli_connect("localhost", "root", "", "shopping");
+include_once '../dbConfig.php'; 
 
 echo $_POST['id_receiver'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query_address = "SELECT * FROM receiver 
         INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
         WHERE receiver_detail.CusID = '$uid' AND receiver.RecvID = '$id_receiver'";
-        $result_address = mysqli_query($cx, $query_address);
+        $result_address = mysqli_query($conn, $query_address);
 
         // Check if there are rows returned
         if ($result_address && mysqli_num_rows($result_address) > 0) {
@@ -21,12 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if (!$result_address) {
-            die("Error fetching user data: " . mysqli_error($cx));
+            die("Error fetching user data: " . mysqli_error($conn));
         }
     }
 }
 
-mysqli_close($cx);
+mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">

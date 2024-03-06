@@ -203,11 +203,11 @@ include('./component/getFunction/getName.php');?>
             $recv_id = $_POST['id_receiver'];
 
 
-            $cx =  mysqli_connect("localhost", "root", "", "shopping");
+            include_once '../dbConfig.php'; 
             $query_address = "SELECT * FROM receiver 
             INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
             WHERE receiver_detail.CusID = '$uid'";
-            $result_address = mysqli_query($cx, $query_address);
+            $result_address = mysqli_query($conn, $query_address);
             if (mysqli_num_rows($result_address) > 0) {
                 // Fetch a single row from the result set
                 $row = mysqli_fetch_assoc($result_address);
@@ -255,11 +255,11 @@ include('./component/getFunction/getName.php');?>
 
                     <!-- Sidebar content -->
                     <?php
-                    $cx = mysqli_connect("localhost", "root", "", "shopping");
+                    include_once '../dbConfig.php'; 
 
 
                     if (isset($_POST['id_invoice'])) {
-                        $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM receiver 
+                        $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM receiver 
                         INNER JOIN receiver_detail ON receiver.RecvID =  receiver_detail.RecvID WHERE receiver_detail.CusID = '$uid' AND receiver_detail.RecvID = '$recv_id'");
                         $customerDetails = mysqli_fetch_array($customerDetailsQuery);
                         $customerId = $uid;
@@ -281,7 +281,7 @@ include('./component/getFunction/getName.php');?>
                                 <li class="list-group-item d-flex justify-content-between lh-condensed">
                                     <div>';
                                         $totalPriceAllItems = 0;
-                                        $invoiceDetailsQuery = mysqli_query($cx, "SELECT * , product.ProName FROM invoice_detail
+                                        $invoiceDetailsQuery = mysqli_query($conn, "SELECT * , product.ProName FROM invoice_detail
                                         INNER JOIN product ON product.ProID =  invoice_detail.ProID 
                                         INNER JOIN invoice ON invoice.InvID =  invoice_detail.InvID 
                                         WHERE invoice.InvID  = '$inv'");

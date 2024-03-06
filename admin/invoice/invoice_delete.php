@@ -1,6 +1,6 @@
 <?php /* get connection */
     header( "location: ./invoice_index.php");
-    $conn = mysqli_connect("localhost", "root", "", "shopping");
+    include_once '../../dbConfig.php'; 
     if (isset($_POST['total_id_invoice'])){
         $code = $_POST['total_id_invoice'];
         /* run delete */

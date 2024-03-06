@@ -68,7 +68,7 @@
 
 <body>
 <?php /* get connection */
-    $conn = mysqli_connect("localhost", "root", "", "shopping");
+    include_once '../../dbConfig.php'; 
 
     /*SELECT*/
     if (isset($_POST['list_id_order'])){

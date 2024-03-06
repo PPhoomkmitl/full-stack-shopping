@@ -1,6 +1,6 @@
 <?php
 include('./component/session.php');
-$cx = mysqli_connect("localhost", "root", "", "shopping");
+include_once '../dbConfig.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productId = $_POST['productId'];
@@ -8,14 +8,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    
 
     // Update the cart table with the new quantity
-    // $uid_query = mysqli_query($cx, "SELECT CusID FROM customer WHERE Username = '$user'");
+    // $uid_query = mysqli_query($conn, "SELECT CusID FROM customer WHERE Username = '$user'");
     // $uid_row = mysqli_fetch_assoc($uid_query);
     // $uid_results = $uid_row['CusID'];
 
 
     if (isset($_SESSION['id_username'])){
         $updateQuery = "UPDATE cart SET Qty = $newQuantity WHERE CusID = $uid  AND ProID = $productId";
-        mysqli_query($cx, $updateQuery);
+        mysqli_query($conn, $updateQuery);
     }
      /* Process the update logic, for example, update $_SESSION['cart'] */
     else if(isset($_SESSION['cart'])) {

@@ -52,11 +52,13 @@
         }
 
         input[type="submit"] {
-            background-color: #ef476f;
+            background-color: #4b93ff;
+
         }
 
         a {
-            background-color: #4b93ff;
+            background-color: #ef476f;
+       
         }
 
         input[type="submit"]:hover,
@@ -68,7 +70,7 @@
 
 <body>
 <?php /* get connection */
-    $conn = mysqli_connect("localhost", "root", "", "shopping");
+    include_once '../../dbConfig.php'; 
 
     /*SELECT*/
     if (isset($_POST['list_id_stock'])){
@@ -89,7 +91,7 @@
         echo "<a href='stock_index.php' 
         style='
         padding: 9px 14px;
-        color: #ef476f;             
+        color: #ffff;             
         text-decoration: none;
         margin-right: 5px;
         '>ยกเลิก</a>";
@@ -114,7 +116,7 @@
             echo "<a href='stock_index.php' 
                     style='
                     padding: 9px 14px;
-                    color: #ef476f;             
+                    color: #ffff;             
                     text-decoration: none;
                     margin-right: 5px;
                     '>ยกเลิก</a>";

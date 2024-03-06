@@ -1,6 +1,6 @@
 <?php
 /* get connection */
-$conn = mysqli_connect("localhost", "root", "", "shopping");
+include_once '../../dbConfig.php'; 
 
 $cusID = $_POST['id_customer'];
 $recvID = $_POST['id_receiver'];

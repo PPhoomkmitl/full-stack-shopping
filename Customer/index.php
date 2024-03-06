@@ -11,19 +11,75 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
+        .container {
+            margin-top: 70px;
+            text-align: center;
+        }
 
         .product-container {
-            width: 80%;
-            /* Adjust the width as needed */
-            margin: 0 auto;
-            /* Center the container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
-            /* Center items horizontally with space around them */
         }
 
         .product-card {
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            flex: 0 1 calc(25% - 20px);   
+            padding: 30px 10px;
+            text-align: center;
+            background-color: #fff;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+
+        .product-image {
+            width: 300px;
+            height: 280px;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+
+        .buy-button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .buy-button:hover {
+            background-color: #2980b9;
+        }
+
+        /* .product-container {
+            width: 80%;
+         
+            margin: 0 auto;
+    
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+     
+        } */
+
+        /* .product-card {
             border: 1px solid #ddd;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin: 10px;
@@ -64,13 +120,20 @@
 
         .buy-button:hover {
             background-color: #2980b9;
+        } */
+
+        .main-about-us-container{
+            margin-top: 80px;
+        }
+        .main-about-us-container h1{
+            margin-bottom: 40px;
         }
 
         .Slide-Container {
             width: 100%;
             max-width: 100%;
             height: 500px;
-            margin-top: 125px;
+            margin-top: 109px;
             overflow: hidden;
             position: relative;
         }
@@ -168,6 +231,7 @@
 
     <div class"navCon">
         <?php include('./component/accessNavbar.php'); ?>
+        <?php include_once '../dbConfig.php';  ?>
     </div>
 
     <div class="Slide-Container">
@@ -180,28 +244,24 @@
             </div>
         </a2>
     </div>
-    <br><br>
-    <center>
-        <br>
-        <br>
-        <h1>Related Products</h1><br><br>
+    <div class="container">
+        <h1>Related Products</h1>
         <div class="product-container">
             <?php
-            $cx = mysqli_connect("localhost", "root", "", "shopping");
             $cur = "SELECT * FROM product";
-            $msresults = mysqli_query($cx, $cur);
+            $msresults = mysqli_query($conn, $cur);
 
             if (mysqli_num_rows($msresults) > 0) {
-                while ($row = mysqli_fetch_array($msresults)) {
+                while ($row = mysqli_fetch_assoc($msresults)) {
                     echo "<div class='product-card'>
-                        <img class='product-image' src='" . getProductImage($row['ProID']) . "'>
-                        <p class='product-name'>{$row['ProName']}</p>
-                        <p class='product-price'>ราคา {$row['PricePerUnit']}</p>
-                        <form method='post' action='detailProduct.php'>
-                            <input type='hidden' name='id_product' value='{$row['ProID']}'>
-                            <input class='buy-button' type='submit' value='ซื้อสินค้า'>
-                        </form>
-                    </div>";
+                            <img class='product-image' src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>
+                            <p class='product-name'>{$row['ProName']}</p>
+                            <p class='product-price'>ราคา {$row['PricePerUnit']}</p>
+                            <form method='post' action='detailProduct.php'>
+                                <input type='hidden' name='id_product' value='{$row['ProID']}'>
+                                <input class='buy-button' type='submit' value='ซื้อสินค้า'>
+                            </form>
+                        </div>";
                 }
             } else {
                 echo "<center><h1>ไม่มีสินค้า</h1></center>";
@@ -209,20 +269,24 @@
             ?>
         </div>
         <!-- About Us Template -->
-        <h1>About Us</h1><br><br>
-        <div class="about-us-container">
-            <div class="about-us-image">
-                <img src="./image/jeans.jpg" alt="About Us Image">
+        <div class="main-about-us-container">
+            <h1>About Us</h1>
+            <div class="about-us-container">
+                <div class="about-us-image">
+                    <img src="./image/jeans.jpg" alt="About Us Image">
+                </div>
+                <div class="about-us-details">
+                    <div class="about-us-details-body">
+                        <h2>Why Puma Fast-Shirt​</h2>
+                        <h2>ลดค่าใช้จ่ายของคุณจากการซื้อสินค้าแพงๆทุกปีมาซื้อเป็นสินค้ามือสองที่ยังคงเป็นที่ต้องการในยุคนี้​</h2>
+                        <h2>เสื้อผ้า/ รองเท้า มือสอง
+                            สภาพดี เกรด A
+                            ปี 70s - 90s​</h2>
+                    </div>
+                    <!-- Add more content as needed -->
+                </div>
             </div>
-            <div class="about-us-details">
-                <h2>Why Puma Fast-Shirt​</h2>
-                <h2>ลดค่าใช้จ่ายของคุณจากการซื้อสินค้าแพงๆทุกปีมาซื้อเป็นสินค้ามือสองที่ยังคงเป็นที่ต้องการในยุคนี้​</h2>
-                <h2>เสื้อผ้า/ รองเท้า มือสอง
-                    สภาพดี เกรด A
-                    ปี 70s - 90s​</h2>
-                <!-- Add more content as needed -->
-            </div>
-        </div>
+        <div>
 
         <!-- Contact Template -->
         <div class="footer">
@@ -232,14 +296,20 @@
             <p>Phone: +66 88 101 9863</p>
             <!-- Add more content as needed -->
         </div>
-    </center>
+    </div>
 </body>
 
 <style>
     /* New styles for About Us template */
     .about-us-container {
         display: flex;
-        margin: 20px;
+        margin: 0px 100px;
+        background-color: rgba(94, 137, 120, 0.5);
+        max-height: 300px;
+        margin-bottom: 80px;
+        padding: 10px 0px;
+        border: #5E8978 solid 1px;
+        border-radius: 10px;
     }
 
     .about-us-image {
@@ -249,12 +319,21 @@
     }
 
     .about-us-details {
-        flex: 2;
+        flex: 1.8;
+        text-align: left;
+        flex-direction: column;
+        
+    }
+
+
+    .about-us-details-body {
+        width: 700px;
+
     }
 
     .about-us-image img {
         width: 100%;
-        height: 50%;
+        height: 100%;
         /* Optional: Add rounded corners to the image */
     }
 </style>

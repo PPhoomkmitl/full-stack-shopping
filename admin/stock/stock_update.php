@@ -1,6 +1,6 @@
 <?php
 /* get connection */
-$conn = mysqli_connect("localhost", "root", "", "shopping");
+include_once '../../dbConfig.php'; 
 
 /* SELECT */
 $code = $_POST['id_stock'];
@@ -24,8 +24,8 @@ if (mysqli_num_rows($msresults) > 0) {
 
     echo "<div style='text-align: center;'>";
     echo "⚠️ โปรดตรวจสอบให้แน่ใจว่าคุณต้องการอัปเดตข้อมูล ⚠️<br><br>";
-    echo "<input type='reset' value='รีเซ็ท' style='background-color: green; color: #fff; padding: 10px 20px; border: none; cursor: pointer; margin-right:2rem; border-radius: 4px;'>";
-    echo "<input type='submit' value='ยืนยัน' style='background-color: blue; color: #fff; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px;'>";
+    echo "<input type='reset' value='รีเซ็ท' style='background-color: #ef476f; color: #fff; padding: 10px 20px; border: none; cursor: pointer; margin-right:2rem; border-radius: 4px;'>";
+    echo "<input type='submit' value='ยืนยัน' style='background-color: #3498db; color: #fff; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px;'>";
     echo "</div>";
     echo "</div>";
     echo "</form>\n";

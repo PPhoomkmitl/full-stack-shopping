@@ -25,7 +25,7 @@
 </style>
 <body>
 <?php
-     $cx =  mysqli_connect("localhost", "root", "", "shopping");
+     include_once '../dbConfig.php'; 
      $uid = $_SESSION['id_username'];
     echo '<div  id="row-rev" class="invoice-container">
         <div class="invoice-header">
@@ -46,7 +46,7 @@
         $customerId = $customerDetails['CusID'];
         $RecId = $_POST['id_order'];
         echo $RecId;
-        $orderQuery = mysqli_query($cx, "SELECT Product.*, receive_detail.*  , receive.*
+        $orderQuery = mysqli_query($conn, "SELECT Product.*, receive_detail.*  , receive.*
                     FROM receive_detail
                     INNER JOIN receive ON receive.RecID = receive_detail.RecID
                     INNER JOIN Product ON Product.ProID = receive_detail.ProID
@@ -101,7 +101,7 @@
               </div>";  
         echo "</div>";
     }
-    mysqli_close($cx);
+    mysqli_close($conn);
 ?>
    
 </div>

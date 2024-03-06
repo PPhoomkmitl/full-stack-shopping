@@ -135,38 +135,38 @@
     <!-- <?php include('./component/backButton.php') ?> -->
 
     <?php
-    $cx =  mysqli_connect("localhost", "root", "", "shopping");
+    include_once '../dbConfig.php'; 
     $uid = $_SESSION['id_username'];
 
     echo "<div class='order-container'>";
     if (isset($_SESSION['cart'])) {
-        $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer WHERE customer.CusID = '$uid'");
+        $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM customer WHERE customer.CusID = '$uid'");
         $customerDetails = mysqli_fetch_array($customerDetailsQuery);
         $customerId = $customerDetails['CusID'];
     } else {
-        $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
+        $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
         $customerDetails = mysqli_fetch_array($customerDetailsQuery);
         $customerId = $customerDetails['CusID'];
     }
 
-    $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
+    $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
     $customerDetails = mysqli_fetch_array($customerDetailsQuery);
 
     
     $RecId = $_POST['id_order'];
-    $payerQuery = mysqli_query($cx, "SELECT * FROM receive
+    $payerQuery = mysqli_query($conn, "SELECT * FROM receive
         INNER JOIN payer ON receive.TaxID = payer.TaxID
         WHERE receive.RecID = '$RecId '");
     $payerResult = mysqli_fetch_array($payerQuery);
 
 
-    $recevierQuery = mysqli_query($cx, "SELECT * FROM receive
+    $recevierQuery = mysqli_query($conn, "SELECT * FROM receive
         INNER JOIN receiver ON receive.RecvID = receiver.RecvID
         WHERE receive.RecID = '$RecId '");
     $recevierResult = mysqli_fetch_array($recevierQuery);
 
 
-    $recQuery = mysqli_query($cx, "SELECT * FROM receive
+    $recQuery = mysqli_query($conn, "SELECT * FROM receive
     WHERE receive.RecID = '$RecId '");
     $recResult = mysqli_fetch_array($recQuery);
 
@@ -215,7 +215,7 @@
 
     if (isset($_POST['id_order'])) {
         $customerId = $customerDetails['CusID'];
-        $orderQuery = mysqli_query($cx, "SELECT Product.*, receive_detail.*  , receive.*
+        $orderQuery = mysqli_query($conn, "SELECT Product.*, receive_detail.*  , receive.*
                     FROM receive_detail
                     INNER JOIN receive ON receive.RecID = receive_detail.RecID
                     INNER JOIN Product ON Product.ProID = receive_detail.ProID
@@ -265,7 +265,7 @@
 
         echo "</div>";
     }
-    mysqli_close($cx);
+    mysqli_close($conn);
     ?>
 </body>
 

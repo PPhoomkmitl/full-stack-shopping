@@ -2,7 +2,7 @@
     header( "location: ./invoice_index.php");  
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        $conn = mysqli_connect("localhost", "root", "", "shopping"); 
+        include_once '../../dbConfig.php';  
         $InvID = $_POST['InvID'];
         $RecvID = $_POST['id_receiver'];
         $Qty = $_POST['Qty'];

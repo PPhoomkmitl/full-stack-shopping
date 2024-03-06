@@ -145,11 +145,11 @@ include('./component/getFunction/getName.php'); ?>
         if (isset($_SESSION['id_username'])) {
             $uid = $_SESSION['id_username'];
 
-            $cx = mysqli_connect("localhost", "root", "", "shopping");
+            include_once '../dbConfig.php'; 
             $query_address = "SELECT * FROM receiver 
             INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
             WHERE receiver_detail.CusID = '$uid'";
-            $result_address = mysqli_query($cx, $query_address);
+            $result_address = mysqli_query($conn, $query_address);
             if (mysqli_num_rows($result_address) > 0) {
                 // Fetch a single row from the result set
                 $row = mysqli_fetch_assoc($result_address);

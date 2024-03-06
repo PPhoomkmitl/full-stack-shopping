@@ -4,10 +4,10 @@
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        $cx = mysqli_connect("localhost", "root", "", "shopping");
+        include_once '../dbConfig.php'; 
 
         $select_user = "SELECT * FROM customer_account WHERE Username = '$username'";
-        $run_qry = mysqli_query($cx, $select_user);
+        $run_qry = mysqli_query($conn, $select_user);
         if (mysqli_num_rows($run_qry) > 0) {
             while ($row = mysqli_fetch_assoc($run_qry)) {
                 if (password_verify($password, $row['Password'])) {
@@ -31,7 +31,7 @@
         else {
             header("Location: ./login.php");
         }
-        mysqli_close($cx);
+        mysqli_close($conn);
     }
 ?>
 

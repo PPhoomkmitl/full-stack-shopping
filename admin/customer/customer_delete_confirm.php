@@ -69,7 +69,7 @@
 <body>
     <?php 
     /* POST connection */
-    $conn = mysqli_connect("localhost", "root", "", "Shopping");
+    include_once '../../dbConfig.php'; 
     echo '123';
     /*SELECT*/
     if (isset($_POST['list_id_customer'])){

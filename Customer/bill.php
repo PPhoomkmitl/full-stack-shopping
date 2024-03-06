@@ -303,26 +303,26 @@ include('./component/getFunction/getProductImages.php');
     if (isset($_POST['id_customer'])) {
         $uid = $_POST['id_customer'];
 
-        $cx =  mysqli_connect("localhost", "root", "", "shopping");
+        $conn=  mysqli_connect("localhost", "root", "", "shopping");
         $query_address = "SELECT * FROM receiver 
             INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
             WHERE receiver_detail.CusID = '$uid'";
-        $result_address = mysqli_query($cx, $query_address);
+        $result_address = mysqli_query($conn, $query_address);
         if (mysqli_num_rows($result_address) > 0) {
 
             $row = mysqli_fetch_assoc($result_address);
         }
     }
-    $cx =  mysqli_connect("localhost", "root", "", "shopping");
+    $conn=  mysqli_connect("localhost", "root", "", "shopping");
     $uid = $_SESSION['id_username'];
 
 
     if (isset($_SESSION['cart'])) {
-        $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
+        $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
         $customerDetails = mysqli_fetch_array($customerDetailsQuery);
         $customerId = $customerDetails['CusID'];
     } else {
-        $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM customer WHERE customer.CusID = '$uid'");
+        $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM customer WHERE customer.CusID = '$uid'");
         $customerDetails = mysqli_fetch_array($customerDetailsQuery);
         $customerId = $customerDetails['CusID'];
     }
@@ -330,19 +330,19 @@ include('./component/getFunction/getProductImages.php');
 
     $RecId = $_POST['id_order'];
 
-    $payerQuery = mysqli_query($cx, "SELECT * FROM receive
+    $payerQuery = mysqli_query($conn, "SELECT * FROM receive
                     INNER JOIN payer ON receive.TaxID = payer.TaxID
                     WHERE receive.RecID = '$RecId '");
     $payerResult = mysqli_fetch_array($payerQuery);
 
 
-    $recevierQuery = mysqli_query($cx, "SELECT * FROM receive
+    $recevierQuery = mysqli_query($conn, "SELECT * FROM receive
                     INNER JOIN receiver ON receive.RecvID = receiver.RecvID
                     WHERE receive.RecID = '$RecId '");
     $recevierResult = mysqli_fetch_array($recevierQuery);
 
 
-    $recQuery = mysqli_query($cx, "SELECT * FROM receive
+    $recQuery = mysqli_query($conn, "SELECT * FROM receive
                 INNER JOIN customer ON customer.cusID = receive.cusID
                 WHERE receive.RecID = '$RecId '");
     $recResult = mysqli_fetch_array($recQuery);
@@ -477,7 +477,7 @@ include('./component/getFunction/getProductImages.php');
 
         // <?---------        ส่วนของ detail     -------->
         if (isset($_POST['id_order'])) {
-            $orderQuery = mysqli_query($cx, "SELECT Product.*, receive_detail.*  , receive.* 
+            $orderQuery = mysqli_query($conn, "SELECT Product.*, receive_detail.*  , receive.* 
                                         FROM receive_detail
                                         INNER JOIN receive ON receive.RecID = receive_detail.RecID
                                         INNER JOIN Product ON Product.ProID = receive_detail.ProID
@@ -563,7 +563,7 @@ include('./component/getFunction/getProductImages.php');
             unset($_SESSION['guest']);
             unset($_SESSION['id_username']);
         }
-        mysqli_close($cx);
+        mysqli_close($conn);
         ?>
     </div>
     <script>

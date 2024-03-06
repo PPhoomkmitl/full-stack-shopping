@@ -1,22 +1,22 @@
 <?php
 include('./component/session.php');
 
-$cx = mysqli_connect("localhost", "root", "", "shopping");
+include_once '../dbConfig.php'; 
 
 $query = "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE  customer.CusID = '$uid'";
-$result = mysqli_query($cx, $query);
+$result = mysqli_query($conn, $query);
 $user_data = mysqli_fetch_assoc($result);
 $uid = $user_data['CusID'];
 
 $query_address = "SELECT * FROM receiver 
     INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
     WHERE receiver_detail.CusID = '$uid'";
-$result_address = mysqli_query($cx, $query_address);
+$result_address = mysqli_query($conn, $query_address);
 
 
 
 if (!$result) {
-    die("Error fetching user data: " . mysqli_error($cx));
+    die("Error fetching user data: " . mysqli_error($conn));
 }
 
 
@@ -29,13 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {;
     $new_address = $_POST['address'];
 
     $update_query = "UPDATE customer SET UserName = '$new_username' ,Tel = '$new_tel' WHERE CusID = '$uid'";
-    $update_result = mysqli_query($cx, $update_query);
+    $update_result = mysqli_query($conn, $update_query);
 
     $update_query = "UPDATE customer_account SET Username = '$new_username' WHERE CusID = '$uid'";
-    $update_result = mysqli_query($cx, $update_query);
+    $update_result = mysqli_query($conn, $update_query);
 
     if (!$update_result) {
-        die("Error updating user data: " . mysqli_error($cx));
+        die("Error updating user data: " . mysqli_error($conn));
     }
 
     // $_SESSION['username'] = $new_username;
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {;
 
 }
 
-mysqli_close($cx);
+mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">

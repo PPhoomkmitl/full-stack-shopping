@@ -9,7 +9,7 @@ include('./component/getFunction/getName.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Connect to the database
-    $cx = mysqli_connect("localhost", "root", "", "shopping");
+    include_once '../dbConfig.php'; 
     $fname = $_POST['fname'];
     $lname = $_POST['lname'];
     $tel = $_POST['tel'];
@@ -42,24 +42,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         AND receiver.RecvLName = '$new_lname'
         AND receiver.Tel = '$new_tel'
         AND receiver.Address = '$new_address'";
-        $result = mysqli_query($cx ,$select_query_head);
+        $result = mysqli_query($conn,$select_query_head);
 
         if(mysqli_num_rows($result) < 1){
             $insert_query_head = "INSERT INTO receiver (RecvFName , RecvLName  , Tel , Address) 
             VALUES('$new_fname', '$new_lname', '$new_tel' , '$new_address')";
-            $insert_result_head = mysqli_query($cx, $insert_query_head);
+            $insert_result_head = mysqli_query($conn, $insert_query_head);
             if ($insert_result_head) {
-                $recv_id = mysqli_insert_id($cx);
+                $recv_id = mysqli_insert_id($conn);
                 // $insert_query = "SELECT * FROM receiver WHERE  RecvID = '$recv_id'";
-                // $insert_result= mysqli_query($cx, $insert_query_head);
+                // $insert_result= mysqli_query($conn, $insert_query_head);
                 // $row = mysqli_fetch_assoc($insert_result);
                 // echo $row['RecvID'] ;
             } else {
-                die("Error inserting into receiver: " . mysqli_error($cx));
+                die("Error inserting into receiver: " . mysqli_error($conn));
             }
 
             // Generate new NumID
-            $resultDetail = mysqli_query($cx, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM receiver_detail WHERE CusID = '$uid'");
+            $resultDetail = mysqli_query($conn, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM receiver_detail WHERE CusID = '$uid'");
             $latestID = mysqli_fetch_assoc($resultDetail);
             $lastID = $latestID['num_id'];
 
@@ -73,10 +73,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo $recv_id;
 
             $insert_query_detail = "INSERT INTO receiver_detail (CusID, RecvID, NumID) VALUES('$uid', '$recv_id', '$NumID')";
-            $insert_result_detail = mysqli_query($cx, $insert_query_detail);
+            $insert_result_detail = mysqli_query($conn, $insert_query_detail);
 
             if (!$insert_result_detail) {
-                die("Error inserting receiver_detail: " . mysqli_error($cx));
+                die("Error inserting receiver_detail: " . mysqli_error($conn));
             }
         }
         else {
@@ -89,14 +89,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         /* ------------------------------------------------------------------------- */
 
         // Retrieve cart items for the specified customer
-        $check_query = mysqli_query($cx, "SELECT Product.ProID, Qty, Product.PricePerUnit FROM cart 
+        $check_query = mysqli_query($conn, "SELECT Product.ProID, Qty, Product.PricePerUnit FROM cart 
             INNER JOIN Product ON Cart.ProID = Product.ProID WHERE CusID = '$cusID'");
 
         // Check if there are items in the cart
         if (mysqli_num_rows($check_query) > 0) {
 
             // Generate a new InvoiceID
-            $result = mysqli_query($cx, "SELECT MAX(InvID) AS inv_id FROM invoice");
+            $result = mysqli_query($conn, "SELECT MAX(InvID) AS inv_id FROM invoice");
             $row = mysqli_fetch_assoc($result);
             $lastID = $row['inv_id'];
             $numericPart = intval(substr($lastID, 3));
@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $InvID = 'INV' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
 
             // Insert a new invoice record
-            $stmt = mysqli_query($cx, "INSERT INTO invoice (InvID, Period, CusID, Status, RecvID)
+            $stmt = mysqli_query($conn, "INSERT INTO invoice (InvID, Period, CusID, Status, RecvID)
                 VALUES ('$InvID', NOW(), '$cusID', 'Unpaid', '$recv_id');");
 
             // ACCESS LOG
@@ -116,14 +116,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $callingFile = __FILE__;
             $action = 'INSERT'; // Static Change Action
-            CallLog::callLog($ipAddress, $cx, $uid, $productId, $callingFile, $action);
+            CallLog::callLog($ipAddress, $conn, $uid, $productId, $callingFile, $action);
             //END LOG
 
             // Iterate through each item in the cart
             while ($row = mysqli_fetch_array($check_query)) {
 
                 // Generate a new NumID for invoice_detail
-                $resultDetail = mysqli_query($cx, "SELECT MAX(NumID) AS num_id FROM invoice_detail WHERE InvID = '$InvID'");
+                $resultDetail = mysqli_query($conn, "SELECT MAX(NumID) AS num_id FROM invoice_detail WHERE InvID = '$InvID'");
                 $row2 = mysqli_fetch_assoc($resultDetail);
                 $lastID = $row2['num_id'];
                 $numericPart = intval(substr($lastID, 3));
@@ -140,23 +140,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $Total = $Tax + $totalPriceAllItems;
 
                 // Insert invoice_detail record
-                $stmt = mysqli_query($cx, "INSERT INTO invoice_detail (NumID, InvID, ProID, Qty)
+                $stmt = mysqli_query($conn, "INSERT INTO invoice_detail (NumID, InvID, ProID, Qty)
                     VALUES ('$NumID', '$InvID', '$proID', '$Qty');");
             }
 
             // Update the total price in the invoice
             if (isset($cusID) && !empty($cusID)) {
-                $stmt = mysqli_query($cx, "UPDATE invoice SET TotalPrice = '$Total' WHERE InvID ='$InvID'");
+                $stmt = mysqli_query($conn, "UPDATE invoice SET TotalPrice = '$Total' WHERE InvID ='$InvID'");
 
                 // Delete items from the cart after successful invoice creation
                 $deleteQuery = "DELETE FROM cart WHERE CusID = '$cusID'";
-                $result = mysqli_query($cx, $deleteQuery);
+                $result = mysqli_query($conn, $deleteQuery);
 
                 // Check if deletion was successful
                 if ($result) {
                     echo "Deletion successful!";
                 } else {
-                    echo "Deletion failed: " . mysqli_error($cx);
+                    echo "Deletion failed: " . mysqli_error($conn);
                 }
 
                 echo $recv_id;
@@ -190,9 +190,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //Manage new Guest for receive
      
             // Insert a customer record for guests
-            $stmt_customer = mysqli_query($cx, "INSERT INTO customer(CusFName , CusLName , Tel )
+            $stmt_customer = mysqli_query($conn, "INSERT INTO customer(CusFName , CusLName , Tel )
                 VALUES('$fname', '$lname' , '$tel' );");
-            $cusID = mysqli_insert_id($cx);
+            $cusID = mysqli_insert_id($conn);
 
             /* ------------------------------------------------------------------------- */
             /* ------------------------------------------------------------------------- */
@@ -205,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             AND receiver.RecvLName = '$lname'
             AND receiver.Tel = '$tel'
             AND receiver.Address = '$address'";
-            $result = mysqli_query($cx ,$select_query_head);
+            $result = mysqli_query($conn,$select_query_head);
             
 
             if(mysqli_num_rows($result) == 0){
@@ -213,16 +213,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $insert_query_head = "INSERT INTO receiver (RecvFName , RecvLName  , Tel , Address) 
                 VALUES('$fname', '$lname', '$tel' , '$address')";
 
-                $insert_result_head = mysqli_query($cx, $insert_query_head);
+                $insert_result_head = mysqli_query($conn, $insert_query_head);
 
                 if ($insert_result_head) {
-                    $recv_id = mysqli_insert_id($cx);
+                    $recv_id = mysqli_insert_id($conn);
                 } else {
-                    die("Error inserting into receiver: " . mysqli_error($cx));
+                    die("Error inserting into receiver: " . mysqli_error($conn));
                 }
 
                 // Generate new NumID
-                $resultDetail = mysqli_query($cx, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM receiver_detail WHERE CusID = '$cusID'");
+                $resultDetail = mysqli_query($conn, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM receiver_detail WHERE CusID = '$cusID'");
                 $latestID = mysqli_fetch_assoc($resultDetail);
                 $lastID = $latestID['num_id'];
 
@@ -236,17 +236,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo $recv_id;
 
                 $insert_query_detail = "INSERT INTO receiver_detail (CusID, RecvID, NumID) VALUES('$cusID', '$recv_id', '$NumID')";
-                $insert_result_detail = mysqli_query($cx, $insert_query_detail);
+                $insert_result_detail = mysqli_query($conn, $insert_query_detail);
 
                 if (!$insert_result_detail) {
-                    die("Error inserting receiver_detail: " . mysqli_error($cx));
+                    die("Error inserting receiver_detail: " . mysqli_error($conn));
                 }
             }
             /* ------------------------------------------------------------------------- */
             /* ------------------------------------------------------------------------- */
            
             // Generate a new InvoiceID
-            $result = mysqli_query($cx, "SELECT MAX(InvID) AS inv_id FROM invoice");
+            $result = mysqli_query($conn, "SELECT MAX(InvID) AS inv_id FROM invoice");
             $row = mysqli_fetch_assoc($result);
             $lastID = $row['inv_id'];
             $numericPart = intval(substr($lastID, 3));
@@ -254,7 +254,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $InvID = 'INV' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
 
             // Insert a new invoice record for guests
-            $stmt = mysqli_query($cx, "INSERT INTO invoice (InvID, Period, CusID, Status, RecvID)
+            $stmt = mysqli_query($conn, "INSERT INTO invoice (InvID, Period, CusID, Status, RecvID)
                 VALUES ('$InvID', NOW(), $cusID, 'Unpaid', $recv_id);");
 
             // ACCESS LOG
@@ -267,14 +267,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             $callingFile = __FILE__;
             $action = 'INSERT'; // Static Change Action
-            CallLog::callLog($ipAddress, $cx, $uid, $productId, $callingFile, $action);
+            CallLog::callLog($ipAddress, $conn, $uid, $productId, $callingFile, $action);
             //END LOG
 
             // Iterate through each item in the session cart
             foreach ($_SESSION['cart'] as $product_id => $product) {
 
                 // Generate a new NumID for invoice_detail
-                $resultDetail = mysqli_query($cx, "SELECT MAX(NumID) AS num_id FROM invoice_detail WHERE InvID = '$InvID'");
+                $resultDetail = mysqli_query($conn, "SELECT MAX(NumID) AS num_id FROM invoice_detail WHERE InvID = '$InvID'");
                 $row2 = mysqli_fetch_assoc($resultDetail);
                 $lastID = $row2['num_id'];
                 $numericPart = intval(substr($lastID, 3));
@@ -285,7 +285,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Fetch product details from the database
                 $cur = "SELECT ProID, ProName, PricePerUnit FROM product WHERE ProID = '$product_id'";
-                $msresults = mysqli_query($cx, $cur);
+                $msresults = mysqli_query($conn, $cur);
                 $row = mysqli_fetch_array($msresults);
 
                 // Calculate subtotal, tax, and total
@@ -295,12 +295,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $Total = $Tax + $totalPriceAllItems;
 
                 // Insert invoice_detail record
-                $stmt = mysqli_query($cx, "INSERT INTO invoice_detail (NumID, InvID, ProID, Qty)
+                $stmt = mysqli_query($conn, "INSERT INTO invoice_detail (NumID, InvID, ProID, Qty)
                     VALUES ('$NumID', '$InvID', '$product_id', '$Qty');");
             }
 
             // Update the total price in the invoice
-            $stmt = mysqli_query($cx, "UPDATE invoice SET TotalPrice ='$Total' WHERE InvID ='$InvID'");
+            $stmt = mysqli_query($conn, "UPDATE invoice SET TotalPrice ='$Total' WHERE InvID ='$InvID'");
 
             // Check if customer ID is set and not empty
             if (isset($cusID) && !empty($cusID)) {

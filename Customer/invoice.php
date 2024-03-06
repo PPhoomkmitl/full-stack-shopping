@@ -138,7 +138,7 @@
 <body>
 <?php include('./component/accessNavbar.php')?>
 <?php    
-    $cx = mysqli_connect("localhost", "root", "", "shopping");
+    include_once '../dbConfig.php'; 
     echo "<div class='invoice-container'>";
     echo "<div class='body-container'>";
     echo "<div class='invoice-header'>
@@ -150,13 +150,13 @@
   
     if(isset($_POST['id_invoice'])){
         if (isset($_SESSION['cart'])) {
-            $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM receiver INNER JOIN receiver_detail ON receiver.RecvID =  receiver_detail.RecvID WHERE receiver_detail.CusID = '$uid' AND receiver_detail.RecvID = '$recv_id' ");  
+            $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM receiver INNER JOIN receiver_detail ON receiver.RecvID =  receiver_detail.RecvID WHERE receiver_detail.CusID = '$uid' AND receiver_detail.RecvID = '$recv_id' ");  
             $customerDetails = mysqli_fetch_array($customerDetailsQuery);
             $customerId = $uid;
         }
         else {
             echo $recv_id;
-            $customerDetailsQuery = mysqli_query($cx, "SELECT * FROM receiver INNER JOIN receiver_detail ON receiver.RecvID =  receiver_detail.RecvID WHERE receiver_detail.CusID = '$uid' AND receiver_detail.RecvID = '$recv_id'");  
+            $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM receiver INNER JOIN receiver_detail ON receiver.RecvID =  receiver_detail.RecvID WHERE receiver_detail.CusID = '$uid' AND receiver_detail.RecvID = '$recv_id'");  
             $customerDetails = mysqli_fetch_array($customerDetailsQuery);
             $customerId = $uid;
         }
@@ -171,7 +171,7 @@
                     <p>Address: {$customerDetails['Address']}</p>
                   </div>";
         
-        $invoiceQuery = mysqli_query($cx, "SELECT invoice.* , invoice_detail.*, product.*
+        $invoiceQuery = mysqli_query($conn, "SELECT invoice.* , invoice_detail.*, product.*
                                            FROM invoice
                                            INNER JOIN invoice_detail ON invoice.InvID = invoice_detail.InvID
                                            INNER JOIN Product ON invoice_detail.ProID = Product.ProID
@@ -247,7 +247,7 @@
         echo "</div>";
 
     }
-    mysqli_close($cx);
+    mysqli_close($conn);
 ?>
 </body>
 </html>
