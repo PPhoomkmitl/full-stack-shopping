@@ -109,14 +109,15 @@
                 <div class="form-group">
                     <label for="InvID">InvID:</label>
                     <?php
-                    // Generate new RECEIVE ID
+                  
+                    // Generate a new InvoiceID
                     $cx =  mysqli_connect("localhost", "root", "", "shopping");
                     $result = mysqli_query($cx, "SELECT MAX(InvID) AS inv_id FROM invoice");
                     $row = mysqli_fetch_assoc($result);
                     $lastID = $row['inv_id'];
-                    $numericPart = intval(substr($lastID, 6));
+                    $numericPart = intval(substr($lastID, 3));
                     $newNumericPart = $numericPart + 1;
-                    $InvID = 'rec_id' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
+                    $InvID = 'INV' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
                     echo "<input type='text' id='InvID' name='InvID' value='$InvID' readonly>
                     </div>";
                     ?>

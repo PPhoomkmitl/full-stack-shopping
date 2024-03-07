@@ -40,12 +40,13 @@ include('./component/getFunction/getProductImages.php');
 
         .product img {
             width: 80px;
-            height: auto;
-            margin-right: 10px;
+            height: 90px;
+            margin-right: 15px;
         }
 
         .product-details {
             flex: 1;
+            margin-top: 5px;
         }
 
         .remove-btn {
@@ -200,7 +201,7 @@ include('./component/getFunction/getProductImages.php');
         if (isset($_SESSION['id_username']) && isset($_SESSION['status'])) {
 
             //Find product.ProID , product.ProName  ,product.PricePerUnit , Qty
-            $cur = "SELECT product.ProID , product.ProName  ,product.PricePerUnit , Qty  FROM cart
+            $cur = "SELECT product.ProID , product.ProName  ,product.PricePerUnit , Qty , ImageData  FROM cart
                 INNER JOIN product ON cart.ProID = product.ProID";
             $msresults = mysqli_query($conn, $cur);
 
@@ -212,7 +213,7 @@ include('./component/getFunction/getProductImages.php');
 
 
                     echo '<div class="product">';
-                    echo '<img src="' . getProductImage($row['ProID']) . '" alt="Product">';
+                    echo "<img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>";
                     echo '<div class="product-details">';
                     echo '<p>' . $row['ProName'] . '</p>';
                     echo '<p>Price: ' . $row['PricePerUnit'] . '</p>';

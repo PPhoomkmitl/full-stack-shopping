@@ -30,16 +30,17 @@
         }
 
         .product-image {
-            flex: 0 1 calc(50% - 20px);
-            margin: 10px;
+            flex: 0 0 calc(50% - 35px);
+            margin: 5px;
             box-sizing: border-box;
         }
 
         .product-image img {
-            width: 100%;
-            height: auto;
+            width: 300px;
+            height: 300px;
             border: 1px solid #ddd;
             border-radius: 8px;
+
         }
 
         .container-2 {
@@ -213,16 +214,16 @@ $onHandStock = $row['StockQty'] - $row['OnHands'];
 echo " <div class='container-body'>
             <div class='container-1'>
                 <div class='product-image'>
-                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
+                    <img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>
                 </div>
                 <div class='product-image'>
-                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
+                    <img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>
                 </div>
                 <div class='product-image'>
-                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
+                    <img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>
                 </div>
                 <div class='product-image'>
-                    <img src='" . getProductImage($row['ProID']) . "' alt='Product Image'>
+                    <img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>
                 </div>
             </div>
             <div class='container-2'>
@@ -243,7 +244,7 @@ echo " <div class='container-body'>
                     <br><br>
                     ";
 if ($onHandStock <= 0) {
-    echo "<input class='buy-button' type='submit' style='background-color:gray;' name='add_to_cart' value='add to cart' disabled>";
+    echo "<input class='buy-button' type='submit' style='background-color:gray;' name='add_to_cart' value='out of stock' disabled>";
 } else {
     echo "<input class='buy-button' type='submit' name='add_to_cart' value='add to cart'>";
 }

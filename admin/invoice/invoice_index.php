@@ -94,6 +94,10 @@
             width: 30px;
             height: 30px;
         }
+
+        select {
+            border: none;
+        }
     </style>
 </head>
 

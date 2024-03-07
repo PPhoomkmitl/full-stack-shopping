@@ -98,6 +98,9 @@
         .navbar {
             margin-top: 100px;
         }
+        select {
+            border: none;
+        }
 
     </style>
 </head>
