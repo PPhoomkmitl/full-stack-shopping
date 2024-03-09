@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="<?php echo dirname($_SERVER['PHP_SELF']); ?>/component/CSS/navStyles.css" />
     <title>HomePage</title>
 </head>
-
+<?php include_once '../dbConfig.php'; ?>
 <body>
     <nav>
         <div class="logo" style="display: flex; align-items: center;">
@@ -26,13 +26,12 @@
 
                     <?php elseif (isset($_SESSION['id_username']) && isset($_SESSION['status']) === true) : ?>
                         <?php
-                        $conn =  mysqli_connect("localhost", "root", "", "shopping");
+
                         $uid = (isset($_SESSION['id_username'])) ? $_SESSION['id_username'] : '';
                         $cur = "SELECT * FROM cart WHERE CusID = '$uid'";
                         $msresults = mysqli_query($conn, $cur);
 
                         $cartIconCount = (mysqli_num_rows($msresults) > 0) ? mysqli_num_rows($msresults) : 0;
-                        mysqli_close($conn);
                         ?>
                     <?php endif; ?>
                     <?php if (!empty($cartIconCount)) : ?>

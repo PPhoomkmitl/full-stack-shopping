@@ -3,6 +3,8 @@ include('../logFolder/AccessLog.php');
 include('../logFolder/CallLog.php');
 include('./component/getFunction/getName.php');
 include('./component/session.php');
+include_once '../dbConfig.php'; 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     /* Add product in cart */
     if (isset($_POST['id_product']) && isset($_POST['amount'])) {
@@ -10,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $productId = $_POST['id_product'];
         $amount = $_POST['amount'];
 
-        $conn=  mysqli_connect("localhost", "root", "", "shopping");
+       
         if (isset($_SESSION['id_username'])) {
             $check_query = mysqli_query($conn, "SELECT * FROM cart WHERE CusID = '$uid' AND ProID = '$productId'");
             if (mysqli_num_rows($check_query) > 0) {
@@ -88,7 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     /* Delete product in cart */ 
     else if (isset($_POST['deleteID'])) {
-        $conn=  mysqli_connect("localhost", "root", "", "shopping");
         $productId = $_POST['deleteID'];
         if (isset($_POST['CusID'])) {
             $cusID = $_POST['CusID'];

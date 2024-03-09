@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {;
 
 }
 
-mysqli_close($conn);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -340,5 +340,5 @@ mysqli_close($conn);
                 }
             </script>
 </body>
-
+<?php mysqli_close($conn); ?>
 </html>

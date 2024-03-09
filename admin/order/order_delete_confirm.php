@@ -67,7 +67,8 @@
 </head>
 
 <body>
-<?php /* get connection */
+<?php 
+    /* get connection */
     include_once '../../dbConfig.php'; 
 
     /*SELECT*/

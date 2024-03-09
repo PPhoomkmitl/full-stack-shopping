@@ -1,5 +1,5 @@
 <?php include('./component/session.php');
-include('./component/getFunction/getProductImages.php');
+include_once '../dbConfig.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -303,7 +303,7 @@ include('./component/getFunction/getProductImages.php');
     if (isset($_POST['id_customer'])) {
         $uid = $_POST['id_customer'];
 
-        $conn=  mysqli_connect("localhost", "root", "", "shopping");
+
         $query_address = "SELECT * FROM receiver 
             INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
             WHERE receiver_detail.CusID = '$uid'";
@@ -313,7 +313,7 @@ include('./component/getFunction/getProductImages.php');
             $row = mysqli_fetch_assoc($result_address);
         }
     }
-    $conn=  mysqli_connect("localhost", "root", "", "shopping");
+
     $uid = $_SESSION['id_username'];
 
 
@@ -495,7 +495,7 @@ include('./component/getFunction/getProductImages.php');
                                 <div class="card-body">
                                     <div class="row">       
                                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center"> 
-                                        <img class="img-fluid" src="' . getProductImage($row['ProID']) . '">
+                                        <img class="img-fluid" src="' . base64_encode($row['ImageData']) . '">
                                         </div>
                                         <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                                             <p class="text-muted mb-0">' . $row['ProName'] . '</p>

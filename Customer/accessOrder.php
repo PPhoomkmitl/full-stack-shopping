@@ -3,6 +3,7 @@ include('./component/session.php');
 include('../logFolder/AccessLog.php');
 include('../logFolder/CallLog.php');
 include('./component/getFunction/getName.php');
+include_once '../dbConfig.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
@@ -21,7 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo $invID;
         echo $recvID;
 
-        $conn=  mysqli_connect("localhost", "root", "", "shopping");
 
         // Create Payer info
         $result = mysqli_query($conn, "SELECT MAX(TaxID) AS tax_id FROM payer");

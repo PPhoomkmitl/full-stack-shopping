@@ -1,9 +1,7 @@
 <?php
-include('../callDatabase/sql_connection.php');
-$sqlConnectionInstance = new Sql_connection();
-$cx = $sqlConnectionInstance->sql_Connection();
+include_once '../dbConfig.php';
 
-$filterKeyword = isset($_GET['filterKeyword']) ? mysqli_real_escape_string($cx, $_GET['filterKeyword']) : '';
+$filterKeyword = isset($_GET['filterKeyword']) ? mysqli_real_escape_string($conn, $_GET['filterKeyword']) : '';
 
 if (!empty($filterKeyword)) {
     $cur = "SELECT * FROM log 
@@ -15,7 +13,7 @@ if (!empty($filterKeyword)) {
     // If $filterKeyword is empty, select all records
     $cur = "SELECT * FROM log LIMIT 10 OFFSET 0";
 }
-$msresults = mysqli_query($cx, $cur);
+$msresults = mysqli_query($conn, $cur);
 
 if (mysqli_num_rows($msresults) > 0) {
     echo "<tr>           
@@ -39,5 +37,5 @@ if (mysqli_num_rows($msresults) > 0) {
     echo "<tr><td colspan='5'>No records found</td></tr>";
 }
 
-mysqli_close($cx);
+mysqli_close($conn);
 ?>

@@ -8,7 +8,5 @@ class Sql_connection
 
         return $cx;
     }
-    public static function query($cx){
-        //....
-    }
+
 }

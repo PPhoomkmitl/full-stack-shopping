@@ -252,12 +252,8 @@ include('./component/getFunction/getName.php');?>
                         <input type="submit">
                     </div>
                 </div>
-
                     <!-- Sidebar content -->
-                    <?php
-                    include_once '../dbConfig.php'; 
-
-
+                    <?php 
                     if (isset($_POST['id_invoice'])) {
                         $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM receiver 
                         INNER JOIN receiver_detail ON receiver.RecvID =  receiver_detail.RecvID WHERE receiver_detail.CusID = '$uid' AND receiver_detail.RecvID = '$recv_id'");

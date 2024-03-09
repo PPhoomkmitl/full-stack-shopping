@@ -90,9 +90,6 @@
             // Insert invoice_detail record
             $stmt = mysqli_query($conn, "INSERT INTO invoice_detail (InvID, NumID, ProID, Qty) VALUES ('$InvID', '$NumID', '$proID', '$Qty')");
 
-            // Update Status
-            // $stmt = mysqli_query($conn, "UPDATE invoice_detail SET Status = 'Paid' WHERE invID ='$invID'");
-
             // Update Stock and OnHands
             $stmt = mysqli_query($conn, "UPDATE product SET OnHands = OnHands + '$Qty' WHERE ProID ='$proID'");
                

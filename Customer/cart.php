@@ -1,7 +1,5 @@
 <?php include('./component/session.php'); ?>
-<?php
-include('./component/getFunction/getProductImages.php');
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -196,7 +194,6 @@ include('./component/getFunction/getProductImages.php');
         $totalPriceAllItems = 0;
         $index = 0;
 
-        include_once '../dbConfig.php';
         /* สำหรับ User */
         if (isset($_SESSION['id_username']) && isset($_SESSION['status'])) {
 
@@ -251,18 +248,19 @@ include('./component/getFunction/getProductImages.php');
                 </form>
                 </div>";
         }
-
-        /* สำหรับ Guest */ else if (isset($_SESSION['cart'])) {
+        /* สำหรับ Guest */ 
+        elseif(isset($_SESSION['cart'])) {
             foreach ($_SESSION['cart'] as $product_id => $product) {
-                $cur = "SELECT product.ProID, product.ProName, product.PricePerUnit FROM product WHERE ProID = '$product_id'";
+                $cur = "SELECT product.ProID, product.ProName, product.PricePerUnit , ImageData FROM product WHERE ProID = '$product_id'";
                 $msresults = mysqli_query($conn, $cur);
                 $row = mysqli_fetch_array($msresults);
 
                 $totalPrice = $row['PricePerUnit'] * $product['quantity'];
                 $totalPriceAllItems += $totalPrice;
-
+                
                 echo '<div class="product">';
-                echo '<img src="' . getProductImage($row['ProID']) . '" alt="Product">';
+                echo "<img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>";
+
                 echo '<div class="product-details">';
                 echo '<p>' . $row['ProName'] . '</p>';
                 echo '<p>Price: ' . $row['PricePerUnit'] . '</p>';
@@ -298,11 +296,16 @@ include('./component/getFunction/getProductImages.php');
             echo '</div>';
 
             echo "<div class='buy-button-container'>
-                    <form method='post' action='addressForm.php'>
-                        <input type='hidden' name='cart' value='" . json_encode($_SESSION['cart']) . "'>
-                        <input class='buy-button' type='submit' value='Check out'>
-                    </form>
-                </div>";
+            <form method='post' action='addressForm.php'>
+                <input type='hidden' name='cart' value='" . json_encode($_SESSION['cart']) . "'>
+                ";
+                if ($totalPriceAllItems <= 0){
+                    echo "<input class='buy-button' style='background-color:gray;' type='submit' value='Check out' disabled>";
+                }else{
+                    echo "<input class='buy-button' type='submit' value='Check out'>";
+                }
+            "</form>
+        </div>";
         }
         mysqli_close($conn);
         ?>

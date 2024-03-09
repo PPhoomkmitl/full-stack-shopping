@@ -16,6 +16,7 @@
                     $uid = $row['CusID'];
                     $_SESSION['status'] = true;
                     $_SESSION['id_username'] = $uid;
+                    $_SESSION['member'] = $uid;
                     unset($_SESSION['cart']);
                     header("Location: index.php");
                     exit(); 

@@ -199,13 +199,13 @@
 </body>
 
 </html>
+
 <div class="navCon">
     <?php include('./component/accessNavBar.php'); ?>
 </div>
-<?php include('./component/getFunction/getProductImages.php');?>
 
 <?php
-include_once '../dbConfig.php';
+
 $code = $_POST['id_product'];
 $cur = "SELECT * FROM product WHERE ProID = $code ";
 $msresults = mysqli_query($conn, $cur);

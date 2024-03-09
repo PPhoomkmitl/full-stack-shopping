@@ -210,10 +210,8 @@
 
 <body>
 
-    <?php include('./component/getFunction/getProductImages.php'); ?>
     <div class="navCon">
         <?php include('./component/accessNavbar.php'); ?>
-        <?php include_once '../dbConfig.php';  ?>
     </div>
 
     <div class="Slide-Container">

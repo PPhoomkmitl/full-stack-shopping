@@ -1,7 +1,5 @@
 <?php
-    include('../callDatabase/sql_connection.php');
-    $sqlConnectionInstance = new Sql_connection();
-    $cx = $sqlConnectionInstance->sql_Connection();
+    include_once '../dbConfig.php';
 
   
     /* Paginition */
@@ -9,7 +7,7 @@
     $recordsPerPage = 10;
 
     // Calculate the total number of records
-    $totalRecords = mysqli_fetch_array(mysqli_query($cx, "SELECT COUNT(*) FROM log"))[0];
+    $totalRecords = mysqli_fetch_array(mysqli_query($conn, "SELECT COUNT(*) FROM log"))[0];
 
     $recordsPerPage = isset($_GET['recordsPerPage']) ? (int)$_GET['recordsPerPage'] : 10;
   
@@ -21,7 +19,7 @@
 
     // Modify the SQL query to include LIMIT and OFFSET
     $cur = "SELECT * FROM log LIMIT $recordsPerPage OFFSET $offset";
-    $msresults = mysqli_query($cx, $cur);
+    $msresults = mysqli_query($conn, $cur);
     
     // Calculate the total number of pages
     $totalPages = ceil($totalRecords / $recordsPerPage);
@@ -191,7 +189,7 @@
 
     <?php
         $cur = "SELECT * FROM log LIMIT $recordsPerPage OFFSET $offset";
-        $msresults = mysqli_query($cx, $cur);
+        $msresults = mysqli_query($conn, $cur);
         
         echo "<center>";
         echo "<div>
@@ -218,7 +216,7 @@
         
         echo "</table></div>";
         echo "</center>";
-        mysqli_close($cx);
+        mysqli_close($conn);
     ?>
     <!-- เพิ่มส่วนของ Pagination ที่นี่ -->
     <!-- <div style='text-align:center;'>

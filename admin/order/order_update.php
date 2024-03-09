@@ -110,14 +110,14 @@
                     <label for="RecID">RecID:</label>
                 <?php     
 
-                    $cx =  mysqli_connect("localhost", "root", "", "shopping");
+                    include_once '../../dbConfig.php'; 
                     $RecID = $_POST['id_order'];
                     echo "<input type='text' id='RecID' name='RecID' value='$RecID' readonly>
                     </div>";
                     $cur = "SELECT * FROM receive 
                     INNER JOIN Customer ON Customer.CusID = receive.CusID
                     WHERE RecID = '$RecID'";
-                    $msresults = mysqli_query($cx, $cur);
+                    $msresults = mysqli_query($conn, $cur);
                     $row = mysqli_fetch_array($msresults);
                     $status = $row['Status'];
 
@@ -143,7 +143,7 @@
                     <select id="customerName" name="customerName" required>
                         <?php
                             // Your PHP code to fetch products from the database
-                            $result = mysqli_query($cx, "SELECT * FROM Customer");
+                            $result = mysqli_query($conn, "SELECT * FROM Customer");
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<option value='{$row['CusID']}'>{$row['CusFName']} {$row['CusLName']}</option>";
                             }
@@ -158,7 +158,7 @@
                         $cur = "SELECT * FROM receive 
                         INNER JOIN receiver ON receiver.RecvID = receive.RecvID
                         WHERE RecID = '$RecID'";
-                        $msresults = mysqli_query($cx, $cur);
+                        $msresults = mysqli_query($conn, $cur);
                         $recv_row = mysqli_fetch_array($msresults);
                     ?>
                     <input type='hidden' name='id_receiver' value='<?php echo $recv_row['RecvID']; ?>'>
@@ -176,7 +176,7 @@
                         $cur = "SELECT * FROM receive 
                         INNER JOIN payer ON payer.TaxID = receive.TaxID
                         WHERE RecID = '$RecID'";
-                        $msresults = mysqli_query($cx, $cur);
+                        $msresults = mysqli_query($conn, $cur);
                         $payer_row = mysqli_fetch_array($msresults);
                     ?>
                     <label style="color: #007bff" for="customerName">Payer info:</label>
@@ -190,13 +190,10 @@
 
             <!-- Add Products Section -->
             <div class="form-block">
-                <!-- <h3 style="color: #007bff;">Add Products</h3> -->
-                <!-- <div class="form-group">
-                <label for="productName">Product Name:</label>
-                <select id="productName" name="productName[]">
+       
                         <?php
                         // Your PHP code to fetch products from the database
-                        $result = mysqli_query($cx, "SELECT *
+                        $result = mysqli_query($conn, "SELECT *
                                                     FROM Product
                                                     WHERE ProID NOT IN (SELECT DISTINCT ProID FROM receive_detail WHERE RecID = '$RecID')");
                         if ($result) {
@@ -204,17 +201,10 @@
                                 echo "<option data-product-id='{$row['ProID']}' data-price='{$row['PricePerUnit']}' value='{$row['ProID']}'>{$row['ProName']}</option>";
                             }
                         } else {
-                            echo "Error: " . mysqli_error($cx);
+                            echo "Error: " . mysqli_error($conn);
                         }
                         ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="quantity">Quantity:</label>
-                    <input type="text" id="quantity" name="quantity[]" >
-                </div>
-                <button type="button" id="addProductBtn">Add Product</button>
-            </div> -->
+ 
     
 
             <!-- Product Table -->
@@ -232,7 +222,7 @@
                     <?php
                         $showTotal = 0.0;
                         $showVat = 0.0;
-                        $result = mysqli_query($cx, " SELECT receive_detail.* , Product.*,
+                        $result = mysqli_query($conn, " SELECT receive_detail.* , Product.*,
                             receive_detail.Qty * Product.PricePerUnit AS TotalPrice
                             FROM receive_detail 
                             INNER JOIN Product ON receive_detail.ProID = Product.ProID WHERE receive_detail.RecID = '$RecID'");
