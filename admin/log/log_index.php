@@ -1,7 +1,6 @@
 <?php
-    include_once '../dbConfig.php';
+    include_once '../../dbConfig.php'; 
 
-  
     /* Paginition */
     // Number of records per page
     $recordsPerPage = 10;
