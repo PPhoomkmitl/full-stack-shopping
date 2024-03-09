@@ -1,6 +1,0 @@
-projectKey=shopping
-serverUrl=http://localhost:9000
-serverVersion=10.4.1.88267
-dashboardUrl=http://localhost:9000/dashboard?id=shopping
-ceTaskId=67b20a7c-49c6-4f43-8e51-83d80c4bf52d
-ceTaskUrl=http://localhost:9000/api/ce/task?id=67b20a7c-49c6-4f43-8e51-83d80c4bf52d
