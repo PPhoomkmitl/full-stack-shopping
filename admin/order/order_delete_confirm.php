@@ -87,20 +87,14 @@
         echo "</form>\n";
         echo "</center>";
 
-        echo "<a href='order_index.php' 
-        style='
-        padding: 9px 14px;
-        color: #ef476f;             
-        text-decoration: none;
-        margin-right: 5px;
-        '>ยกเลิก</a>";
+
         echo "</form>\n"; 
         echo "</center>";
     }
     else {
         $code = $_POST['total_id_order'];
         echo $code;
-        $cur = "SELECT * FROM receive WHERE RecID = '$code'";
+        $cur = "SELECT * FROM orders WHERE order_id = '$code'";
         $msresults = mysqli_query($conn,$cur);
     
         if(mysqli_num_rows($msresults) > 0) {
@@ -117,13 +111,6 @@
             echo "</form>\n";
             echo "</center>";
     
-            echo "<a href='order_index.php' 
-            style='
-            padding: 9px 14px;
-            color: #ef476f;             
-            text-decoration: none;
-            margin-right: 5px;
-            '>ยกเลิก</a>";
             echo "</form>\n"; 
             echo "</center>";
         }

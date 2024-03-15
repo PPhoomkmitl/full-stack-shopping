@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <title>Order List</title>
+     <!-- Bootstrap CSS -->
+    <link href="path/to/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="path/to/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -101,6 +106,10 @@
         select {
             border: none;
         }
+        .product-image {
+            width: 40px;
+            height: 40px;
+        }
 
     </style>
 </head>
@@ -109,7 +118,7 @@
     <div class="navbar"> <?php include('../navbar/navbarAdmin.php') ?></div>
     <h1>Order List</h1>
     <div class="container">
-        <div>
+        <!-- <div>
             <input type='checkbox' id='checkAll' onchange='checkAll()'>
             <label class="check-all-label">Check All</label>
             <form id='deleteForm' class="delete-form" action='order_delete_confirm.php' method='post'>
@@ -118,37 +127,42 @@
                 <input type='submit' id='deleteButton' value='Delete Order' disabled />
             </form>
 
-        </div>
+        </div> -->
         <div>
             <!------------- Fillter ------------------->
             <label for="filter">Filter by Name:</label>
             <input type="text" name="filter" id="filter" placeholder="Enter name to filter">
             <!------------------------------------------>
-            <form class="add-order-form" action='order_insert.php' method='post'>
-                <input type='submit' id="addOrderButton" value='Add Order'/>
-            </form>
+            <?php
+                if($_SESSION['admin'] !== 'user_admin'){
+                    echo '<form class="add-order-form" action="order_insert.php" method="post">
+                        <input type="submit" id="addOrderButton" value="Add Order"/>
+                    </form>';
+                }
+            ?>
             <br>
         </div>
     </div>
 
     <?php
     include_once '../../dbConfig.php'; 
-    $cur = "SELECT * FROM receive 
-    INNER JOIN customer ON customer.CusID = receive.CusID
-    INNER JOIN receive_detail ON receive_detail.RecID = receive.RecID";
+    $cur = "SELECT * FROM orders 
+    INNER JOIN customer ON customer.CusID = orders.CusID
+    INNER JOIN order_details ON order_details.order_id = orders.order_id
+    INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id";
     $msresults = mysqli_query($conn, $cur);
 
     echo "<center>";
     echo "<div>
         <table>
-            <tr>  
-                <th></th>                   
+            <tr>               
                 <th>Order ID</th>
                 <th>Customer</th>
                 <th>Amount</th>
                 <th>Order Date</th>
                 <th>Delivery Date</th>
                 <th>Delivery Status</th>
+                <th>Slip</th>
                 <th>Action</th>
             </tr>";
 
@@ -157,37 +171,36 @@
         while ($row = mysqli_fetch_array($msresults)) {
 
             echo "<tr class='user-row'>
-                    <td><input type='checkbox' name='checkbox[]' value='{$row['RecID']}'></td>
-                    <td>{$row['RecID']}</td>
+                    <td>{$row['order_id']}</td>
                     <td>{$row['CusFName']} {$row['CusLName']}</td>
-                    <td>{$row['TotalPrice']}</td>
-                    <td>{$row['OrderDate']}</td>
-                    <td>{$row['DeliveryDate']}</td>";
+                    <td>{$row['total_price']}</td>
+                    <td>{$row['order_date']}</td>
+                    <td>{$row['delivery_date']}</td>";
 
 
                     echo "<td>";
                     echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
 
-                    // เงื่อนไขตรวจสอบค่า Status และกำหนดสีให้กับ background-color
-                    if ($row['Status'] == 'Pickups') {
+                    // เงื่อนไขตรวจสอบค่า shipping_status และกำหนดสีให้กับ background-color
+                    if ($row['shipping_status'] == 'Pickups') {
                         echo '#0176FF;';
-                    } elseif ($row['Status'] == 'Pending' || $row['Status'] == 'pending') {
+                    } elseif ($row['shipping_status'] == 'Pending' || $row['shipping_status'] == 'pending') {
                         echo '#FFA500;';
-                    } elseif ($row['Status'] == 'Inprogress') {
+                    } elseif ($row['shipping_status'] == 'Inprogress') {
                         echo '#7C6BFF;'; 
-                    } elseif ($row['Status'] == 'Canceled') {
+                    } elseif ($row['shipping_status'] == 'Canceled') {
                         echo '#FF0000;';
                     } else {
                         echo '#06D6B1;'; 
                     }
 
                     echo "'>";
-                    echo "<select id='select_$index' data-recid='{$row['RecID']}' style='background-color: inherit; color: #ffff;' required>";
+                    echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
 
-                    $statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
+                    $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
 
-                    foreach ($statusCompare as $value) {
-                        $selected = ($value == $row['Status']) ? 'selected' : '';
+                    foreach ($shipping_statusCompare as $value) {
+                        $selected = ($value == $row['shipping_status']) ? 'selected' : '';
  
 
                         echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
@@ -195,17 +208,28 @@
 
                     echo "</select>";
                     echo "</div></td>";
+                    echo "<td>";
+                    // Check if the image_data is not empty
+                    if (!empty($row['image_data'])) {
+                        // Output the image as a clickable link to open modal
+                        echo "<a href='#imageModal' data-toggle='modal' data-image-src='data:image/*;base64," . base64_encode($row['image_data']) . "'><img class='product-image' src='data:image/*;base64," . base64_encode($row['image_data']) . "'></a>";
+                    } else {
+                        // Output a placeholder or empty cell if image_data is empty
+                        echo "-";
+                    }
+                    echo "</td>";
+                    
+         
+
+
+                   
 
 
                   
             echo    "<td>
                         <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
-                            <input type='hidden' name='id_order' value={$row['RecID']}>
+                            <input type='hidden' name='id_order' value={$row['order_id']}>
                             <input type='image' alt='update' src='../img/pencil.png'/>
-                        </form>
-                        <form class='action-button' action='order_delete_confirm.php' method='post' style='display: inline-block;'>
-                            <input type='hidden' name='total_id_order' value={$row['RecID']}>
-                            <input type='image' alt='delete' src='../img/trash.png'/>
                         </form>
                     </td>
                 </tr>";
@@ -218,7 +242,7 @@
     mysqli_close($conn);
     ?>
 <script>
-    function updateDeleteButtonStatus() {
+    function updateDeleteButtonshipping_status() {
         var checkboxes = document.getElementsByName('checkbox[]');
         var deleteButton = document.getElementById('deleteButton');
         var selectedValuesInput = document.getElementById('selectedValues');
@@ -237,10 +261,12 @@
     var individualCheckboxes = document.getElementsByName('checkbox[]');
     for (var i = 0; i < individualCheckboxes.length; i++) {
         individualCheckboxes[i].addEventListener('change', function () {
-            updateDeleteButtonStatus(); // Update deleteButton's status
+            updateDeleteButtonshipping_status(); // Update deleteButton's shipping_status
         });
     }
 </script>
+
+
 <script>
    document.addEventListener('DOMContentLoaded', function () {
     // Loop through all select elements and attach event listeners
@@ -251,7 +277,7 @@
             selectElement.addEventListener('change', function () {
                 var selectedValue = this.value;
                 var selectDiv = this.parentElement;
-                var recID = this.getAttribute('data-recid');
+                var order_id = this.getAttribute('data-order_id');
 
                 switch (selectedValue) {
                     case 'Pending':
@@ -267,57 +293,57 @@
                         selectDiv.style.backgroundColor = '#06D6B1';
                 }
 
-                console.log(recID , selectedValue )
-                // Update the status using AJAX
-                updateStatus(recID, selectedValue);
+                console.log(order_id , selectedValue )
+                // Update the shipping_status using AJAX
+                updateshipping_status(order_id, selectedValue);
             });
         }
     }
 
-    function updateStatus(recID, newStatus) {
+    function updateshipping_status(order_id, newshipping_status) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'order_update_status.php', true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-        console.log(recID , newStatus )
+        console.log(order_id , newshipping_status )
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
+                if (xhr.shipping_status === 200) {
                     // Handle successful response
-                    console.log('Status updated successfully');
+                    console.log('shipping_status updated successfully');
                 } else {
                     // Handle error
-                    console.error('Error updating status');
+                    console.error('Error updating shipping_status');
                 }
             }
         };
-        xhr.send('recID=' + encodeURIComponent(recID) + '&newStatus=' + encodeURIComponent(newStatus));
+        xhr.send('order_id=' + encodeURIComponent(order_id) + '&newshipping_status=' + encodeURIComponent(newshipping_status));
 
     }
 });
 </script>
 <script>
-    function checkAll() {
-        var checkboxes = document.getElementsByName('checkbox[]');
-        var checkAllCheckbox = document.getElementById('checkAll');
-        var deleteButton = document.getElementById('deleteButton');
-        var checkboxValues = [];
+    // function checkAll() {
+    //     var checkboxes = document.getElementsByName('checkbox[]');
+    //     var checkAllCheckbox = document.getElementById('checkAll');
+    //     var deleteButton = document.getElementById('deleteButton');
+    //     var checkboxValues = [];
 
-        for (var i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].checked = checkAllCheckbox.checked;
-            if (checkboxes[i].checked) {
-                checkboxValues.push(checkboxes[i].value);
-            }
-        }
+    //     for (var i = 0; i < checkboxes.length; i++) {
+    //         checkboxes[i].checked = checkAllCheckbox.checked;
+    //         if (checkboxes[i].checked) {
+    //             checkboxValues.push(checkboxes[i].value);
+    //         }
+    //     }
 
-        // Join values into a comma-separated string
-        document.getElementById('deleteForm').elements['selectedValues'].value = checkboxValues.join(',');
-        var checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
-        var enableDeleteButton = checkedCheckboxes.length > 0;
+    //     // Join values into a comma-separated string
+    //     document.getElementById('deleteForm').elements['selectedValues'].value = checkboxValues.join(',');
+    //     var checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+    //     var enableDeleteButton = checkedCheckboxes.length > 0;
 
-        deleteButton.disabled = !enableDeleteButton;
-    }
+    //     deleteButton.disabled = !enableDeleteButton;
+    // }
 
     /* Fillter */
     function updateTable(filterKeyword) {

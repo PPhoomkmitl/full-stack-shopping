@@ -106,23 +106,33 @@
     <div class="navbar"> <?php include('../navbar/navbarAdmin.php') ?></div>
     <h1>Stock List</h1>
     <div class="container">
-        <div>
-            <input type='checkbox' id='checkAll' onchange='checkAll()'>
-            <label class="check-all-label">Check All</label>
-            <form id='deleteForm' class="delete-form" action='stock_delete_confirm.php' method='post'>
-                <input type='hidden' name='list_id_stock' id='selectedValues' value=''>
-                <input type='hidden' name='total_id_stock' id='selectedTotal' value=''>
-                <input type='submit' id='deleteButton' value='Delete Product' disabled />
-            </form>
-        </div>
+            <?php
+                if ($_SESSION['admin'] !== 'user_admin') {
+                    echo '<div>
+                            <input type="checkbox" id="checkAll" onchange="checkAll()">
+                            <label class="check-all-label">Check All</label>
+                            <form id="deleteForm" class="delete-form" action="stock_delete_confirm.php" method="post">
+                                <input type="hidden" name="list_id_stock" id="selectedValues" value="">
+                                <input type="hidden" name="total_id_stock" id="selectedTotal" value="">
+                                <input type="submit" id="deleteButton" value="Delete Product" disabled>
+                            </form>
+                        </div>';
+                }
+            ?>
+
         <div>
             <!------------- Fillter ------------------->
             <label for="filter">Filter by Name:</label>
             <input type="text" name="filter" id="filter" placeholder="Enter name to filter">
             <!------------------------------------------>
-            <form class="add-user-form" action='stock_insert_form.html' method='post'>
-                <input type='submit' id="addUserButton" value='Add Product'/>
-            </form>
+            <?php
+                if ($_SESSION['admin'] !== 'user_admin') {
+                    echo '<form class="add-user-form" action="stock_insert_form.html" method="post">
+                            <input type="submit" id="addUserButton" value="Add Product"/>
+                        </form>';
+                }
+            ?>
+
             <br>
         </div>
     </div>

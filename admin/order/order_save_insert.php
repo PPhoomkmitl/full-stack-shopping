@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cusID = $_POST['customerName'];
     $status = $_POST['status'];
 
-    /* Receiver */
+    /* shipping_address */
     $recv_fname = $_POST['recv_fname'];
     $recv_lname = $_POST['recv_lname'];
     $recv_tel = $_POST['recv_tel'];
@@ -21,51 +21,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $payer_lname = $_POST['payer_lname'];
     $payer_tel = $_POST['payer_tel'];
 
-    // Create Receiver info
-    $insert_query_head = "INSERT INTO receiver (RecvFName, RecvLName, Tel, Address) 
-                        VALUES('$recv_fname', '$recv_lname', '$recv_tel', '$recv_address')";
+    // Create shipping_address info
+    $insert_query_head = "INSERT INTO shipping_address (recipient_name, phone_number, address_line1) 
+                        VALUES('$recv_fname.$recv_lname', '$recv_tel', '$recv_address')";
     $insert_result_head = mysqli_query($conn, $insert_query_head);
 
-    if (!$insert_result_head) {
-        die("Error inserting into receiver: " . mysqli_error($conn));
+    if (!$insert_result_head) { 
+        die("Error inserting into shipping_address: " . mysqli_error($conn));
     }
 
     // Get the inserted RecvID
     $recv_id = mysqli_insert_id($conn);
 
-    // Generate new NumID for receiver_detail
-    $resultDetail = mysqli_query($conn, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM receiver_detail WHERE CusID = '$cusID'");
-    $latestID = mysqli_fetch_assoc($resultDetail);
-    $lastID = $latestID['num_id'];
+    // // Generate new NumID for shipping_address_detail
+    // $resultDetail = mysqli_query($conn, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM shipping_address_detail WHERE CusID = '$cusID'");
+    // $latestID = mysqli_fetch_assoc($resultDetail);
+    // $lastID = $latestID['num_id'];
 
-    // Increment the numeric part
-    $newNumericPart = $lastID + 1;
+    // // Increment the numeric part
+    // $newNumericPart = $lastID + 1;
 
-    // Format the complete NumID
-    $NumID_receiver = 'Num' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
+    // // Format the complete NumID
+    // $NumID_shipping_address = 'Num' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
 
-    // Insert into receiver_detail
-    $insert_query_detail = "INSERT INTO receiver_detail (CusID, RecvID, NumID) VALUES('$cusID', '$recv_id', '$NumID_receiver')";
-    $insert_result_detail = mysqli_query($conn, $insert_query_detail);
+    // // Insert into shipping_address_detail
+    // $insert_query_detail = "INSERT INTO shipping_address_detail (CusID, RecvID, NumID) VALUES('$cusID', '$recv_id', '$NumID_shipping_address')";
+    // $insert_result_detail = mysqli_query($conn, $insert_query_detail);
 
-    if (!$insert_result_detail) {
-        die("Error inserting receiver_detail: " . mysqli_error($conn));
-    }
+    // if (!$insert_result_detail) {
+    //     die("Error inserting shipping_address_detail: " . mysqli_error($conn));
+    // }
 
     // Create Payer info
-    $result = mysqli_query($conn, "SELECT MAX(TaxID) AS tax_id FROM payer");
-    $row = mysqli_fetch_assoc($result);
-    $lastID = $row['tax_id'];
-    $numericPart = intval(substr($lastID, 3));
-    $newNumericPart = $numericPart + 1;
-    $TaxID = 'Tax' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
-
-    $insert_query_head = "INSERT INTO payer(TaxID, PayerFName, PayerLName, Tel) 
-                        VALUES('$TaxID', '$payer_fname', '$payer_lname', '$payer_tel')";
+    $insert_query_head = "INSERT INTO billing_address(recipient_name, phone_number, address_line1) 
+                        VALUES('$payer_fname . $payer_lname', '$payer_tel', NULL)";
     $insert_result_head = mysqli_query($conn, $insert_query_head);
 
     if (!$insert_result_head) {
-        die("Error inserting into payer: " . mysqli_error($conn));
+        die("Error inserting into billing_address: " . mysqli_error($conn));
     }
 
   
@@ -74,52 +67,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo $TaxID;
 
 
-    // Generate new NumID for payer_detail
-    $resultDetail = mysqli_query($conn, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM payer_detail WHERE CusID = '$cusID'");
-    $latestID = mysqli_fetch_assoc($resultDetail);
-    $lastID = $latestID['num_id'];
+    // // Generate new NumID for payer_detail
+    // $resultDetail = mysqli_query($conn, "SELECT MAX(CAST(SUBSTRING(NumID, 4) AS UNSIGNED)) AS num_id FROM payer_detail WHERE CusID = '$cusID'");
+    // $latestID = mysqli_fetch_assoc($resultDetail);
+    // $lastID = $latestID['num_id'];
 
-    // Increment the numeric part
-    $newNumericPart = $lastID + 1;
+    // // Increment the numeric part
+    // $newNumericPart = $lastID + 1;
 
-    // Format the complete NumID
-    $NumID_payer = 'Num' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
+    // // Format the complete NumID
+    // $NumID_payer = 'Num' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
 
-    // Insert into payer_detail
-    $insert_query_detail = "INSERT INTO payer_detail (CusID, TaxID, NumID) VALUES('$cusID', '$TaxID', '$NumID_payer')";
-    $insert_result_detail = mysqli_query($conn, $insert_query_detail);
+    // // Insert into payer_detail
+    // $insert_query_detail = "INSERT INTO payer_detail (CusID, TaxID, NumID) VALUES('$cusID', '$TaxID', '$NumID_payer')";
+    // $insert_result_detail = mysqli_query($conn, $insert_query_detail);
 
-    if (!$insert_result_detail) {
-        die("Error inserting payer_detail: " . mysqli_error($conn));
-    }
+    // if (!$insert_result_detail) {
+    //     die("Error inserting payer_detail: " . mysqli_error($conn));
+    // }
 
     // Generate new RECEIVE ID
-    $result = mysqli_query($conn, "SELECT MAX(RecID) AS rec_id FROM receive");
-    $row = mysqli_fetch_assoc($result);
-    $lastID = $row['rec_id'];
-    $numericPart = intval(substr($lastID, 6));
-    $newNumericPart = $numericPart + 1;
-    $RecID = 'rec_id' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
+    // $result = mysqli_query($conn, "SELECT MAX(order_id) AS order_id FROM orders");
+    // $row = mysqli_fetch_assoc($result);
+    // $lastID = $row['order_id'];
+    // $newNumericPart = $lastID + 1;
+    // $order_id = $newNumericPart;
 
-    // Insert into receive table
-    $stmt = mysqli_query($conn, "INSERT INTO receive(RecID, OrderDate, CusID, TotalPrice, RecvID , TaxID ,Status)
-        VALUES ('$RecID', NOW(),'$cusID','$totalPrice', '$recv_id', '$TaxID' ,'$status');");
+    // Insert into orders table
+    $stmt = mysqli_query($conn, "INSERT INTO orders(CusID, order_date, shipping_status, fullfill_status , total_price , billing_address_id , shipping_address_id , image_slip_id)
+        VALUES ($cusID , NOW(),'$status', 'Unfulfilled' ,'$totalPrice', '$TaxID' , '$recv_id' , null);");
 
     if (!$stmt) {
-        die("Error inserting into receive: " . mysqli_error($conn));
+        die("Error inserting into orders: " . mysqli_error($conn));
     }
 
     foreach ($selectedProducts as $product) {
-        // Generate new NumID for receive_detail
-        $resultDetail = mysqli_query($conn, "SELECT MAX(NumID) AS num_id FROM receive_detail WHERE RecID = '$RecID'");
-        $latestID = mysqli_fetch_assoc($resultDetail);
-        $lastID = $latestID['num_id'];
-        $numericPart = intval(substr($lastID, 3));
-        $newNumericPart = $numericPart + 1;
-        $NumID_receive = 'Num' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
+        // Generate new NumID for order_details
+        // $resultDetail = mysqli_query($conn, "SELECT MAX(NumID) AS num_id FROM order_details WHERE order_id = '$order_id'");
+        // $latestID = mysqli_fetch_assoc($resultDetail);
+        // $lastID = $latestID['num_id'];
+        // $numericPart = intval(substr($lastID, 3));
+        // $newNumericPart = $numericPart + 1;
+        // $NumID_receive = 'Num' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
 
-        // Insert into receive_detail table
-        $stmt = mysqli_query($conn, "INSERT INTO receive_detail (RecID, NumID, ProID, Qty) VALUES ('$RecID', '$NumID_receive', '{$product['productId']}', '{$product['quantity']}')");
+        // Insert into order_details table
+        $stmt = mysqli_query($conn, "INSERT INTO order_details (order_id, ProID , quantity, subtotal_price) VALUES ('$order_id', '{$product['productId']}', '{$product['quantity']}') , 0.0");
 
         // Update Stock and OnHands
         $stmt = mysqli_query($conn, "UPDATE product SET StockQty = StockQty - '{$product['quantity']}', OnHands = OnHands - '{$product['quantity']}' WHERE ProID = '{$product['productId']}'");
@@ -128,8 +120,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Calculate total with tax
     $TotalWithTax = $totalPrice * 1.07;
 
-    // Update total with tax in receive table
-    $stmt = mysqli_query($conn, "UPDATE receive SET TotalPrice ='$TotalWithTax' WHERE RecID ='$RecID'");
+    // Update total with tax in orders table
+    $stmt = mysqli_query($conn, "UPDATE orders SET TotalPrice ='$TotalWithTax' WHERE order_id ='$order_id'");
 
     // Redirect to order_index.php
     header("location: ./order_index.php");

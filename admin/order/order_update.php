@@ -107,103 +107,89 @@
             <div class="form-block">
                 <h3 style="color: #007bff;">Order Information</h3>
                 <div class="form-group">
-                    <label for="RecID">RecID:</label>
+                    <label for="order_id">order_id:</label>
                 <?php     
 
                     include_once '../../dbConfig.php'; 
-                    $RecID = $_POST['id_order'];
-                    echo "<input type='text' id='RecID' name='RecID' value='$RecID' readonly>
+                    $order_id = $_POST['id_order'];
+                    echo "<input type='text' id='order_id' name='order_id' value='$order_id' readonly>
                     </div>";
-                    $cur = "SELECT * FROM receive 
-                    INNER JOIN Customer ON Customer.CusID = receive.CusID
-                    WHERE RecID = '$RecID'";
+                    $cur = "SELECT * FROM orders 
+                    INNER JOIN Customer ON Customer.CusID = orders.CusID
+                    WHERE order_id = '$order_id'";
                     $msresults = mysqli_query($conn, $cur);
                     $row = mysqli_fetch_array($msresults);
-                    $status = $row['Status'];
+                    $status = $row['shipping_status'];
 
 
                 ?>
                 <div class="form-group">
-                    <label for="status">Status:</label>
-                    <select id="status" name="status" required>
+                    <!-- <label for="status">Status:</label> -->
+                    <!-- <select id="status" name="status" required>
                         <?php
-                            $statusCompare = ['Pending', 'Inprogress', 'Delivered' , 'Canceled'];
-                            foreach ($statusCompare as $value) {
-                                echo "<option value='$value'".($value == $status ? ' selected' : '').">$value</option>";
-                            }
+                            // $statusCompare = ['Pending', 'Inprogress', 'Delivered' , 'Canceled'];
+                            // foreach ($statusCompare as $value) {
+                            //     echo "<option value='$value'".($value == $status ? ' selected' : '').">$value</option>";
+                            // }
                         ?>
-                    </select>
+                    </select> -->
                 </div>
             </div>
             
-            <h3 style="color: #007bff;">Customer Information</h3>
+            <h3 style="color: #007bff;">Shipping Information</h3>
             <div class="form-block">
-                <div class="form-group">
-                    <label for="customerName">Customer Name:</label>
-                    <select id="customerName" name="customerName" required>
-                        <?php
-                            // Your PHP code to fetch products from the database
-                            $result = mysqli_query($conn, "SELECT * FROM Customer");
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='{$row['CusID']}'>{$row['CusFName']} {$row['CusLName']}</option>";
-                            }
-                        ?>
-                    </select>
-                             
-                </div>
                 <div class="form-group" style="color: #007bff">
                     <label style="color: #007bff" for="customerName">Customer Address:</label>
 
                     <?php 
-                        $cur = "SELECT * FROM receive 
-                        INNER JOIN receiver ON receiver.RecvID = receive.RecvID
-                        WHERE RecID = '$RecID'";
+                        $cur = "SELECT * FROM orders 
+                        INNER JOIN shipping_address ON shipping_address.address_id = orders.shipping_address_id
+                        WHERE order_id = '$order_id'";
                         $msresults = mysqli_query($conn, $cur);
                         $recv_row = mysqli_fetch_array($msresults);
                     ?>
-                    <input type='hidden' name='id_receiver' value='<?php echo $recv_row['RecvID']; ?>'>
-                    FirstName: <input type='text' name='recv_fname' value='<?php echo $recv_row['RecvFName']; ?>'>
-                    LastName: <input type='text' name='recv_lname' value='<?php echo $recv_row['RecvLName']; ?>'>
-                    Tel: <input type='text' name='recv_tel' value='<?php echo $recv_row['Tel']; ?>'>
-                    Address: <input type='text' name='recv_address' value='<?php echo $recv_row['Address']; ?>'>
+    
+                    <input type='hidden' name='id_receiver' value='<?php echo $recv_row['shipping_address_id']; ?>'>
+                    FullName: <input type='text' name='recv_fname' value='<?php echo $recv_row['recipient_name']; ?>'>
+                    Tel: <input type='text' name='recv_tel' value='<?php echo $recv_row['phone_number']; ?>'>
+                    Address: <input type='text' name='recv_address' value='<?php echo $recv_row['address_line1']; ?>'>
                 </div>
             </div>
 
-            <div class="form-block">
-                <h3 style="color: #007bff;">Payer Form</h3>
+            <h3 style="color: #007bff;">Billing Information</h3>
+            <div class="form-block">              
                 <div class="form-group" style="color: #007bff">
                     <?php 
-                        $cur = "SELECT * FROM receive 
-                        INNER JOIN payer ON payer.TaxID = receive.TaxID
-                        WHERE RecID = '$RecID'";
+                        $cur = "SELECT * FROM orders 
+                        INNER JOIN billing_address ON billing_address.address_id = orders.billing_address_id
+                        WHERE order_id = '$order_id'";
                         $msresults = mysqli_query($conn, $cur);
                         $payer_row = mysqli_fetch_array($msresults);
                     ?>
                     <label style="color: #007bff" for="customerName">Payer info:</label>
                         <!-- <input type='text' name='id_recevier' value=''> -->
-                        <input type='hidden' name='id_payer' value='<?php echo $payer_row['TaxID']; ?>'>
-                        FirstName: <input type='text' name='payer_fname' value='<?php echo $payer_row['PayerFName']; ?>'>
-                        LastName: <input type='text' name='payer_lname' value='<?php echo $payer_row['PayerLName']; ?>'>
-                        Tel: <input type='text' name='payer_tel' value='<?php echo $payer_row['Tel']; ?>'>
+                        <input type='hidden' name='id_payer' value='<?php echo $payer_row['billing_address_id']; ?>'>
+                        FullName: <input type='text' name='payer_fname' value='<?php echo $payer_row['recipient_name']; ?>'>
+                        Tel: <input type='text' name='payer_tel' value='<?php echo $payer_row['phone_number']; ?>'>
                 </div>
             </div>
 
             <!-- Add Products Section -->
             <div class="form-block">
-       
-                        <?php
+                    
+                        <!-- <?php
                         // Your PHP code to fetch products from the database
-                        $result = mysqli_query($conn, "SELECT *
-                                                    FROM Product
-                                                    WHERE ProID NOT IN (SELECT DISTINCT ProID FROM receive_detail WHERE RecID = '$RecID')");
-                        if ($result) {
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option data-product-id='{$row['ProID']}' data-price='{$row['PricePerUnit']}' value='{$row['ProID']}'>{$row['ProName']}</option>";
-                            }
-                        } else {
-                            echo "Error: " . mysqli_error($conn);
-                        }
-                        ?>
+                        // $result = mysqli_query($conn, "SELECT *
+                        //                             FROM Product
+                        //                             WHERE ProID NOT IN (SELECT DISTINCT ProID FROM order_details WHERE order_id = '$order_id')");
+                        // if ($result) {
+                        //     while ($row = mysqli_fetch_assoc($result)) {
+                        //         echo "<option data-product-id='{$row['ProID']}' data-price='{$row['PricePerUnit']}' value='{$row['ProID']}'>{$row['ProName']}</option>";
+                        //     }
+                        // } else {
+                        //     echo "Error: " . mysqli_error($conn);
+                        // }
+                        ?> -->
  
     
 
@@ -222,15 +208,12 @@
                     <?php
                         $showTotal = 0.0;
                         $showVat = 0.0;
-                        $result = mysqli_query($conn, " SELECT receive_detail.* , Product.*,
-                            receive_detail.Qty * Product.PricePerUnit AS TotalPrice
-                            FROM receive_detail 
-                            INNER JOIN Product ON receive_detail.ProID = Product.ProID WHERE receive_detail.RecID = '$RecID'");
+                        $result = mysqli_query($conn, "SELECT order_details.* , product.*, (order_details.quantity * product.PricePerUnit) AS TotalPrice FROM order_details INNER JOIN product ON order_details.ProID = product.ProID WHERE order_details.order_id = $order_id");
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo "<input type='hidden' name='ProID[]' value={$row['ProID']}";
                             echo "<tr>
                                     <td>{$row['ProName']}</td>
-                                    <td><input type='text' name='Qty[]' value='{$row['Qty']}' class='quantity-input'></td>
+                                    <td><input type='text' name='Qty[]' value='{$row['quantity']}' class='quantity-input'></td>
                                     <td>{$row['PricePerUnit']}</td>
                                     <td class='total-price'>{$row['TotalPrice']}</td>
                                   </tr>

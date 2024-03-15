@@ -193,10 +193,9 @@
         <?php
         $totalPriceAllItems = 0;
         $index = 0;
-
         /* สำหรับ User */
-        if (isset($_SESSION['id_username']) && isset($_SESSION['status'])) {
-
+        if (isset($_SESSION['id_username']) && isset($_SESSION['status']) ) {
+            
             //Find product.ProID , product.ProName  ,product.PricePerUnit , Qty
             $cur = "SELECT product.ProID , product.ProName  ,product.PricePerUnit , Qty , ImageData  FROM cart
                 INNER JOIN product ON cart.ProID = product.ProID";
@@ -249,7 +248,7 @@
                 </div>";
         }
         /* สำหรับ Guest */ 
-        elseif(isset($_SESSION['cart'])) {
+        elseif(isset($_SESSION['cart']) && isset($_SESSION['guest'])) {
             foreach ($_SESSION['cart'] as $product_id => $product) {
                 $cur = "SELECT product.ProID, product.ProName, product.PricePerUnit , ImageData FROM product WHERE ProID = '$product_id'";
                 $msresults = mysqli_query($conn, $cur);

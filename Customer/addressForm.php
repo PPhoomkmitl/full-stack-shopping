@@ -140,21 +140,20 @@ include('./component/getFunction/getName.php'); ?>
     <div class="mx-5">
         <?php include('./component/backButton.php'); ?>
     </div>
-    <form id="profileForm" method="post" action="accessInvoice.php">
+    <form id="profileForm" method="post" action="accessOrder.php" enctype="multipart/form-data">
         <?php
-        if (isset($_SESSION['id_username'])) {
-            $uid = $_SESSION['id_username'];
+            if (isset($_SESSION['member'])) {
+                $uid = $_SESSION['member'];
 
-            include_once '../dbConfig.php'; 
-            $query_address = "SELECT * FROM receiver 
-            INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
-            WHERE receiver_detail.CusID = '$uid'";
-            $result_address = mysqli_query($conn, $query_address);
-            if (mysqli_num_rows($result_address) > 0) {
-                // Fetch a single row from the result set
-                $row = mysqli_fetch_assoc($result_address);
+                include_once '../dbConfig.php'; 
+                $query_address = "SELECT * FROM shipping_address
+                WHERE shipping_address.CusID = '$uid'";
+                $result_address = mysqli_query($conn, $query_address);
+                if (mysqli_num_rows($result_address) > 0) {
+                    // Fetch a single row from the result set
+                    $row = mysqli_fetch_assoc($result_address);
+                }
             }
-        }
         ?>
         <div class="checkout-container">
             <div class="checkout-header">
@@ -162,48 +161,107 @@ include('./component/getFunction/getName.php'); ?>
             </div>
 
             <div class="checkout-steps">
-                <div class="checkout-step active">Step 1: Shipping</div>
-                <div class="checkout-step">Step 2: Payment</div>
-                <div class="checkout-step">Step 3: Success</div>
+                <div class="checkout-step active">Step 1: Payment</div>
+                <div class="checkout-step">Step 2: Success</div>
             </div>
 
 
             <div class="container">
             <div class="col-md-8 order-md-1 mx-auto py-4">
-            <h4 class="mb-3">Billing address</h4>
-            <form class="needs-validation" novalidate="">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                      
-                        <label for="fullname">First Name</label>
-                        <input class="form-control" type="text" id="fullname" name="fname" value="<?php echo $row['RecvFName'] ?? ''; ?>" required>              
-                        <div class="invalid-feedback"> Valid first name is required. </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                   
-                        <label for="lastname">Last Name</label>
-                        <input class="form-control" type="text" id="lastname" name="lname" value="<?php echo $row['RecvLName'] ?? ''; ?>"required>
-                        <div class="invalid-feedback"> Valid last name is required. </div>
-                    </div>
-                </div>
-             
-                <div class="mb-3">
-                    <label for="tel">Tel<span>*</span></label>
-                    <input class="form-control" required type="tel" name="tel" value="<?php echo $row['Tel'] ?? ''; ?>">
-                    <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
-                </div>
-                <div class="mb-3">
-                    <label for="address">Address</label>
-                    <textarea style="resize:none;" name="address" id="address" rows="3" required><?php echo $row['Address'] ?? ''; ?></textarea>
-                    <div class="invalid-feedback"> Please enter your shipping address. </div>
-                </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="shipment-container">
+                                <h4 class="mb-3">Shipping address</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">              
+                                        <label for="fullname">First Name</label>
+                                        <input class="form-control" type="text" id="fullname" name="ship_fname" value="<?php echo $row['RecvFName'] ?? ''; ?>" required>              
+                                        <div class="invalid-feedback"> Valid first name is required. </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                
+                                        <label for="lastname">Last Name</label>
+                                        <input class="form-control" type="text" id="lastname" name="ship_lname" value="<?php echo $row['RecvLName'] ?? ''; ?>"required>
+                                        <div class="invalid-feedback"> Valid last name is required. </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="mb-3">
+                                    <label for="tel">Tel<span>*</span></label>
+                                    <input class="form-control" required type="tel" name="ship_tel" value="<?php echo $row['Tel'] ?? ''; ?>">
+                                    <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address">Address</label>
+                                    <textarea style="resize:none;" name="ship_address" id="address" rows="3" required><?php echo $row['Address'] ?? ''; ?></textarea>
+                                    <div class="invalid-feedback"> Please enter your shipping address. </div>
+                                </div>
+                            </div>
 
-                    <input type='submit'>
+                            <div class="billing-container">
+                                <h4 class="mb-3">Billing address</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">                 
+                                        <label for="fullname">First Name</label>
+                                        <input class="form-control" type="text" id="fullname" name="bill_fname" value="<?php echo $row['RecvFName'] ?? ''; ?>" required>              
+                                        <div class="invalid-feedback"> Valid first name is required. </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">                  
+                                        <label for="lastname">Last Name</label>
+                                        <input class="form-control" type="text" id="lastname" name="bill_lname" value="<?php echo $row['RecvLName'] ?? ''; ?>"required>
+                                        <div class="invalid-feedback"> Valid last name is required. </div>
+                                    </div>
+                                </div>
+                                                   
+                                <div class="mb-3">
+                                    <label for="tel">Tel<span>*</span></label>
+                                    <input class="form-control" required type="tel" name="bill_tel" value="<?php echo $row['Tel'] ?? ''; ?>">
+                                    <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address">Address</label>
+                                    <textarea style="resize:none;" name="bill_address" id="address" rows="3" required><?php echo $row['Address'] ?? ''; ?></textarea>
+                                    <div class="invalid-feedback"> Please enter your shipping address. </div>
+                                </div>
+                                <?php if(isset($_SESSION['member'])): ?>
+                                    <div class="mb-3 py-2">                           
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+                                            <label class="form-check-label" for="flexCheckChecked">
+                                                Checked Invoice (Optional)
+                                            </label>
+                                        </div>
+                                
+                                        <div id="invoiceInput" style="display: none;">
+                                            <input type="text" id="tax_id" class="form-control" name="tax_id" placeholder="The tax ID has 13 digits.">
+                                        </div>
+                                        <div class="invalid-feedback"> Please enter your taxID. </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 ms-5"> 
+                            <div class="payment-container">                             
+                                    <div class="mb-3">                 
+                                        <label for="QR">Payment Qr Scanning</label>                        
+                                        <img id="QR" src="https://www.globsub.com/wp-content/uploads/2021/12/QR-Code-Payment-Globsub.jpg" alt="Qr code" width="100%" height="70%" />                 
+                                    </div>
+                                    <div class="mb-3">                  
+                                        <label for="image">upload your slip:</label>
+                                        <input class="form-control" type="file" id="image" name="image" accept="image/*" required/>
+                                        <div class="invalid-feedback"> Valid your slip is required. </div>
+                                    </div>
+                         
+                            </div>
+                        </div>
+                    </div>
+                
+                    <input type='submit' class="p-3">
 
                     <!-- ตรวจสอบว่าเป็น Guest หรือ User และแสดงปุ่ม 'ชำระเงิน' ตามเงื่อนไข -->
-                    <?php if (isset($_SESSION['cart'])): ?>
+                    <?php if (isset($_SESSION['guest'])): ?>
                         <input type='hidden' name='cart' value='<?php echo json_encode($_SESSION['cart']); ?>'>
-                    <?php elseif (isset($_SESSION['id_username'])): ?>
+                    <?php elseif (isset($_SESSION['member'])): ?>
                         <input type='hidden' name='id_customer' value='<?php echo $uid; ?>'>
                     <?php else: ?>
                         <p>Oops Something went wrong</p>
@@ -213,14 +271,26 @@ include('./component/getFunction/getName.php'); ?>
             </div>
         </div>
     </form>
-        
+    <script>
+        document.getElementById('flexCheckChecked').addEventListener('change', function() {
+            var invoiceInput = document.getElementById('invoiceInput');
+            if (this.checked) {
+                invoiceInput.style.display = 'block';
+            } else {
+                invoiceInput.style.display = 'none';
+            }
+        });
+        document.getElementById('tax_id').addEventListener('change', function() {
+            var taxIDInput = document.getElementById('tax_id');
+            var taxIDValue = taxIDInput.value;
 
-    <!-- <script> -->
-
-        <!-- // function submit() {
-        //     document.querySelector('form').submit();
-        // } -->
-    <!-- </script> -->
+            // Check if the tax ID has 13 digits and consists of only digits
+            if (taxIDValue.length !== 13 || !(/^\d+$/.test(taxIDValue))) {
+                alert('Your tax id is incorrect');
+                taxIDInput.value = ''; // Clear the input field
+            }
+        });
+    </script>
 </body>
 
 </html>

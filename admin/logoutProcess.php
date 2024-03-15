@@ -8,6 +8,6 @@
     session_destroy();
 
     // Redirect to the login page or any other desired page after logout
-    header("Location: ./index.php");
+    header("Location: ../Customer/login.php");
     exit();
 ?>

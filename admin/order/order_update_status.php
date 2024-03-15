@@ -3,18 +3,19 @@ include_once '../../dbConfig.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ใช้ $_POST แทน $_GET เนื่องจากข้อมูลถูกส่งด้วย POST
-    $recID = $_POST['recID'];
-    $newStatus = $_POST['newStatus'];
+    $order_id = $_POST['order_id'];
+    $newshipping_status = $_POST['newshipping_status'];
+
 
     // ป้องกัน SQL Injection ด้วย mysqli_real_escape_string
-    $recID = mysqli_real_escape_string($conn, $recID);
-    $newStatus = mysqli_real_escape_string($conn, $newStatus);
+    // $recID = mysqli_real_escape_string($conn, $recID);
+    // $newStatus = mysqli_real_escape_string($conn, $newStatus);
 
     if($newStatus !== 'Pending') {
-        $updateQuery = "UPDATE receive SET Status = '$newStatus', DeliveryDate = NOW() WHERE RecID = '$recID'";
+        $updateQuery = "UPDATE orders SET shipping_status = '$newshipping_status', delivery_date = NOW() WHERE order_id = '$order_id'";
     }
     else {
-        $updateQuery = "UPDATE receive SET Status = '$newStatus', DeliveryDate = NULL WHERE RecID = '$recID'";
+        $updateQuery = "UPDATE orders SET shipping_status = '$newshipping_status', delivery_date = NULL WHERE order_id = '$order_id'";
     }
     mysqli_query($conn, $updateQuery);
 

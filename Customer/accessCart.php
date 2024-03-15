@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $productId = $_POST['id_product'];
         $amount = $_POST['amount'];
+        $uid = $_SESSION['id_username'];
 
        
         if (isset($_SESSION['id_username'])) {

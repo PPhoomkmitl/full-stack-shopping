@@ -100,24 +100,32 @@
     <div class="navbar"> <?php include('../navbar/navbarAdmin.php') ?></div>
     <h1>User List</h1>
     <div class="container">
-        <div>
+        <?php
+            if ($_SESSION['admin'] !== 'user_admin') {
+                echo '<div>
+                        <input type="checkbox" id="checkAll" onchange="checkAll()">
+                        <label class="check-all-label">Check All</label>
+                        <form id="deleteForm" class="delete-form" action="customer_delete_confirm.php" method="post">
+                            <input type="hidden" name="list_id_customer" id="selectedValues" value="">
+                            <input type="hidden" name="total_id_customer" id="selectedTotal" value="">
+                            <input type="submit" id="deleteButton" value="Delete User" disabled>
+                        </form>
+                    </div>';
+            }
+        ?>
 
-            <input type="checkbox" id="checkAll" onchange="checkAll()">
-            <label class="check-all-label">Check All</label>
-            <form id='deleteForm' class="delete-form" action="customer_delete_confirm.php" method="post">
-                <input type="hidden" name="list_id_customer" id="selectedValues" value="">
-                <input type="hidden" name="total_id_customer" id="selectedTotal" value="">
-                <input type="submit" id="deleteButton" value="Delete User" disabled>
-            </form>
-        </div>
         <div>
             <!------------- Fillter ------------------->
             <label for="filter">Filter by Name:</label>
             <input type="text" name="filter" id="filter" placeholder="Enter name to filter">
             <!------------------------------------------>
-            <form class="add-user-form" action="customer_insert_form.html" method="post">
-                <input type="submit" id="addUserButton" value="Add User">
-            </form>
+            <?php
+                if ($_SESSION['admin'] !== 'user_admin') {
+                    echo '<form class="add-user-form" action="customer_insert_form.html" method="post">
+                            <input type="submit" id="addUserButton" value="Add User">
+                        </form>';
+                }
+            ?>
             <br>
         </div>
     </div>
@@ -152,13 +160,15 @@
                         <form class='action-button' action='customer_update.php' method='post'>  
                             <input type='hidden' name='id_customer' value={$row['CusID']}>
                             <input type='image' alt='update' src='../img/pencil.png'>
-                        </form>
-                        <form class='action-button' action='customer_delete_confirm.php' method='post'>
-                            <input type='hidden' name='id_customer' value={$row['CusID']}>
-                            <input type='image' alt='delete' src='../img/trash.png'>
-                        </form>
-                    </td>
-                </tr>";
+                        </form>:";
+                if($_SESSION['admin'] == 'super_admin'){
+                    echo"<form class='action-button' action='customer_delete_confirm.php' method='post'>
+                                <input type='hidden' name='id_customer' value={$row['CusID']}>
+                                <input type='image' alt='delete' src='../img/trash.png'>
+                            </form>
+                        </td>
+                    </tr>";
+                }
         }
     }
     echo "</table></div>";

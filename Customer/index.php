@@ -1,4 +1,9 @@
 <?php include('./component/session.php'); ?>
+<?php
+    if(isset($_SESSION['guest'])&&isset($_SESSION['id_username'])) {
+        unset($_SESSION['id_username']);
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -209,7 +214,6 @@
 </head>
 
 <body>
-
     <div class="navCon">
         <?php include('./component/accessNavbar.php'); ?>
     </div>

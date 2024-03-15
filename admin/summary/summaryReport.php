@@ -114,10 +114,10 @@
                     </tr>
                     <?php
                         // Calculate the total quantity sold across all products
-                        $totalQuantityAllProducts_Query = mysqli_query($cx, "SELECT SUM(receive_detail.Qty) AS TotalQtyAllProducts
-                        FROM receive_detail
-                        INNER JOIN receive ON receive_detail.RecID = receive.RecID
-                        WHERE DATE(receive.OrderDate) = CURDATE()");
+                        $totalQuantityAllProducts_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyAllProducts
+                        FROM order_details
+                        INNER JOIN orders ON order_details.order_id = orders.order_id
+                        WHERE DATE(orders.order_date) = CURDATE()");
                         $totalQuantityAllProducts_row = mysqli_fetch_assoc($totalQuantityAllProducts_Query);
                         $totalQuantityAllProducts = $totalQuantityAllProducts_row['TotalQtyAllProducts'];
 
@@ -127,13 +127,13 @@
                             product.ProName,
                             product.Description,
                             product.PricePerUnit,
-                            SUM(receive_detail.Qty) AS TotalQty
+                            SUM(order_details.quantity) AS TotalQty
                         FROM
                             product
-                            INNER JOIN receive_detail ON product.ProID = receive_detail.ProID
-                            INNER JOIN receive ON receive_detail.RecID = receive.RecID
+                            INNER JOIN order_details ON product.ProID = order_details.ProID
+                            INNER JOIN orders ON order_details.order_id = orders.order_id
                         WHERE
-                            DATE(receive.OrderDate) = CURDATE()
+                            DATE(orders.order_date) = CURDATE()
                         GROUP BY
                             product.ProID
                         ORDER BY
@@ -157,11 +157,11 @@
                 </table>
                 <h1 id='Re'></h1>
                     <?php 
-                        $income_Query = mysqli_query($cx, "SELECT SUM(product.PricePerUnit * receive_detail.Qty) AS TotalIncome
+                        $income_Query = mysqli_query($cx, "SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalIncome
                         FROM product 
-                        INNER JOIN receive_detail ON product.ProID = receive_detail.ProID
-                        INNER JOIN receive ON receive_detail.RecID = receive.RecID
-                        WHERE DATE(receive.OrderDate) = CURDATE()");
+                        INNER JOIN order_details ON product.ProID = order_details.ProID
+                        INNER JOIN orders ON order_details.order_id = orders.order_id
+                        WHERE DATE(orders.order_date) = CURDATE()");
                         $total_income_row = mysqli_fetch_assoc($income_Query);
                         $total_income = $total_income_row['TotalIncome'];
                         echo "<h2>Total Income: ฿" . number_format($total_income, 2) . "</h2>";
@@ -189,10 +189,10 @@
                     </tr>
             <?php
             // Calculate the total quantity sold across all products for the month
-            $totalQuantityMonthly_Query = mysqli_query($cx, "SELECT SUM(receive_detail.Qty) AS TotalQtyMonthly
-                    FROM receive_detail
-                    INNER JOIN receive ON receive_detail.RecID = receive.RecID
-                    WHERE MONTH(receive.OrderDate) = MONTH(CURDATE()) AND YEAR(receive.OrderDate) = YEAR(CURDATE())");
+            $totalQuantityMonthly_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyMonthly
+                    FROM order_details
+                    INNER JOIN orders ON order_details.order_id = orders.order_id
+                    WHERE MONTH(orders.order_date) = MONTH(CURDATE()) AND YEAR(orders.order_date) = YEAR(CURDATE())");
             $totalQuantityMonthly_row = mysqli_fetch_assoc($totalQuantityMonthly_Query);
             $totalQuantityMonthly = $totalQuantityMonthly_row['TotalQtyMonthly'];
 
@@ -202,13 +202,13 @@
                         product.ProName,
                         product.Description,
                         product.PricePerUnit,
-                        SUM(receive_detail.Qty) AS TotalQty
+                        SUM(order_details.quantity) AS TotalQty
                     FROM
                         product
-                        INNER JOIN receive_detail ON product.ProID = receive_detail.ProID
-                        INNER JOIN receive ON receive_detail.RecID = receive.RecID
+                        INNER JOIN order_details ON product.ProID = order_details.ProID
+                        INNER JOIN orders ON order_details.order_id = orders.order_id
                     WHERE
-                        MONTH(receive.OrderDate) = MONTH(CURDATE()) AND YEAR(receive.OrderDate) = YEAR(CURDATE())
+                        MONTH(orders.order_date) = MONTH(CURDATE()) AND YEAR(orders.order_date) = YEAR(CURDATE())
                     GROUP BY
                         product.ProID
                     ORDER BY
@@ -234,11 +234,11 @@
             <h1 id='Re'></h1>
             <?php 
                 $monthlyIncome_Query = mysqli_query($cx, "
-                    SELECT SUM(product.PricePerUnit * receive_detail.Qty) AS TotalMonthlyIncome
+                    SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalMonthlyIncome
                     FROM product 
-                    INNER JOIN receive_detail ON product.ProID = receive_detail.ProID
-                    INNER JOIN receive ON receive_detail.RecID = receive.RecID
-                    WHERE MONTH(receive.OrderDate) = MONTH(CURDATE()) AND YEAR(receive.OrderDate) = YEAR(CURDATE())
+                    INNER JOIN order_details ON product.ProID = order_details.ProID
+                    INNER JOIN orders ON order_details.order_id = orders.order_id
+                    WHERE MONTH(orders.order_date) = MONTH(CURDATE()) AND YEAR(orders.order_date) = YEAR(CURDATE())
                 ");
                 $total_monthly_income_row = mysqli_fetch_assoc($monthlyIncome_Query);
                 $total_monthly_income = $total_monthly_income_row['TotalMonthlyIncome'];
@@ -267,10 +267,10 @@
                     </tr>
             <?php
             // Calculate the total quantity sold across all products for the year
-            $totalQuantityYearly_Query = mysqli_query($cx, "SELECT SUM(receive_detail.Qty) AS TotalQtyYearly
-                    FROM receive_detail
-                    INNER JOIN receive ON receive_detail.RecID = receive.RecID
-                    WHERE YEAR(receive.OrderDate) = YEAR(CURDATE())");
+            $totalQuantityYearly_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyYearly
+                    FROM order_details
+                    INNER JOIN orders ON order_details.order_id = orders.order_id
+                    WHERE YEAR(orders.order_date) = YEAR(CURDATE())");
             $totalQuantityYearly_row = mysqli_fetch_assoc($totalQuantityYearly_Query);
             $totalQuantityYearly = $totalQuantityYearly_row['TotalQtyYearly'];
 
@@ -280,13 +280,13 @@
                         product.ProName,
                         product.Description,
                         product.PricePerUnit,
-                        SUM(receive_detail.Qty) AS TotalQty
+                        SUM(order_details.quantity) AS TotalQty
                     FROM
                         product
-                        INNER JOIN receive_detail ON product.ProID = receive_detail.ProID
-                        INNER JOIN receive ON receive_detail.RecID = receive.RecID
+                        INNER JOIN order_details ON product.ProID = order_details.ProID
+                        INNER JOIN orders ON order_details.order_id = orders.order_id
                     WHERE
-                        YEAR(receive.OrderDate) = YEAR(CURDATE())
+                        YEAR(orders.order_date) = YEAR(CURDATE())
                     GROUP BY
                         product.ProID
                     ORDER BY
@@ -311,11 +311,11 @@
             <h1 id='Re'></h1>
             <?php 
                 $yearlyIncome_Query = mysqli_query($cx, "
-                    SELECT SUM(product.PricePerUnit * receive_detail.Qty) AS TotalYearlyIncome
+                    SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalYearlyIncome
                     FROM product 
-                    INNER JOIN receive_detail ON product.ProID = receive_detail.ProID
-                    INNER JOIN receive ON receive_detail.RecID = receive.RecID
-                    WHERE YEAR(receive.OrderDate) = YEAR(CURDATE())
+                    INNER JOIN order_details ON product.ProID = order_details.ProID
+                    INNER JOIN orders ON order_details.order_id = orders.order_id
+                    WHERE YEAR(orders.order_date) = YEAR(CURDATE())
                 ");
                 $total_yearly_income_row = mysqli_fetch_assoc($yearlyIncome_Query);
                 $total_yearly_income = $total_yearly_income_row['TotalYearlyIncome'];

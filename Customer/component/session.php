@@ -2,15 +2,16 @@
 // Start session
 session_start();
 
-if (isset($_SESSION['id_username']) && isset($_SESSION['status'])) {
-    if ($_SESSION['status'] == true) {
-        $uid = $_SESSION['id_username'];
-        $status = $_SESSION['status'];
-        unset($_SESSION['cart']);
-    } else {
-        $_SESSION['status'] = false;
-        $uid = "GUEST";
-        $_SESSION['cart'];
-    }
+if (isset($_SESSION['status']) && isset($_SESSION['member'])) {
+    $status = $_SESSION['status'];
+    unset($_SESSION['cart']);
+    unset($_SESSION['guest']);
+} else if(isset($_SESSION['admin'])){
+    unset($_SESSION['cart']);
+    unset($_SESSION['guest']);
 }
-// var_dump($_SESSION);
+else {
+    $_SESSION['guest'] = 'guest';
+}
+
+var_dump($_SESSION);

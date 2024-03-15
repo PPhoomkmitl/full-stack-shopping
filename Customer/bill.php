@@ -292,6 +292,11 @@ include_once '../dbConfig.php';
         .backButton {
             margin-left: 90px;
         }
+
+        .product-image {
+            width: 40px;
+            height: 40px;
+        }
     </style>
 </head>
 
@@ -300,52 +305,33 @@ include_once '../dbConfig.php';
         <?php include('./component/backButton.php'); ?>
     </div>
     <?php
-    if (isset($_POST['id_customer'])) {
-        $uid = $_POST['id_customer'];
+    if (isset($_SESSION['id_username'])) {
+        $cusID = $_SESSION['id_username'];
+        $orderID = $_POST['id_order'];
 
-
-        $query_address = "SELECT * FROM receiver 
-            INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
-            WHERE receiver_detail.CusID = '$uid'";
+        $query_address = "SELECT * FROM shipping_address WHERE shipping_address.CusID = $cusID";
         $result_address = mysqli_query($conn, $query_address);
         if (mysqli_num_rows($result_address) > 0) {
-
             $row = mysqli_fetch_assoc($result_address);
         }
     }
 
-    $uid = $_SESSION['id_username'];
+    $billingQuery = mysqli_query($conn, "SELECT * FROM orders
+                    INNER JOIN billing_address ON orders.billing_address_id = billing_address.address_id
+                    WHERE orders.order_id = $orderID");
+    $billingResult = mysqli_fetch_array($billingQuery);
 
 
-    if (isset($_SESSION['cart'])) {
-        $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE customer.CusID = '$uid'");
-        $customerDetails = mysqli_fetch_array($customerDetailsQuery);
-        $customerId = $customerDetails['CusID'];
-    } else {
-        $customerDetailsQuery = mysqli_query($conn, "SELECT * FROM customer WHERE customer.CusID = '$uid'");
-        $customerDetails = mysqli_fetch_array($customerDetailsQuery);
-        $customerId = $customerDetails['CusID'];
-    }
+    $shippingQuery = mysqli_query($conn, "SELECT * FROM orders
+                    INNER JOIN shipping_address ON orders.shipping_address_id = shipping_address.address_id
+                    WHERE orders.order_id = '$orderID '");
+    $shippingResult = mysqli_fetch_array($shippingQuery);
 
 
-    $RecId = $_POST['id_order'];
-
-    $payerQuery = mysqli_query($conn, "SELECT * FROM receive
-                    INNER JOIN payer ON receive.TaxID = payer.TaxID
-                    WHERE receive.RecID = '$RecId '");
-    $payerResult = mysqli_fetch_array($payerQuery);
-
-
-    $recevierQuery = mysqli_query($conn, "SELECT * FROM receive
-                    INNER JOIN receiver ON receive.RecvID = receiver.RecvID
-                    WHERE receive.RecID = '$RecId '");
-    $recevierResult = mysqli_fetch_array($recevierQuery);
-
-
-    $recQuery = mysqli_query($conn, "SELECT * FROM receive
-                INNER JOIN customer ON customer.cusID = receive.cusID
-                WHERE receive.RecID = '$RecId '");
-    $recResult = mysqli_fetch_array($recQuery);
+    $orderQuery = mysqli_query($conn, "SELECT * FROM orders
+                INNER JOIN customer ON customer.CusID = orders.CusID
+                WHERE orders.order_id = '$orderID '");
+    $orderResult = mysqli_fetch_array($orderQuery);
     ?>
 
     <!----------------------------------------Check out Header------------------------------------------------->
@@ -356,25 +342,29 @@ include_once '../dbConfig.php';
 
         <div class="checkout-steps">
             <div class="checkout-step">Step 1: Shipping</div>
-            <div class="checkout-step">Step 2: Payment</div>
-            <div class="checkout-step active">Step 3: Success</div>
+            <div class="checkout-step active">Step 2: Success</div>
         </div>
 
         <div id="successForm" class="checkout-form" style="display: block; margin-left:50px;">
             <h3>Order Placed Successfully!</h3>
-            <p>Your order has been confirmed. Thank you for shopping with us.</p>
+            <?php
+            if($orderResult['fullfill_status'] == 'Unfullfilled') {
+                echo '<p>Your order has not been confirmed. Thank you for shopping with us.</p>';
+            } else {
+                echo '<p>Your order has been confirmed. Thank you for shopping with us.</p>';
+            }
+            ?>
         </div>
-
         <!----------------------------------------Order Tracking------------------------------------------------->
-        <div class="container py-3 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center ">
                 <div class="col">
                     <div class="card">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex flex-column">
                                     <span class="lead fw-normal">Order Tracking</span>
-                                    <span class="text-muted small">by DHFL on <?php echo $recResult['OrderDate']; ?></span>
+                                    <span class="text-muted small">by DHFL on <?php echo $orderResult['order_date']; ?></span>
                                 </div>
                             </div>
                             <hr class="my-4">
@@ -383,7 +373,6 @@ include_once '../dbConfig.php';
                                 <?php
                                 // Define colors for different order statuses
                                 $statusColors = array(
-                                    'Confirm' => 'confirm',
                                     'Pending' => 'pending',
                                     'Inprogress' => 'inprogress',
                                     'Delivered' => 'delivered'
@@ -394,7 +383,7 @@ include_once '../dbConfig.php';
                                 // Loop through each status and display corresponding dot
                                 foreach ($statusColors as $status => $color) {
                                     echo '<div class="d-flex flex-column align-items-center">';
-                                    if ($status === $recResult['Status']) {
+                                    if ($status === $orderResult['shipping_status']) {
                                         if ($status === 'Pending') {
                                             echo '<div class="dot ' . $color . '"><i class="fas fa-clock text-white" ></i></div>';
                                         } else if ($status === 'Inprogress') {
@@ -403,23 +392,19 @@ include_once '../dbConfig.php';
                                             echo '<div class="dot delivered"><i class="fas fa-check-circle text-white"></i></div>';
                                         }
 
-                                        echo '<span class="order-date">' . substr($recResult['OrderDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
-                                    } else if ($status === 'Confirm' && in_array($recResult['Status'], ['Confirm', 'Pending', 'Inprogress', 'Delivered'])) {
-                                        // Change color for Confirm status
-                                        echo '<div class="dot confirm"><i class="fas fa-check text-white"></i></div>';
-                                        echo '<span class="order-date">' . substr($recResult['OrderDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
-                                    } else if ($status === 'Pending' && in_array($recResult['Status'], ['Pending', 'Inprogress', 'Delivered'])) {
+                                        echo '<span class="order-date">' . substr($orderResult['order_date'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                    }  else if ($status === 'Pending' && in_array($orderResult['shipping_status'], ['Pending', 'Inprogress', 'Delivered'])) {
                                         // Change color for Pending status
                                         echo '<div class="dot pending"><i class="fas fa-clock text-white"></i></div>';
-                                        echo '<span class="order-date">' . substr($recResult['OrderDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
-                                    } else if ($status === 'Inprogress' && in_array($recResult['Status'], ['Inprogress', 'Delivered'])) {
+                                        echo '<span class="order-date">' . substr($orderResult['order_date'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                    } else if ($status === 'Inprogress' && in_array($orderResult['shipping_status'], ['Inprogress', 'Delivered'])) {
                                         // Change color for Inprogress status
                                         echo '<div class="dot inprogress"><i class="fas fa-spinner text-white"></i></div>';
 
-                                        echo '<span class="order-date">' . substr($recResult['DeliveryDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                        echo '<span class="order-date">' . substr($orderResult['delivery_date'], 0, 10) . '</span><span>' . $status . '</span></div>';
                                     } else {
                                         echo '<div class="dot"></div>';
-                                        echo '<span class="order-date">' . substr($recResult['DeliveryDate'], 0, 10) . '</span><span>' . $status . '</span></div>';
+                                        echo '<span class="order-date">' . substr($orderResult['delivery_date'], 0, 10) . '</span><span>' . $status . '</span></div>';
                                     }
 
 
@@ -451,69 +436,69 @@ include_once '../dbConfig.php';
         <!------------------------------------------------------------------------------------------>
         <?php
         echo '<section class="h-100 gradient-custom">
-    <div class="container py-2 h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col-lg-10 col-xl-12">
-              <div class="card" style="border-radius: 10px;">
-                  <div class="card-header px-4 py-5 d-flex justify-content-between" >
-                      <h5 class="text-muted mb-0">Thanks for your Order,<span style="color: #488978;"> ' . $recResult['CusFName'] . '!</span></h5>
-                      <div class="action-buttons">
-                       
-                          <form class="action-button" action="pdf.php" method="post" target="_blank" style="display: inline-block;">
-                              <input type="hidden" name="id_receive" value="' . $RecId . '">
-                              <input type="hidden" name="id_customer" value="' . $customerId . '">
-                              <button type="submit">
-                                  <img src="./image/print.png" alt="print">
-                              </button>
-                          </form>
-                      </div>
-                  </div>
-                  <div class="card-body p-4">
-                      <div class="d-flex justify-content-between align-items-center mb-4">
-                          <p class="lead fw-normal mb-0" style="color: #488978;">Receipt</p>
-                          <p class="small text-muted mb-0">Receipt Voucher : ' . $recResult['RecID'] . '</p>
-                      </div>';
+        <div class="container py-4">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-lg-12">
+                <div class="card" style="border-radius: 10px;">
+                    <div class="card-header px-4 py-5 d-flex justify-content-between" >
+                        <h5 class="text-muted mb-0">Thanks for your Order,<span style="color: #488978;"> ' . $orderResult['CusFName'] . '!</span></h5>
+                        <div class="action-buttons">';
+                        if($orderResult['invoice_id'] !== null){          
+                           echo '<form class="action-button" action="pdf.php" method="post" target="_blank" style="display: inline-block;">
+                                <input type="hidden" name="order_id" value="' . $orderID . '">
+                                <input type="hidden" name="id_customer" value="' . $cusID . '">
+                                <button type="submit">
+                                    <img src="./image/print.png" alt="print">
+                                </button>
+                            </form>';
+                        }
+                        echo '</div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <p class="lead fw-normal mb-0" style="color: #488978;">Receipt</p>
+                        </div>';
 
 
         // <?---------        ส่วนของ detail     -------->
         if (isset($_POST['id_order'])) {
-            $orderQuery = mysqli_query($conn, "SELECT Product.*, receive_detail.*  , receive.* 
-                                        FROM receive_detail
-                                        INNER JOIN receive ON receive.RecID = receive_detail.RecID
-                                        INNER JOIN Product ON Product.ProID = receive_detail.ProID
-                    
-                                        WHERE receive_detail.RecID = '$RecId '");
+
+            $orderQuery = mysqli_query($conn, "SELECT product.*, order_details.* , orders.* 
+                                        FROM order_details
+                                        INNER JOIN orders ON orders.order_id = order_details.order_id
+                                        INNER JOIN product ON product.ProID = order_details.ProID            
+                                        WHERE orders.order_id = $orderID");
 
             $totalPriceAllItems = 0;
             $detailsDisplayed = false;
 
+
             while ($row = mysqli_fetch_array($orderQuery)) {
-                $totalPrice = $row['PricePerUnit'] * $row['Qty'];
+                $totalPrice = $row['PricePerUnit'] * $row['quantity'];
                 $totalPriceAllItems += $totalPrice;
 
                 echo '<div class="card shadow-0 border mb-4">
-                                <div class="card-body">
-                                    <div class="row">       
-                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center"> 
-                                        <img class="img-fluid" src="' . base64_encode($row['ImageData']) . '">
-                                        </div>
-                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0">' . $row['ProName'] . '</p>
-                                        </div>
-                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0 small">Qty:' . $row['Qty'] . '</p>
-                                        </div>
-                                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0 small">price: ' . $row['PricePerUnit'] . '</p>
-                                        </div>
-                        
-                                        <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
-                                            <p class="text-muted mb-0 small">' . $totalPrice . '</p>
-                                        </div>
-                                    </div>
-                                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
-                                    <div class="row d-flex align-items-center"></div>
-                                </div>';
+                <div class="card-body">
+                    <div class="row">       
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center"> 
+                            <img class="product-image" src="data:image/*;base64,' . base64_encode($row['ImageData']) . '">
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0">' . $row['ProName'] . '</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small">Qty:' . $row['quantity'] . '</p>
+                        </div>
+                        <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small">price: ' . $row['PricePerUnit'] . '</p>
+                        </div>
+                        <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
+                            <p class="text-muted mb-0 small">' . $totalPrice . '</p>
+                        </div>
+                    </div>
+                    <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+                    <div class="row d-flex align-items-center"></div>
+                </div>';
             }
         }
 
@@ -535,8 +520,8 @@ include_once '../dbConfig.php';
 
         echo '<div class="d-flex justify-content-between mb-5" style="margin-top: -10px;">
                     <div class="flex-col mb-5">
-                        <p class="text-muted mb-0 mx-3">Receipt: <span style="font-weight: bold;">' . $recResult['RecID'] . '</span></p>
-                        <p class="text-muted mb-0 mx-3">Order Date: ' . $recResult['OrderDate'] . '</p>
+                        <p class="text-muted mb-0 mx-3">Receipt: <span style="font-weight: bold;">' . $orderResult['order_id'] . '</span></p>
+                        <p class="text-muted mb-0 mx-3">Order Date: ' . $orderResult['order_date'] . '</p>
                     </div>
                     <div class="flex-col mb-5">
                         <p class="text-muted mb-0" style="font-size: 1rem;"><span class="fw-bold me-4">VAT 7%</span><span class="fw-bold mx-5">' . $tax . '฿</span></p>
@@ -558,11 +543,11 @@ include_once '../dbConfig.php';
                 </div>
             </div>
             </section>';
-        if (isset($_SESSION['guest'])) {
-            // Unset session ที่คุณต้องการ
-            unset($_SESSION['guest']);
-            unset($_SESSION['id_username']);
-        }
+        // if (isset($_SESSION['guest'])) {
+        //     // Unset session ที่คุณต้องการ
+        //     unset($_SESSION['guest']);
+        //     unset($_SESSION['id_username']);
+        // }
         mysqli_close($conn);
         ?>
     </div>

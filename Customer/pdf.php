@@ -1,44 +1,43 @@
 <?php
 require_once('./vendor/autoload.php');
+include_once '../dbConfig.php'; 
+
 
 session_start();
-$conn =  mysqli_connect("localhost", "root", "", "shopping");
 
+// $conn =  mysqli_connect("localhost", "root", "", "shopping");
 
-
-if (empty($_POST["id_receive"])) {
+if (isset($_POST['order_id'])) {
     // $receiptCode = $_SESSION['ReceiptCode'];
-    $receiptCode = $_POST['id_receive'];
-    $sql = "SELECT RecvID FROM receive WHERE RecID = '$receiptCode'";
+    $receiptCode = $_POST['order_id'];
+    $sql = "SELECT shipping_address_id FROM orders WHERE order_id = '$receiptCode'";
     $result = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($result);
-    $RecvID = $row['RecvID'];
-} else {
-    $receiptCode = $_POST["id_receive"];
-    $sql = "SELECT RecvID FROM receive WHERE RecID = '$receiptCode'";
-    $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
-    $RecvID = $row['RecvID'];
-}
+    $address_id = $row['shipping_address_id'];
+} 
+// else {
+//     $receiptCode = $_POST["order_id"];
+//     $sql = "SELECT shipping_address_id FROM orders WHERE order_id = '$receiptCode'";
+//     $result = mysqli_query($conn, $sql);
+//     $row = mysqli_fetch_assoc($result);
+//     $address_id = $row['shipping_'];
+// }
 
-$sql = "SELECT r.RecvID, r.RecvFName, r.RecvLName, r.Sex, r.Tel, r.Address, ro.CusID
-        FROM receiver r 
-        JOIN receiver_detail ro ON r.RecvID = '$RecvID' AND r.RecvID = ro.RecvID";
+$sql = "SELECT * FROM shipping_address r  
+        WHERE  r.address_id = '$address_id'";
 
 $result = mysqli_query($conn, $sql);
 
 $row = mysqli_fetch_assoc($result);
 $cusID = $row["CusID"];
-$cusAddress = $row['Address'];
-$cusFName = $row['RecvFName'];
-$cusLName = $row['RecvLName'];
-$cusSex = $row['Sex'];
-$cusTel = $row['Tel'];
+$cusAddress = $row['address_line1'];
+$cusFName = $row['recipient_name'];
+$cusphone_number = $row['phone_number'];
 
-$sql = "SELECT OrderDate FROM receive WHERE RecID = '$receiptCode'";
+$sql = "SELECT order_date FROM orders WHERE order_id = '$receiptCode'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
-$payTime = $row['OrderDate'];
+$payTime = $row['order_date'];
 $payDate = date('Y-m-d', strtotime($payTime));
 
 
@@ -105,7 +104,7 @@ $pdf->SetFont('sarabun', '', 9);
 
 $pdf->SetXY(30, 40);
 
-$pdf->Cell(60, 10, "" . $cusFName . " " . $cusLName . "", 0, 0, 'L');
+$pdf->Cell(60, 10, " . $cusFName . " , 0, 0, 'L');
 
 $pdf->SetFont('sarabun', '', 10);
 
@@ -159,7 +158,7 @@ $pdf->Cell(60, 10, "โทร: ", 0, 0, 'L');
 
 $pdf->SetXY(30, 55);
 
-$pdf->Cell(60, 10, "" . $cusTel  . "", 0, 0, 'L');
+$pdf->Cell(60, 10, "" . $cusphone_number  . "", 0, 0, 'L');
 
 $pdf->SetFont('sarabun', '', 10);
 
@@ -174,9 +173,9 @@ $pdf->Cell(60, 10, "testuser@test.com", 0, 1, 'L');
 $pdf->Cell(170, 10, "", 'T', 1, 'L');
 
 $sql = "SELECT *
-FROM receive_detail
-JOIN product ON receive_detail.ProID = product.ProID 
-WHERE receive_detail.RecID = '$receiptCode'";
+FROM order_details
+JOIN product ON order_details.ProID = product.ProID 
+WHERE order_details.order_id = '$receiptCode'";
 $result = mysqli_query($conn, $sql);
 
 $orderProducts = array();
@@ -199,9 +198,9 @@ $html = "
 
 foreach ($orderProducts as $orderProductRow) {
     $productName = $orderProductRow['ProName'];
-    $qty = $orderProductRow['Qty'];
+    $qty = $orderProductRow['quantity'];
     $pricePerUnit = $orderProductRow['PricePerUnit'];
-    $total = $orderProductRow['PricePerUnit'] * $orderProductRow['Qty'];
+    $total = $orderProductRow['PricePerUnit'] * $orderProductRow['quantity'];
 
     $html .= "<tr>
     <td style='padding-top: 50px'>" . $id . "</td>
@@ -211,7 +210,7 @@ foreach ($orderProducts as $orderProductRow) {
     <td style='padding-top: 50px'>" . $total . " บาท</td>
     </tr>";
 
-    $totalPrice += $orderProductRow['PricePerUnit'] * $orderProductRow['Qty'];
+    $totalPrice += $orderProductRow['PricePerUnit'] * $orderProductRow['quantity'];
     $id++;
 }
 

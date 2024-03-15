@@ -63,6 +63,10 @@
         input[type="reset"]:hover {
             background-color: #2980b9;
         }
+        .role {
+            display: block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -88,6 +92,14 @@
 
         <label for="a7">รหัสผ่าน:</label>
         <input type="tel" id="a7" name="a7" maxlength="10" required>
+
+        <div class="role">
+            <label for="role">บทบาท:</label>
+            <select name="role">
+                <option value="member">Member</option>
+                <option value="user_admin">User Admin</option>
+            </select>
+        </div>
 
         <input type="submit" value="ยืนยัน">
         <input type="reset" value="รีเซ็ต">

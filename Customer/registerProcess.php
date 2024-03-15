@@ -14,17 +14,12 @@
         $run_qry = mysqli_query($conn, $select_user);
         echo mysqli_num_rows($run_qry);
         if (mysqli_num_rows($run_qry) == 0) {
-            $stmt_1 = mysqli_query($conn, "INSERT INTO customer(CusFName , CusLName, Sex ,Tel )
-            VALUES('$fname', '$lname' ,'$sex','$tel');");
-
-
-            $findByID = mysqli_query($conn, "SELECT CusID FROM customer WHERE CusFName = '$fname' AND CusLName = '$lname' ");
-            $row = mysqli_fetch_assoc($findByID);
-            $cusID = $row['CusID'];
-
+            $stmt_1 = mysqli_query($conn, "INSERT INTO customer(CusFName , CusLName, Sex ,Tel ,role)
+            VALUES('$fname', '$lname' ,'$sex','$tel','member');");
+            $last_inserted_id = mysqli_insert_id($conn);
 
             $stmt_2 = mysqli_query($conn, "INSERT INTO customer_account (UserName , PassWord , CusID)
-            VALUES('$username' , '$password' , ' $cusID' );");
+            VALUES('$username' , '$password' , '$last_inserted_id' );");
 
             if (!$stmt_1 && !$stmt_2) {
                 echo "Error";
@@ -37,6 +32,8 @@
         }
         else {
             echo "User Have Already!";
+            header("Location: login.php");
+            exit(); 
         }
         mysqli_close($conn);
     }

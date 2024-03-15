@@ -105,7 +105,7 @@
     <div class="navbar"> <?php include('../navbar/navbarAdmin.php') ?></div>
     <h1>Invoice List</h1>
     <div class="container">
-        <div>
+        <!-- <div>
             <input type="checkbox" id="checkAll" onchange="checkAll()">
             <label class="check-all-label">Check All</label>
             <form id='deleteForm' class="delete-form" action="invoice_delete_confirm.php" method="post">
@@ -113,15 +113,15 @@
                 <input type="hidden" name="total_id_invoice" id="selectedTotal" value="">
                 <input type="submit" id="deleteButton" value="Delete Invoice" disabled>
             </form>
-        </div>
+        </div> -->
         <div>
             <!------------- Fillter ------------------->
             <label for="filter">Filter by Name:</label>
             <input type="text" name="filter" id="filter" placeholder="Enter name to filter">
             <!------------------------------------------>
-            <form class="add-invoice-form" action="invoice_insert.php" method="post">
+            <!-- <form class="add-invoice-form" action="invoice_insert.php" method="post">
                 <input type="submit" id="addInvoiceButton" value="Add Invoice">
-            </form>
+            </form> -->
             <br>
         </div>
     </div>
@@ -137,7 +137,7 @@ FROM
 JOIN
     customer ON invoice.CusID = customer.CusID
 JOIN
-    invoice_detail ON invoice.InvID = invoice_detail.InvID
+    invoice_detail ON invoice.invoice_id = invoice_detail.detail_id
 JOIN
     product ON invoice_detail.ProID = product.proID;
 ";
@@ -147,24 +147,20 @@ JOIN
     echo "<div>
         <table>
             <tr>
-                <th><img src='http://localhost/phpmyadmin/themes/pmahomme/img/arrow_ltr.png'></th>
                 <th>ID</th>
                 <th>Customer</th>
                 <th>Date</th>
                 <th>Amount</th>
-                <th>Payment Status</th>
-                <th>Action</th>
             </tr>";
 
-    $index = 1;
+    // $index = 1;
     if (mysqli_num_rows($msresults) > 0) {
         while ($row = mysqli_fetch_array($msresults)) {
             echo "<tr class='user-row'>
-                    <td><input type='checkbox' name='checkbox[]' value='{$row['InvID']}'></td>
-                    <td>{$row['InvID']}</td>
+                    <td>{$row['invoice_id']}</td>
                     <td>{$row['CusFName']} {$row['CusLName']}</td>
-                    <td>{$row['Period']}</td>
-                    <td>{$row['TotalPrice']}</td>";
+                    <td>{$row['invoice_date']}</td>
+                    <td>{$row['total_amount']}</td>";
 
 
             // echo "<td><div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";                
@@ -183,52 +179,52 @@ JOIN
 
 
 
-            echo "<td>";
-            echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
+            // echo "<td>";
+            // echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
 
             // เงื่อนไขตรวจสอบค่า Status และกำหนดสีให้กับ background-color
-            if ($row['Status'] == 'Unpaid') {
-                echo '#FFA500;';
-            } elseif ($row['Status'] == 'Paid') {
-                echo '#06D6B1;';
-            } else if ($row['Status'] == 'Canceled') {
-                echo '#FF0000;';
-            } else {
-                echo '#06D6B1;';
-            }
+            // if ($row['Status'] == 'Unpaid') {
+            //     echo '#FFA500;';
+            // } elseif ($row['Status'] == 'Paid') {
+            //     echo '#06D6B1;';
+            // } else if ($row['Status'] == 'Canceled') {
+            //     echo '#FF0000;';
+            // } else {
+            //     echo '#06D6B1;';
+            // }
 
-            echo "'>";
-            echo "<select id='select_$index' data-recid='{$row['InvID']}' style='background-color: inherit; color: #ffff;' required>";
+            // echo "'>";
+            // echo "<select id='select_$index' data-recid='{$row['invoice_id']}' style='background-color: inherit; color: #ffff;' required>";
 
-            $statusCompare = ['Unpaid', 'Paid', 'Canceled'];
+            // $statusCompare = ['Unpaid', 'Paid', 'Canceled'];
 
-            foreach ($statusCompare as $value) {
-                $selected = ($value == $row['Status']) ? 'selected' : '';
-
-
-                echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
-            }
-
-            echo "</select>";
-            echo "</div></td>";
+            // foreach ($statusCompare as $value) {
+            //     $selected = ($value == $row['Status']) ? 'selected' : '';
 
 
+            //     echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+            // }
+
+            // echo "</select>";
+            // echo "</div></td>";
 
 
 
 
-            echo "<td class='action-buttons'>
-                        <form class='action-button' action='invoice_update.php' method='post'>  
-                            <input type='hidden' name='id_invoice' value={$row['InvID']}>
-                            <input type='image' alt='update' src='../img/pencil.png'>
-                        </form>
-                        <form class='action-button' action='invoice_delete_confirm.php' method='post'>
-                            <input type='hidden' name='total_id_invoice' value={$row['InvID']}>
-                            <input type='image' alt='delete' src='../img/trash.png'>
-                        </form>
-                    </td>
-                </tr>";
-            $index++;
+
+
+            // echo "<td class='action-buttons'>
+            //             <form class='action-button' action='invoice_update.php' method='post'>  
+            //                 <input type='hidden' name='id_invoice' value={$row['invoice_id']}>
+            //                 <input type='image' alt='update' src='../img/pencil.png'>
+            //             </form>
+            //             <form class='action-button' action='invoice_delete_confirm.php' method='post'>
+            //                 <input type='hidden' name='total_id_invoice' value={$row['invoice_id']}>
+            //                 <input type='image' alt='delete' src='../img/trash.png'>
+            //             </form>
+            //         </td>
+            echo "</tr>";
+            // $index++;
         }
     }
     echo "</table></div>";
@@ -356,12 +352,12 @@ JOIN
                 }
             }
 
-            function updateStatus(invID, newStatus) {
+            function updateStatus(invoice_id, newStatus) {
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', 'invoice_update_status.php', true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-                console.log(invID, newStatus)
+                console.log(invoice_id, newStatus)
 
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -374,7 +370,7 @@ JOIN
                         }
                     }
                 };
-                xhr.send('InvID=' + encodeURIComponent(invID) + '&newStatus=' + encodeURIComponent(newStatus));
+                xhr.send('invoice_id=' + encodeURIComponent(invoice_id) + '&newStatus=' + encodeURIComponent(newStatus));
 
             }
         });

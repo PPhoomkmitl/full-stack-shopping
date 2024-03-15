@@ -192,9 +192,9 @@
                         <th>Sold Quantity</th>
                     </tr>
                     <?php
-                        $bestSell_Query = mysqli_query($cx, "SELECT product.ProID, product.ProName, SUM(receive_detail.Qty) AS TotalQty
+                        $bestSell_Query = mysqli_query($cx, "SELECT product.ProID, product.ProName, SUM(order_details.quantity) AS TotalQty
                         FROM product
-                        INNER JOIN receive_detail ON product.ProID = receive_detail.ProID
+                        INNER JOIN order_details ON product.ProID = order_details.ProID
                         GROUP BY product.ProID
                         ORDER BY TotalQty DESC");
                         while($row = mysqli_fetch_assoc($bestSell_Query)) {
@@ -210,10 +210,10 @@
             <div class="data-card" id='card-4'>
                 <h2 id='Re'>Revenue</h2>
                 <?php 
-                    $income_Query = mysqli_query($cx, "SELECT * FROM product INNER JOIN receive_detail ON product.ProID = receive_detail.ProID");
+                    $income_Query = mysqli_query($cx, "SELECT * FROM product INNER JOIN order_details ON product.ProID = order_details.ProID");
                     (double)$total_income = 0;
                     while($row = mysqli_fetch_assoc($income_Query)) {
-                        $total_income += (double)$row['PricePerUnit'] * (double)$row['Qty'];
+                        $total_income += (double)$row['PricePerUnit'] * (double)$row['quantity'];
                     }
                     echo "<h1>Total Income: ฿" . number_format($total_income, 2) . "</h1>";
                 ?>
@@ -227,7 +227,7 @@
                         <th>Sold Quantity</th>
                     </tr>
                     <?php
-                        $income_Query = mysqli_query($cx, "SELECT * FROM product INNER JOIN receive_detail ON product.ProID = receive_detail.ProID");
+                        $income_Query = mysqli_query($cx, "SELECT * FROM product INNER JOIN order_details ON product.ProID = order_details.ProID");
                         while($row = mysqli_fetch_assoc($income_Query)) {
                             $total_pro = (double)$row['PricePerUnit'] * (double)$row['Qty'];
                             echo "<tr>";

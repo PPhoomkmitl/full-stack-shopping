@@ -107,16 +107,15 @@
             <div class="form-block">
                 <h3 style="color: #007bff;">Order Information</h3>
                 <div class="form-group">
-                    <label for="RecID">RecID:</label>
+                    <label for="order_id">order_id:</label>
                 <?php     
                     // Generate new RECEIVE ID
-                    $result = mysqli_query($conn, "SELECT MAX(RecID) AS rec_id FROM receive");
+                    $result = mysqli_query($conn, "SELECT MAX(order_id) AS order_id FROM orders");
                     $row = mysqli_fetch_assoc($result);
-                    $lastID = $row['rec_id'];
-                    $numericPart = intval(substr($lastID, 6));
-                    $newNumericPart = $numericPart + 1;
-                    $RecID = 'rec_id'.str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
-                    echo "<input type='text' id='RecID' name='RecID' value='$RecID' readonly>
+                    $lastID = $row['order_id'];
+                    $newNumericPart = $lastID + 1;
+                    $order_id = $newNumericPart;
+                    echo "<input type='text' id='order_id' name='order_id' value='$order_id' readonly>
                     </div>";
                 ?>
                 <div class="form-group">
