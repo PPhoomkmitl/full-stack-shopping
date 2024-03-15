@@ -162,6 +162,7 @@
                 <th>Order Date</th>
                 <th>Delivery Date</th>
                 <th>Delivery Status</th>
+                <th>Payment Status</th>
                 <th>Slip</th>
                 <th>Action</th>
             </tr>";
@@ -177,7 +178,7 @@
                     <td>{$row['order_date']}</td>
                     <td>{$row['delivery_date']}</td>";
 
-
+                    /* Shipping Status */
                     echo "<td>";
                     echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
 
@@ -193,14 +194,46 @@
                     } else {
                         echo '#06D6B1;'; 
                     }
+                    echo "'>";
+
+                    if($row['fullfill_status'] == 'Unfullfilled') {
+                        echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' disabled>";
+                    } else {
+                        echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
+                    }
+                    
+                    $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
+                    
+                    foreach ($shipping_statusCompare as $value) {
+                        $selected = ($value == $row['shipping_status']) ? 'selected' : '';
+                        echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+                    }
+                    
+                    echo "</select>";
+
+                    echo "</div></td>";
+
+
+                    /*------------------------------------- Payment Status -------------------------------------*/
+                    echo "<td>";
+                    echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
+
+                    // เงื่อนไขตรวจสอบค่า shipping_status และกำหนดสีให้กับ background-color
+                    if ($row['fullfill_status'] == 'Unfullfilled') {
+                        echo '#FFA500;';
+                    } elseif ($row['fullfill_status'] == 'Fullfilled') {
+                        echo '#06D6B1;';
+                    }  else {
+                        echo '#06D6B1;'; 
+                    }
 
                     echo "'>";
                     echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
 
-                    $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
+                    $shipping_statusCompare = ['Unfullfilled' , 'Fullfilled'];
 
                     foreach ($shipping_statusCompare as $value) {
-                        $selected = ($value == $row['shipping_status']) ? 'selected' : '';
+                        $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
  
 
                         echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
@@ -208,6 +241,7 @@
 
                     echo "</select>";
                     echo "</div></td>";
+
                     echo "<td>";
                     // Check if the image_data is not empty
                     if (!empty($row['image_data'])) {

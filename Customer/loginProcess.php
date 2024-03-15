@@ -35,6 +35,12 @@
                         $_SESSION['status'] = true;
                         $_SESSION['admin'] = $row['role'];
                         unset($_SESSION['cart']);
+                        unset($_SESSION['guest']);
+                        if($row['role'] === 'user_admin'){
+                            unset($_SESSION['super_admin']);
+                        } else if($row['role'] === 'super_admin'){
+                            unset($_SESSION['user_admin']);
+                        }
                         header("Location: ../admin/dashboard/dashboard.php");
                         exit();
 

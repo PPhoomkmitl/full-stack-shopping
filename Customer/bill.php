@@ -348,11 +348,11 @@ include_once '../dbConfig.php';
         <div id="successForm" class="checkout-form" style="display: block; margin-left:50px;">
             <h3>Order Placed Successfully!</h3>
             <?php
-            if($orderResult['fullfill_status'] == 'Unfullfilled') {
-                echo '<p>Your order has not been confirmed. Thank you for shopping with us.</p>';
-            } else {
-                echo '<p>Your order has been confirmed. Thank you for shopping with us.</p>';
-            }
+                if($orderResult['fullfill_status'] == 'Unfullfilled') {
+                    echo '<p>Your order has not been confirmed. Thank you for shopping with us.</p>';
+                } else if($orderResult['fullfill_status'] == 'Fullfilled'){
+                    echo '<p>Your order has been confirmed. Thank you for shopping with us.</p>';
+                }
             ?>
         </div>
         <!----------------------------------------Order Tracking------------------------------------------------->

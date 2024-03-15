@@ -128,19 +128,17 @@
 
     <?php
     include_once '../../dbConfig.php'; 
-    $cur = "SELECT DISTINCT
+    $cur = "SELECT 
     invoice.*,
     customer.CusFName,
     customer.CusLName
-FROM
-    invoice
-JOIN
-    customer ON invoice.CusID = customer.CusID
-JOIN
-    invoice_detail ON invoice.invoice_id = invoice_detail.detail_id
-JOIN
-    product ON invoice_detail.ProID = product.proID;
-";
+    FROM
+        invoice
+    JOIN
+        customer ON invoice.CusID = customer.CusID
+    JOIN
+        invoice_detail ON invoice.invoice_id = invoice_detail.invoice_id
+    ";
 
     $msresults = mysqli_query($conn, $cur);
     echo "<center>";
