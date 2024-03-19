@@ -12,6 +12,8 @@
     
     <!-- Bootstrap Icons -->
     <link href="path/to/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,11 +23,14 @@
             text-align: center;
         }
 
-        .container {
+        .container-1 {
             display: flex;
             justify-content: space-between;
             background-color: #C4DFDF;
             padding: 20px;
+            /* width: 100%; */
+            /* margin-right: auto;
+            margin-left: auto; */
         }
 
         .check-all-label {
@@ -117,7 +122,67 @@
 <body>
     <div class="navbar"> <?php include('../navbar/navbarAdmin.php') ?></div>
     <h1>Order List</h1>
-    <div class="container">
+    <?php
+        include_once '../../dbConfig.php'; 
+        $sql = "SELECT 
+            SUM(CASE WHEN fullfill_status = 'Unfulfilled' THEN 1 ELSE 0 END) AS unfulfilled_orders,
+            SUM(CASE WHEN shipping_status = 'Pending' THEN 1 ELSE 0 END) AS pending_orders,
+            SUM(CASE WHEN shipping_status = 'Inprogress' THEN 1 ELSE 0 END) AS inprogress_orders,
+            COUNT(*) AS total_orders
+        FROM 
+            orders";
+        $result = mysqli_query($conn, $sql);
+        if (mysqli_num_rows($result) > 0) {
+            // วน loop เพื่อดึงข้อมูลจากแต่ละแถว
+            while ($row = mysqli_fetch_assoc($result)) {
+    ?>
+
+    <div class="row py-3">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Unfulfilled Orders</h5>
+                    <p class="card-text"><?php echo $row['unfulfilled_orders']; ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Orders</h5>
+                    <p class="card-text"><?php echo $row['pending_orders']; ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Inprogress Orders</h5>
+                    <p class="card-text"><?php echo $row['inprogress_orders']; ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text"><?php echo $row['total_orders']; ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php
+            } // ปิดวงเล็บของ while
+        } // ปิดวงเล็บของ if
+    ?>
+
+
+
+
+
+    <div class="container-1">
+        
         <!-- <div>
             <input type='checkbox' id='checkAll' onchange='checkAll()'>
             <label class="check-all-label">Check All</label>
@@ -128,6 +193,14 @@
             </form>
 
         </div> -->
+        <!-- <div>            -->
+            <!-- <div class="tab">
+                <form action="order_index.php" method="get">
+                    <button id="UnFullFillTab" class="tablinks" name="tab" value="Unfulfilled">UnFullFill</button>
+                    <button id="FullFillTab" class="tablinks" name="tab" value="Fullfilled">FullFill</button>
+                </form>
+            </div> -->
+        <!-- </div> -->
         <div>
             <!------------- Fillter ------------------->
             <label for="filter">Filter by Name:</label>
@@ -142,10 +215,107 @@
             ?>
             <br>
         </div>
+        <div>
+            <!------------- Filter by Shipping Status ------------------->
+            <label for="filterShipping">Filter by Shipping Status:</label>
+            <select name="filter" id="filterDropdown-1" onchange="updateTable()">
+                <option value="">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Inprogress">Inprogress</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Canceled">Canceled</option>
+            </select>
+            <!------------------------------------------>
+            <!------------- Filter by Payment Status ------------------->
+            <label for="filterPayment">Filter by Payment Status:</label>
+            <select name="filter" id="filterDropdown-2" onchange="updateTable()">
+                <option value="">All</option>
+                <option value="Unfullfilled">Unfullfilled</option>
+                <option value="Fullfilled">Fullfilled</option>
+            </select>
+            <!------------------------------------------>
+            <br>
+        </div>
     </div>
 
     <?php
-    include_once '../../dbConfig.php'; 
+
+
+    // if (isset($_GET['tab']) && !empty($_GET['tab'])) {
+       
+    //     // Define the tab variable
+    //     $tab = $_GET['tab'];
+    //      $tab = $_GET['tab'];
+    //     // Check if the tab is 'Fullfilled'
+    //     if ($tab === 'Fullfilled') {
+    //         // Query to select orders with 'Fullfilled' status
+    //         $cur = "SELECT * FROM orders 
+    //                 INNER JOIN customer ON customer.CusID = orders.CusID
+    //                 INNER JOIN order_details ON order_details.order_id = orders.order_id
+    //                 INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
+    //                 WHERE orders.fullfill_status = 'Fullfilled'";
+    //         $msresults = mysqli_query($conn, $cur);
+    //         echo "<center>";
+    //         echo "<div>
+    //         <table>
+    //             <tr>               
+    //                 <th>Order ID</th>
+    //                 <th>Customer</th>
+    //                 <th>Amount</th>
+    //                 <th>Order Date</th>
+    //                 <th>Delivery Date</th>
+    //                 <th>Delivery Status</th>
+    //                 <th>Payment Status</th>
+    //                 <th>Action</th>
+    //             </tr>";
+
+    //     } else if($tab === 'Unfulfilled'){
+    //         // Query to select orders with 'Unfullfilled' status by default
+    //         $cur = "SELECT * FROM orders 
+    //                 INNER JOIN customer ON customer.CusID = orders.CusID
+    //                 INNER JOIN order_details ON order_details.order_id = orders.order_id
+    //                 INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
+    //                 WHERE orders.fullfill_status = 'Unfulfilled'";
+    //         $msresults = mysqli_query($conn, $cur);
+    //         echo "<center>";
+    //         echo "<div>
+    //             <table>
+    //                 <tr>               
+    //                     <th>Order ID</th>
+    //                     <th>Customer</th>
+    //                     <th>Amount</th>
+    //                     <th>Order Date</th>           
+    //                     <th>Payment Status</th>
+    //                     <th>Slip</th>
+    //                     <th>Action</th>
+    //                 </tr>";
+            
+    //     } else {
+    //         $msresults = 0;
+    //     }
+    // }
+    // else {
+    //     // Default query to select orders with 'Unfullfilled' status
+    //     $cur = "SELECT * FROM orders 
+    //             INNER JOIN customer ON customer.CusID = orders.CusID
+    //             INNER JOIN order_details ON order_details.order_id = orders.order_id
+    //             INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
+    //             WHERE orders.fullfill_status = 'Unfulfilled'";
+    //     $msresults = mysqli_query($conn, $cur);     
+    //     echo "<center>";
+    //     echo "<div>
+    //         <table>
+    //             <tr>               
+    //                 <th>Order ID</th>
+    //                 <th>Customer</th>
+    //                 <th>Amount</th>
+    //                 <th>Order Date</th>           
+    //                 <th>Payment Status</th>
+    //                 <th>Slip</th>
+    //                 <th>Action</th>
+    //             </tr>";   
+    // }
+
     $cur = "SELECT * FROM orders 
     INNER JOIN customer ON customer.CusID = orders.CusID
     INNER JOIN order_details ON order_details.order_id = orders.order_id
@@ -154,7 +324,7 @@
 
     echo "<center>";
     echo "<div>
-        <table>
+        <table id='logTable'>
             <tr>               
                 <th>Order ID</th>
                 <th>Customer</th>
@@ -167,114 +337,111 @@
                 <th>Action</th>
             </tr>";
 
+
+    
     $index = 1;
     if (mysqli_num_rows($msresults) > 0) {
         while ($row = mysqli_fetch_array($msresults)) {
-
             echo "<tr class='user-row'>
                     <td>{$row['order_id']}</td>
                     <td>{$row['CusFName']} {$row['CusLName']}</td>
                     <td>{$row['total_price']}</td>
-                    <td>{$row['order_date']}</td>
-                    <td>{$row['delivery_date']}</td>";
-
-                    /* Shipping Status */
-                    echo "<td>";
-                    echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
-
-                    // เงื่อนไขตรวจสอบค่า shipping_status และกำหนดสีให้กับ background-color
-                    if ($row['shipping_status'] == 'Pickups') {
-                        echo '#0176FF;';
-                    } elseif ($row['shipping_status'] == 'Pending' || $row['shipping_status'] == 'pending') {
-                        echo '#FFA500;';
-                    } elseif ($row['shipping_status'] == 'Inprogress') {
-                        echo '#7C6BFF;'; 
-                    } elseif ($row['shipping_status'] == 'Canceled') {
-                        echo '#FF0000;';
-                    } else {
-                        echo '#06D6B1;'; 
-                    }
-                    echo "'>";
-
-                    if($row['fullfill_status'] == 'Unfullfilled') {
-                        echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' disabled>";
-                    } else {
-                        echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
-                    }
-                    
-                    $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
-                    
-                    foreach ($shipping_statusCompare as $value) {
-                        $selected = ($value == $row['shipping_status']) ? 'selected' : '';
-                        echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
-                    }
-                    
-                    echo "</select>";
-
-                    echo "</div></td>";
-
-
-                    /*------------------------------------- Payment Status -------------------------------------*/
-                    echo "<td>";
-                    echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";
-
-                    // เงื่อนไขตรวจสอบค่า shipping_status และกำหนดสีให้กับ background-color
-                    if ($row['fullfill_status'] == 'Unfullfilled') {
-                        echo '#FFA500;';
-                    } elseif ($row['fullfill_status'] == 'Fullfilled') {
-                        echo '#06D6B1;';
-                    }  else {
-                        echo '#06D6B1;'; 
-                    }
-
-                    echo "'>";
-                    echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
-
-                    $shipping_statusCompare = ['Unfullfilled' , 'Fullfilled'];
-
-                    foreach ($shipping_statusCompare as $value) {
-                        $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
- 
-
-                        echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
-                    }
-
-                    echo "</select>";
-                    echo "</div></td>";
-
-                    echo "<td>";
-                    // Check if the image_data is not empty
-                    if (!empty($row['image_data'])) {
-                        // Output the image as a clickable link to open modal
-                        echo "<a href='#imageModal' data-toggle='modal' data-image-src='data:image/*;base64," . base64_encode($row['image_data']) . "'><img class='product-image' src='data:image/*;base64," . base64_encode($row['image_data']) . "'></a>";
-                    } else {
-                        // Output a placeholder or empty cell if image_data is empty
-                        echo "-";
-                    }
-                    echo "</td>";
-                    
-         
-
-
-                   
-
-
-                  
-            echo    "<td>
-                        <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
-                            <input type='hidden' name='id_order' value={$row['order_id']}>
-                            <input type='image' alt='update' src='../img/pencil.png'/>
-                        </form>
-                    </td>
-                </tr>";
+                    <td>{$row['order_date']}</td>";
+    
+            // Check if fullfill_status is Fullfilled
+            // if($row['fullfill_status'] === 'Fullfilled'){
+                echo "<td>{$row['delivery_date']}</td>";
+    
+                /* Shipping Status */
+                echo "<td>";
+                echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:120px; margin: 0 auto; background-color:";
+    
+                // Conditions to set background color based on shipping_status value
+                if ($row['shipping_status'] == 'Pickups') {
+                    echo '#0176FF;';
+                } elseif ($row['shipping_status'] == 'Pending' || $row['shipping_status'] == 'pending') {
+                    echo '#FFA500;';
+                } elseif ($row['shipping_status'] == 'Inprogress') {
+                    echo '#7C6BFF;'; 
+                } elseif ($row['shipping_status'] == 'Canceled') {
+                    echo '#FF0000;';
+                } else {
+                    echo '#06D6B1;'; 
+                }
+                echo "'>";
+    
+                // Dropdown select for shipping_status
+                echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
+    
+                // Options for shipping_status
+                $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
+                foreach ($shipping_statusCompare as $value) {
+                    $selected = ($value == $row['shipping_status']) ? 'selected' : '';
+                    echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+                }
+                echo "</select>";
+    
+                echo "</div></td>";
+            // } 
+            
+    
+            /* Payment Status */
+            echo "<td>";
+            echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:120px; margin: 0 auto; background-color:";
+    
+            // Conditions to set background color based on fullfill_status value
+            if ($row['fullfill_status'] == 'Unfullfilled') {
+                echo '#FFA500;';
+            } elseif ($row['fullfill_status'] == 'Fullfilled') {
+                echo '#06D6B1;';
+            } else {
+                echo '#06D6B1;'; 
+            }
+            echo "'>";
+            echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
+    
+            // Options for fullfill_status
+            $shipping_statusCompare = ['Unfullfilled' , 'Fullfilled'];
+            foreach ($shipping_statusCompare as $value) {
+                $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
+                echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+            }
+            echo "</select>";
+            echo "</div></td>";
+    
+            // Check if fullfill_status is Unfullfilled
+            // if ($row['fullfill_status'] == 'Unfulfilled') {
+                echo "<td>";
+                // Check if the image_data is not empty
+                if (!empty($row['image_data'])) {
+                    // Output the image as a clickable link to open modal
+                    echo "<a href='#imageModal' data-toggle='modal' data-image-src='data:image/*;base64," . base64_encode($row['image_data']) . "'><img class='product-image' src='data:image/*;base64," . base64_encode($row['image_data']) . "'></a>";
+                } else {
+                    // Output a placeholder or empty cell if image_data is empty
+                    echo "-";
+                }
+                echo "</td>";
+            // }
+    
+            echo "<td>
+                    <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
+                        <input type='hidden' name='id_order' value={$row['order_id']}>
+                        <input type='image' alt='update' src='../img/pencil.png'/>
+                    </form>
+                  </td>
+                  </tr>";
             $index++;
         }
+    } else {
+        echo "<h1>Empty</h1>";
     }
-
     echo "</table></div>";
     echo "</center>";
     mysqli_close($conn);
     ?>
+
+<!-- Bootstrap JS (Optional, if you need JavaScript components) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function updateDeleteButtonshipping_status() {
         var checkboxes = document.getElementsByName('checkbox[]');
@@ -357,7 +524,27 @@
     }
 });
 </script>
+
 <script>
+    function openTab(event, tabName) {
+        // Prevent the default action of the button
+        event.preventDefault();
+        // Set the active tab to the clicked tab
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        event.currentTarget.className += " active";
+
+        // Send the tab value via GET method to the URL
+        window.location.href = window.location.pathname + "?tab=" + tabName;
+    }
     // function checkAll() {
     //     var checkboxes = document.getElementsByName('checkbox[]');
     //     var checkAllCheckbox = document.getElementById('checkAll');
@@ -380,49 +567,80 @@
     // }
 
     /* Fillter */
+    /* Fillter */
     function updateTable(filterKeyword) {
-            var tableRows = document.querySelectorAll('.user-row');
-
-            tableRows.forEach(function (row) {
-                var containsKeyword = false;
-
-                // Loop through all columns (td elements) in the current row
-                row.querySelectorAll('td').forEach(function (cell, index) {
-                    var cellText = cell.innerText.toLowerCase();
-
-                    // Check if the cell contains the filter keyword (string comparison)
-                    if (cellText.includes(filterKeyword.toLowerCase())) {
-                        containsKeyword = true;
-                        return; // Break out of the loop if the keyword is found in any cell
-                    }
-
-                    // Check if the cell contains the filter keyword as a number
-                    var cellNumber = parseFloat(cellText);
-                    var filterNumber = parseFloat(filterKeyword);
-
-                    if (!isNaN(cellNumber) && !isNaN(filterNumber) && cellNumber === filterNumber) {
-                        containsKeyword = true;
-                        return; // Break out of the loop if the numeric values match
-                    }
-                });
-
-                // Display or hide the row based on the keyword presence
-                if (containsKeyword) {
-                    row.style.display = 'table-row';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        // Listen for input event on the filter input
-        $('#filter').on('input', function() {
-            // Get the value of the filter input
-            var filterKeyword = $(this).val();
-
-            // Update the table based on the filter keyword
-            updateTable(filterKeyword);
+    // AJAX request to fetch filtered data
+        $.ajax({
+            type: 'GET',
+            url: 'filter_data.php',
+            data: { filterKeyword: filterKeyword },
+            success: function(data) {
+                // Replace the table content with the filtered data
+                $('#logTable').html(data); // Ensure that the id matches your table id
+            },
+            error: function(error) {
+                console.error('Error fetching filtered data:', error);
+            }
         });
+    }
+
+    // Listen for input event on the filter input
+    $('#filter').on('input', function() {
+        // Get the value of the filter input
+        var filterKeyword = $(this).val();
+
+        // Update the table based on the filter keyword
+        updateTable(filterKeyword);
+    });
+
+    $('#filterDropdown-1').on('change', function() {
+        // Get the value of the filter input
+        var filterKeyword = $(this).val();
+
+        console.log(filterKeyword);
+
+        // Update the table based on the filter keyword
+        updateTable(filterKeyword);
+    }); 
+
+    $('#filterDropdown-2').on('change', function() {
+        // Get the value of the filter input
+        var filterKeyword = $(this).val();
+
+        console.log(filterKeyword);
+
+        // Update the table based on the filter keyword
+        updateTable(filterKeyword);
+    }); 
+//     function filterTable() {
+//     var filterShipping = document.getElementById("filterShipping").value;
+//     var filterPayment = document.getElementById("filterPayment").value;
+
+//     console.log(filterPayment);
+//     console.log(filterShipping);
+
+//     var tableRows = document.querySelectorAll('.user-row');
+
+//     console.log(tableRows);
+
+//     tableRows.forEach(function (row) {
+//         var shippingStatusCell = row.querySelectorAll('td')[5].getAttribute('data-order_status');
+//         var paymentStatusCell = row.querySelectorAll('td')[6].getAttribute('data-order_status');
+
+//         console.log(shippingStatusCell);
+
+//         var matchShipping = filterShipping === '' || shippingStatusCell === filterShipping;
+//         var matchPayment = filterPayment === '' || paymentStatusCell === filterPayment;
+
+//         if (matchShipping && matchPayment) {
+//             row.style.display = 'table-row';
+//         } else {
+//             row.style.display = 'none';
+//         }
+//     });
+// }
 </script>
+
+
 </body>
 </html>
