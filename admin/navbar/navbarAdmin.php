@@ -111,7 +111,7 @@
                     <li><a class="a" href="../invoice/invoice_index.php">Invoice</a></li>
                     <li><a class="a" href="../order/order_index.php">Order</a></li>
                     <li class="nav-right"><a class="a" href="../../Customer/logoutProcess.php">Logout</a></li>';
-                }
+                } 
             ?>           
         </ul>
     </nav>

@@ -346,11 +346,12 @@ include_once '../dbConfig.php';
         </div>
 
         <div id="successForm" class="checkout-form" style="display: block; margin-left:50px;">
-            <h3>Order Placed Successfully!</h3>
             <?php
-                if($orderResult['fullfill_status'] == 'Unfullfilled') {
+                if($orderResult['fullfill_status'] == 'Unfulfilled') {
+                    echo '<h3>Order waiting for confirmation</h3>';
                     echo '<p>Your order has not been confirmed. Thank you for shopping with us.</p>';
-                } else if($orderResult['fullfill_status'] == 'Fullfilled'){
+                } else if($orderResult['fullfill_status'] == 'Fulfilled'){
+                    echo '<h3>Your Order has been placed </h3>';
                     echo '<p>Your order has been confirmed. Thank you for shopping with us.</p>';
                 }
             ?>

@@ -24,11 +24,20 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
         INNER JOIN Product ON Cart.ProID = Product.ProID WHERE CusID = $cusID");
 
         $orderInsertQuery = "
-            INSERT INTO orders (CusID, order_date, shipping_status, fullfill_status , total_price, shipping_address_id  , billing_address_id  , image_slip_id)
-            VALUES ($cusID, NOW(), 'Pending', 'Unfulfilled', 0.0 , $shippingAddressId, $billingAddressId  , $slipID)
+        INSERT INTO orders (CusID, order_date, shipping_status, fullfill_status, total_price, shipping_address_id, billing_address_id, image_slip_id)
+        VALUES (?, NOW(), 'Pending', 'Unfulfilled', '0.0', ?, ?, ?)
         ";
-    
-        mysqli_query($conn, $orderInsertQuery); 
+
+        // Prepare the statement
+        $stmt = mysqli_prepare($conn, $orderInsertQuery);
+
+        // Bind parameters to the placeholders
+        mysqli_stmt_bind_param($stmt, "iiii", $cusID, $shippingAddressId, $billingAddressId, $slipID);
+
+        // Execute the statement
+        mysqli_stmt_execute($stmt);
+
+        // Get the ID of the newly inserted order
         $orderId = $conn->insert_id;
 
         echo $orderId;
@@ -62,13 +71,32 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
         }
 
     } elseif(isset($_SESSION['guest']) && !empty($_SESSION['cart'])) {
+        // $orderInsertQuery = "
+        //     INSERT INTO orders (CusID, order_date, shipping_status, fullfill_status , total_price , shipping_address_id  , billing_address_id , image_slip_id)
+        //     VALUES ($cusID, NOW(), 'Pending', 'Unfulfilled', 0.0 , $shippingAddressId, $billingAddressId , $slipID)
+        // ";
+
+        // mysqli_query($conn, $orderInsertQuery); 
+        // $orderId = $conn->insert_id;
+
         $orderInsertQuery = "
-            INSERT INTO orders (CusID, order_date, shipping_status, fullfill_status , total_price , shipping_address_id  , billing_address_id , image_slip_id)
-            VALUES ($cusID, NOW(), 'Pending', 'Unfulfilled', 0.0 , $shippingAddressId, $billingAddressId , $slipID)
+        INSERT INTO orders (CusID, order_date, shipping_status, fullfill_status, total_price, shipping_address_id, billing_address_id, image_slip_id)
+        VALUES (?, NOW(), 'Pending', 'Unfulfilled', '0.0', ?, ?, ?)
         ";
 
-        mysqli_query($conn, $orderInsertQuery); 
+        // Prepare the statement
+        $stmt = mysqli_prepare($conn, $orderInsertQuery);
+
+        // Bind parameters to the placeholders
+        mysqli_stmt_bind_param($stmt, "iiii", $cusID, $shippingAddressId, $billingAddressId, $slipID);
+
+        // Execute the statement
+        mysqli_stmt_execute($stmt);
+
+        // Get the ID of the newly inserted order
         $orderId = $conn->insert_id;
+
+
 
         foreach ($_SESSION['cart'] as $product_id => $item) {
             $cur = "SELECT product.ProID, product.ProName, product.PricePerUnit , ImageData FROM product WHERE ProID = '$product_id'";
@@ -121,9 +149,12 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
     CallLog::callLog($ipAddress, $conn, $cusID , $productId, $callingFile, $action);
     /*----------------------------------------------*/
 
+
+    echo $tax_id;
     // Create Invoice if member needed
-    if($tax_id !== null && $tax_id !== ''){
+    if($tax_id !== null || $tax_id !== ''){
       createInvoice($cusID, $orderId , $conn , $tax_id);
+      echo 'Im in!';
     }
 
     mysqli_query($conn, "DELETE FROM cart WHERE CusID = '$cusID'");

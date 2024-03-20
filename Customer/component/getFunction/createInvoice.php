@@ -11,6 +11,13 @@ function createInvoice($cusID, $orderId, $conn , $tax_id)
     mysqli_query($conn, $invoiceInsertQuery);
     $invoiceId = $conn->insert_id;
 
+    $invoiceUpdateOrders = "
+        UPDATE orders
+        SET invoice_id = '$invoiceId'
+        WHERE order_id = '$orderId';
+    ";
+    mysqli_query($conn, $invoiceUpdateOrders);
+
     echo $invoiceId;
 
     // Insert invoice details
