@@ -204,11 +204,17 @@
 
 
 
-    $cur = "SELECT * FROM orders 
+    $cur = "SELECT * 
+    FROM orders 
     INNER JOIN customer ON customer.CusID = orders.CusID
-    INNER JOIN order_details ON order_details.order_id = orders.order_id
     INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
-    WHERE orders.fullfill_status = 'Fulfilled'";
+    WHERE orders.fullfill_status = 'Fulfilled' 
+    UNION
+    SELECT * 
+    FROM orders 
+    INNER JOIN customer ON customer.CusID = orders.CusID
+    INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
+    WHERE orders.fullfill_status = 'Unfulfilled' AND orders.shipping_status = 'Canceled'";
     $msresults = mysqli_query($conn, $cur);
 
     echo "<center>";
@@ -366,30 +372,39 @@
 </script>
 <script>
     function attachEventListenersForPaymentStatus() {
-        // Loop through all select elements and attach event listeners
+      
+        // Loop through all buttons and attach event listeners
         for (var i = 1; i <= <?php echo $index; ?>; i++) {
-            var selectElement = document.getElementById('select_payment_' + i);
+            var buttonElement = document.getElementById('select_payment_' + i);
 
-            if (selectElement) {
-                selectElement.addEventListener('change', function () {
-                    var selectedValue = this.value;
-                    var selectDiv = this.parentElement;
+            if (buttonElement) {
+                buttonElement.addEventListener('click', function () {
                     var order_id = this.getAttribute('data-payment-order_id');
+                    var selectedValue = "Fulfilled"; // ให้กำหนดค่าตามที่คุณต้องการ
 
-                    switch (selectedValue) {            
-                        case 'Unfulfilled':
-                            selectDiv.style.backgroundColor = '#FF6868';
-                            break;
-                        case 'Fulfilled':
-                            selectDiv.style.backgroundColor = '#06D6B1';
-                            break;
-                        default:
-                            selectDiv.style.backgroundColor = '#06D6B1';
-                    }
-
-                    console.log('123456');
-                    // Update the fullfill_status using AJAX
+                    // ทำการอัปเดตสถานะการชำระเงินโดยใช้ฟังก์ชัน updateFullfillStatus()
                     updateFullfillStatus(order_id, selectedValue);
+                    
+                    // สามารถทำอย่างอื่น ๆ ตามที่ต้องการหลังจากอัปเดตสถานะการชำระเงินเสร็จสิ้น
+                    // เช่น รีเฟรชหน้าเว็บหรือแสดงข้อความยืนยันการอัปเดตเป็นเรียบร้อย
+                });
+            }
+        }
+
+         // Loop through all buttons and attach event listeners
+         for (var i = 1; i <= <?php echo $index; ?>; i++) {
+            var buttonElement = document.getElementById('decline_payment_' + i);
+
+            if (buttonElement) {
+                buttonElement.addEventListener('click', function () {
+                    var order_id = this.getAttribute('data-payment-order_id');
+                    var selectedValue = "Canceled"; // ให้กำหนดค่าตามที่คุณต้องการ
+
+                    // ทำการอัปเดตสถานะการชำระเงินโดยใช้ฟังก์ชัน updateFullfillStatus()
+                    updateFullfillStatus(order_id, selectedValue);
+                    
+                    // สามารถทำอย่างอื่น ๆ ตามที่ต้องการหลังจากอัปเดตสถานะการชำระเงินเสร็จสิ้น
+                    // เช่น รีเฟรชหน้าเว็บหรือแสดงข้อความยืนยันการอัปเดตเป็นเรียบร้อย
                 });
             }
         }

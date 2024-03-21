@@ -1,4 +1,8 @@
-<?php include('./component/session.php'); ?>
+<?php 
+    include('./component/session.php'); 
+    include_once '../dbConfig.php'; 
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +10,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>History</title>
+    <!-- Bootstrap Icons -->
+    <link href="path/to/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- เรียกใช้งาน Bootstrap JavaScript รวมถึงโมดูล Popper.js ที่ต้องใช้
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script> -->
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,7 +49,7 @@
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 20px;
-            background-color: #f9f9f9;
+            background-color: #F7F7F7;
         }
 
         .order p {
@@ -52,7 +67,7 @@
             border-radius: 10px;
         }
 
-        #Paid {
+        /* #Paid {
             padding: 3px 8px;
             background-color: #06D6B1;
         }
@@ -60,31 +75,29 @@
         #Unpaid {
             padding: 3px 8px;
             background-color: #F0476F;
-        }
+        }*/
 
-        #Pending {
-            padding: 3px 8px;
-            background-color: #FFA500;
+        #Pending-status {
+            color: #06D6B1;
+            margin-top: 5px;
+        } 
+
+        #Inprogress-status {
+            color: #06D6B1;
             margin-top: 5px;
         }
 
-        #Inprogress {
-            padding: 3px 8px;
-            background-color: #7c6bff;
+        #Delivered-status {
+            /* padding: 3px 8px; */
+            /* background-color: #06D6B1; */
+            color: #06D6B1;
             margin-top: 5px;
         }
 
-        #Delivered {
-            padding: 3px 8px;
-            background-color: #06D6B1;
+        #Canceled-status {
+            color: #FC4141;
             margin-top: 5px;
-        }
-
-        #Canceled {
-            padding: 3px 8px;
-            background-color: #F0476F;
-            margin-top: 5px;
-        }
+        } 
 
 
 
@@ -93,7 +106,29 @@
             top: 10px;
             right: 10px;
             cursor: pointer;
+            border: none;
         }
+
+        
+        .button-container {
+            display: flex;
+            justify-content: center; /* จัดตำแหน่งปุ่มไปทางขวา */
+            
+            /* background-color: #FE6233; */
+            /* color: #ffff; */
+        }
+
+        .button-container button {
+            background-color: #FE6233;
+            width: 100%;
+            color: #ffff;
+        }
+
+        .button-container button:hover {
+            background-color: #EE4D2D;
+            color: #ffff;
+        }
+
 
 
         .tab {
@@ -136,6 +171,10 @@
             z-index: 100;
             border: 1px solid #333;
         }
+
+      
+
+      
     </style>
 </head>
 <!-- <?php include('./component/backButton.php'); ?> -->
@@ -148,21 +187,33 @@
         <h1>History</h1>
         <!-- Tab buttons -->
         <div class="tab">
-            <button id="invoiceTab" class="tablinks" onclick="openTab(event, 'invoice')">Invoice</button>
-            <button class="tablinks" onclick="openTab(event, 'orders')">Orders</button>
+            <button id="pendingTab" class="tablinks" onclick="openTab(event, 'pending')">Pending</button>
+            <button class="tablinks" onclick="openTab(event, 'inprogress')">Inprogress</button>
+            <button class="tablinks" onclick="openTab(event, 'delivered')">Delivered</button>
+            <button class="tablinks" onclick="openTab(event, 'canceled')">Canceled</button>
         </div>
+
         <?php
         $uid = $_SESSION['id_username'];
         ?>
 
         <!-- Tab content -->
-        <div id="invoice" class="tabcontent">
-            <?php includeInvoice("SELECT * FROM invoice WHERE CusID = '$uid'"); ?>
+        <div id="pending" class="tabcontent">
+            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Pending'", $conn); ?>
         </div>
 
-        <div id="orders" class="tabcontent">
-            <?php includeOrders("SELECT * FROM receive WHERE CusID = '$uid'"); ?>
+        <div id="inprogress" class="tabcontent">
+            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Inprogress'", $conn); ?>
         </div>
+
+        <div id="delivered" class="tabcontent">
+            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Delivered'", $conn); ?>
+        </div>
+
+        <div id="canceled" class="tabcontent">
+            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Canceled'", $conn); ?>
+        </div>
+
     </div>
     <script>
         function openTab(evt, tabName) {
@@ -178,74 +229,109 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
-        document.getElementById("invoiceTab").click();
+        document.getElementById("pendingTab").click();
+    </script>
+    <script>
+        function updateStatus(order_id, new_status) {
+            console.log(order_id, new_status);
+            $.ajax({
+                type:'POST',
+                url:'updateStatus.php',
+                data: { order_id: order_id, new_status: new_status },
+                success: function(response) {
+                    // console.log(response); // ล็อกข้อมูลทั้งหมดที่ได้รับกลับมาจากการเรียก Ajax
+                    
+                    var jsonResponse = JSON.parse(response);
+                    console.log(jsonResponse); 
+                    console.log(jsonResponse.message); 
+
+                    if (jsonResponse.message === "Add-new-cart") {
+                        console.log('check');
+                        window.location.assign('./cart.php');
+                    }
+                    
+                }, 
+                error: function(error) {
+                    console.error('Error fetching filtered data:', error);
+                }
+            });
+
+            // ตัวอย่างเทส: พิมพ์ข้อความออกมาเพื่อแสดงว่าการอัปเดตเสร็จสมบูรณ์
+            console.log('Order ID ' + order_id + ' updated to ' + new_status);
+            
+        }
     </script>
 </body>
 
 </html>
 
 <?php
-function includeInvoice($query)
-{
-    $conn =  mysqli_connect("localhost", "root", "", "shopping");
-    $msresults = mysqli_query($conn, $query);
-    while ($row = mysqli_fetch_array($msresults)) {
 
-        if ($row['Status'] == 'Unpaid') {
-            echo '<div class="order">';
-            echo "<div class='icon-container'>
-                    <form method='post' action='paymentForm.php'>
-                        <input type='hidden' name='id_invoice' value='{$row['InvID']}'>
-                        <input type='hidden' name='id_receiver' value='{$row['RecvID']}'>
-                        <button type='submit'>
-                            <img src='./image/search-alt.png' alt='Invoice Icon' width='20'>
-                        </button>
-                    </form>
+
+    function includeOrders($query , $conn) { 
+        $msresults = mysqli_query($conn, $query);
+        
+        while ($row = mysqli_fetch_array($msresults)) {
+
+                echo '<div class="order">';
+                echo "<div class='icon-container'>
+                        <form method='post' action='bill.php'>
+                            <input type='hidden' name='id_order' value='{$row['order_id']}'>
+                            <button type='submit'>
+                                <img src='./image/search-alt.png' alt='Order Icon' width='20'>
+                            </button>
+                        </form>
+                    </div>";
+                echo "<pf>Order ID: {$row['order_id']}</pf>";
+                echo "<hr>";
+                echo "<p>Total Amount: {$row['total_price']} ฿</p>";
+                echo "<p>Order Date: {$row['order_date']}</p>";
+                if ($row['delivery_date'] != null) {
+                    echo "<p>Delivery Date: {$row['delivery_date']}</p>";
+                }
+                echo "<hr>";
+
+               
+                
+                
+      
+                if($row['shipping_status'] == 'Inprogress') {
+                    echo "<pl id='{$row['shipping_status']}-status'><img src='./image/noun-shipping.png' alt='Shipping Fast Icon' width='20'> {$row['shipping_status']}</pl>";
+                    echo "<hr>";
+                    // echo "<button type='button' class='btn btn-primary' onclick='updateStatus({$row['order_id']}, 'Canceled')'>Canceled</button>";
+                    // <button type='button' class='btn btn-primary' onclick='updateStatus({$row['order_id']}, 'Canceled')'>Canceled</button>
+                    echo "<div class='button-container'>
+                    
                 </div>";
-            echo "<pf>Invoice ID: {$row['InvID']}</pf>";
-            echo "<p>Order Date: {$row['Period']}</p>";
-            echo "<p>Total Amount: {$row['TotalPrice']} ฿</p>";
-            if ($row['Status'] == 'Paid') {
-                echo "<pl id='Paid'>Status: {$row['Status']}</pl>";
-            } else {
-                echo "<pl id='Unpaid'>Status: {$row['Status']}</pl>";
-            }
-            echo '</div>';
-        }
-    }
-}
-
-function includeOrders($query)
-{
-    include_once '../dbConfig.php';
-
-    $msresults = mysqli_query($conn, $query);
-    while ($row = mysqli_fetch_array($msresults)) {
-        echo '<div class="order">';
-        echo "<div class='icon-container'>
-                <form method='post' action='bill.php'>
-                    <input type='hidden' name='id_order' value='{$row['RecID']}'>
-                    <button type='submit'>
-                        <img src='./image/search-alt.png' alt='Order Icon' width='20'>
+                }
+                else if($row['shipping_status'] == 'Pending') {
+                    echo "<pl id='{$row['shipping_status']}-status'><img src='./image/pending.png' alt='Pending Fast Icon' width='20'> {$row['shipping_status']}</pl>";
+                    echo "<hr>";
+                    echo "<div class='button-container'>
+                    <button type='button' class='btn' onclick='updateStatus({$row['order_id']}, \"Canceled\")'>
+                        Canceled
                     </button>
-                </form>
-            </div>";
-        echo "<pf>Order ID: {$row['RecID']}</pf>";
-        echo "<p>Total Amount: {$row['TotalPrice']} ฿</p>";
-        echo "<p>Order Date: {$row['OrderDate']}</p>";
-        if ($row['DeliveryDate'] != null) {
-            echo "<p>Delivery Date: {$row['DeliveryDate']}</p>";
+                    </div>";
+                }
+                else if($row['shipping_status'] == 'Delivered') {
+                    echo "<pl id='{$row['shipping_status']}-status'><img src='./image/shipping-fast.png' alt='Delivered Fast Icon' width='20'> {$row['shipping_status']}</pl>";
+                    echo "<hr>";
+                    echo "<div class='button-container'>
+                        <button type='button' class='btn' onclick='updateStatus({$row['order_id']}, \"Add-new-cart\")'>
+                            Order again
+                        </button>
+                    </div>";
+                }
+                else if($row['shipping_status'] == 'Canceled') {
+                    echo "<pl id='{$row['shipping_status']}-status'><img src='./image/cross-circle.png' alt='Canceled Fast Icon' width='20'> {$row['shipping_status']}</pl>";
+                    echo "<hr>";
+                }
+         
+                
+                echo '</div>';
+    
+            }          
         }
-        if ($row['Status'] == 'Pending') {
-            echo "<pl id='Pending'>Status: {$row['Status']}</pl>";
-        } else if ($row['Status'] == 'Inprogress') {
-            echo "<pl id='Inprogress'>Status: {$row['Status']}</pl>";
-        } else if ($row['Status'] == 'Delivered') {
-            echo "<pl id='Delivered'>Status: {$row['Status']}</pl>";
-        } else if ($row['Status'] == 'Canceled') {
-            echo "<pl id='Canceled'>Status: {$row['Status']}</pl>";
-        }
-        echo '</div>';
-    }
-}
 ?>
+
+

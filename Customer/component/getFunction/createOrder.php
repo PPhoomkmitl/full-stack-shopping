@@ -150,9 +150,9 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
     /*----------------------------------------------*/
 
 
-    echo $tax_id;
+    
     // Create Invoice if member needed
-    if($tax_id !== null || $tax_id !== ''){
+    if($tax_id !== null && $tax_id !== ''){
       createInvoice($cusID, $orderId , $conn , $tax_id);
       echo 'Im in!';
     }

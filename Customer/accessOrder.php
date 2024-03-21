@@ -11,6 +11,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if(isset( $_POST['tax_id'])) {
         $tax_id = $_POST['tax_id'];
     } 
+    else {
+        $tax_id = '';
+    }
 
 
     if (empty($_SESSION['id_username']) && isset($_SESSION['guest'])) {

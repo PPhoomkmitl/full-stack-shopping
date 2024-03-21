@@ -223,7 +223,7 @@ include('./component/getFunction/getName.php'); ?>
                                     <textarea style="resize:none;" name="bill_address" id="address" rows="3" required><?php echo $row['Address'] ?? ''; ?></textarea>
                                     <div class="invalid-feedback"> Please enter your shipping address. </div>
                                 </div>
-                                <?php if(isset($_SESSION['member'])): ?>
+                                <?php if(isset($_SESSION['member']) || isset($_SESSION['guest'])): ?>
                                     <div class="mb-3 py-2">                           
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
