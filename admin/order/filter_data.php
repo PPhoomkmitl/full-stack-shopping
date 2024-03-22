@@ -80,7 +80,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
         <td>{$row['order_date']}</td>";
 
         // Check if fullfill_status is Fulfilled
-        if ($row['fullfill_status'] == 'Unfulfilled' || $row['fullfill_status'] == 'Fulfilled' && $filterKeyword == 'All') {
+        if ((($row['fullfill_status'] == 'Unfulfilled') || ($row['fullfill_status'] == 'Fulfilled')) && ($filterKeyword != 'Unfulfilled')) {
             echo "<td>{$row['delivery_date']}</td>";
 
             /* Shipping Status */
@@ -119,6 +119,8 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
                 // $selected = ($value == $row['shipping_status']) ? 'selected' : '';
                 // echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
             }
+
+
            
             echo "</select>";
 
