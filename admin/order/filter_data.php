@@ -42,17 +42,16 @@ if (!empty($filterKeyword) && $filterKeyword != 'All') {
     FROM orders 
     INNER JOIN customer ON customer.CusID = orders.CusID
     INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
-    WHERE orders.fullfill_status = 'Unfulfilled' AND orders.shipping_status = 'Canceled'  
-    LIMIT 10 OFFSET 0";
+    WHERE orders.fullfill_status = 'Unfulfilled' AND orders.shipping_status = 'Canceled'";
     $msresults = mysqli_query($conn, $cur);
     // Check for errors in query execution
     if (!$msresults) {
         die("Query failed: " . mysqli_error($conn));
     }
 } else {
+    
     $msresults = null;
 }
-
 if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
     echo "<tr>";
     echo "<th>Order ID</th>";
@@ -81,7 +80,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
         <td>{$row['order_date']}</td>";
 
         // Check if fullfill_status is Fulfilled
-        if ($row['fullfill_status'] == 'Fulfilled') {
+        if ($row['fullfill_status'] == 'Unfulfilled' || $row['fullfill_status'] == 'Fulfilled' && $filterKeyword == 'All') {
             echo "<td>{$row['delivery_date']}</td>";
 
             /* Shipping Status */
@@ -161,7 +160,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
 
 
         // Check if fullfill_status is Unfulfilled
-        if ($row['fullfill_status'] == 'Unfulfilled') {
+        if ($row['fullfill_status'] == 'Unfulfilled' && $filterKeyword != 'All') {
 
             echo "
             <td>
