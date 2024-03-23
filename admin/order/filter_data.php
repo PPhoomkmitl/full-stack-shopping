@@ -80,7 +80,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
         <td>{$row['order_date']}</td>";
 
         // Check if fullfill_status is Fulfilled
-        if ((($row['fullfill_status'] == 'Unfulfilled') || ($row['fullfill_status'] == 'Fulfilled')) && ($filterKeyword != 'Unfulfilled')) {
+        if ((($row['fullfill_status'] == 'Unfulfilled') || ($row['fullfill_status'] == 'Fulfilled')) && ($filterKeyword != 'Unfulfilled' || $filterKeyword == 'Canceled')) {
             echo "<td>{$row['delivery_date']}</td>";
 
             /* Shipping Status */
@@ -162,7 +162,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
 
 
         // Check if fullfill_status is Unfulfilled
-        if ($row['fullfill_status'] == 'Unfulfilled' && $filterKeyword != 'All' ) {
+        if ($row['fullfill_status'] == 'Unfulfilled' && ($filterKeyword != 'All' && $filterKeyword != 'Canceled')  ) {
 
             echo "
             <td>

@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $selectedProducts = json_decode($selectedProductsJSON, true);
 
     $totalPrice = $_POST['totalProductPrice'];
-    $cusID = $_POST['customerName'];
+    $cusID = $_POST['customerID'];
     $status = $_POST['status'];
 
     /* shipping_address */
@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $payer_fname = $_POST['payer_fname'];
     $payer_lname = $_POST['payer_lname'];
     $payer_tel = $_POST['payer_tel'];
+    $addr1 = $_POST['address_line1'];
 
     // Create shipping_address info
     $insert_query_head = "INSERT INTO shipping_address (recipient_name, phone_number, address_line1) 
@@ -53,8 +54,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // }
 
     // Create Payer info
-    $insert_query_head = "INSERT INTO billing_address(recipient_name, phone_number, address_line1) 
-                        VALUES('$payer_fname . $payer_lname', '$payer_tel', NULL)";
+    $insert_query_head = "INSERT INTO billing_address(CusID, recipient_name, phone_number, address_line1) 
+                        VALUES('$cusID','$payer_fname . $payer_lname', '$payer_tel', '$addr1')";
     $insert_result_head = mysqli_query($conn, $insert_query_head);
 
     if (!$insert_result_head) {
@@ -64,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
 
 
-    echo $TaxID;
+    // echo $TaxID;
 
 
     // // Generate new NumID for payer_detail
@@ -95,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Insert into orders table
     $stmt = mysqli_query($conn, "INSERT INTO orders(CusID, order_date, shipping_status, fullfill_status , total_price , billing_address_id , shipping_address_id , image_slip_id)
-        VALUES ($cusID , NOW(),'$status', 'Unfulfilled' ,'$totalPrice', '$TaxID' , '$recv_id' , null);");
+        VALUES ($cusID , NOW(),'$status', 'Unfulfilled' ,'$totalPrice', NULL , '$recv_id' , null);");
 
     if (!$stmt) {
         die("Error inserting into orders: " . mysqli_error($conn));

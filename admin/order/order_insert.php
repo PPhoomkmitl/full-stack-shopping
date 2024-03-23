@@ -102,13 +102,13 @@
     <div class="invoice-form">
         <form action="order_save_insert.php" method="post">
             <h2 style="color: #007bff;">Create Order</h2>
-    
+
             <!-- Invoice Information Section -->
             <div class="form-block">
                 <h3 style="color: #007bff;">Order Information</h3>
                 <div class="form-group">
                     <label for="order_id">order_id:</label>
-                <?php     
+                    <?php
                     // Generate new RECEIVE ID
                     $result = mysqli_query($conn, "SELECT MAX(order_id) AS order_id FROM orders");
                     $row = mysqli_fetch_assoc($result);
@@ -117,187 +117,203 @@
                     $order_id = $newNumericPart;
                     echo "<input type='text' id='order_id' name='order_id' value='$order_id' readonly>
                     </div>";
-                ?>
-                <div class="form-group">
-                    <label for="status">Status:</label>
-                    <select id="status" name="status" required>
-                        <option value="Pending">Pending</option>
-                        <option value="Inprogress">Inprogress</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Canceled">Delivered</option>
-                    </select>
+                    ?>
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" required>
+                            <option value="Pending">Pending</option>
+                            <option value="Inprogress">Inprogress</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Canceled">Delivered</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            
-            <h3 style="color: #007bff;">Customer Information</h3>
-            <div class="form-block">
-                <div class="form-group">
-                    <label for="customerName">Customer Name:</label>
-                    <select id="customerName" name="customerName" required>
-                        <?php
+
+                <h3 style="color: #007bff;">Customer Information</h3>
+                <div class="form-block">
+                    <div class="form-group">
+                        <label for="customerName">Customer Name:</label>
+
+                        <select id="customerName" name="customerName" onchange="updateCustomerID(this)" required>
+                            <?php
                             // Your PHP code to fetch products from the database
                             $result = mysqli_query($conn, "SELECT * FROM Customer");
                             while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='{$row['CusID']}'>{$row['CusFName']} {$row['CusLName']}</option>";
+                                echo "<option value='{$row['CusID']}' data-cusid='{$row['CusID']}'>{$row['CusFName']} {$row['CusLName']}</option>";
                             }
-                        ?>
-                    </select>
-                             
-                </div>
-                <div class="form-group" style="color: #007bff">
-                    <label style="color: #007bff" for="customerName">Customer Address:</label>
+                            ?>
+                        </select>
+                        <input type="hidden" id="customerID" name="customerID" value="">
+
+                        <script>
+                            function updateCustomerID(select) {
+                                var selectedOption = select.options[select.selectedIndex];
+                                var customerID = selectedOption.getAttribute('data-cusid');
+                                console.log('Selected CusID:', customerID);
+                                document.getElementById('customerID').value = customerID;
+                            }
+                        </script>
+
+
+
+
+
+
+                    </div>
+                    <div class="form-group" style="color: #007bff">
+                        <label style="color: #007bff" for="customerName">Customer Address:</label>
                         <!-- <input type='text' name='id_recevier' value=''> -->
                         FirstName: <input type='text' name='recv_fname' value=''>
                         LastName: <input type='text' name='recv_lname' value=''>
                         Tel: <input type='text' name='recv_tel' value=''>
                         Address: <input type='text' name='recv_address' value=''>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-block">
-                <h3 style="color: #007bff;">Payer Form</h3>
-                <div class="form-group" style="color: #007bff">
-                    <label style="color: #007bff" for="customerName">Payer info:</label>
+                <div class="form-block">
+                    <h3 style="color: #007bff;">Payer Form</h3>
+                    <div class="form-group" style="color: #007bff">
+                        <label style="color: #007bff" for="customerName">Payer info:</label>
                         <!-- <input type='text' name='id_recevier' value=''> -->
                         FirstName: <input type='text' name='payer_fname' value=''>
                         LastName: <input type='text' name='payer_lname' value=''>
                         Tel: <input type='text' name='payer_tel' value=''>
+                        Address 1: <input type='text' name='address_line1' value=''>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Add Products Section -->
-            <div class="form-block">
-                <h3 style="color: #007bff;">Add Products</h3>
-                <div class="form-group">
-                    <label for="productName">Product Name:</label>
-                    <select id="productName" name="productName[]" >
-                        <?php
+                <!-- Add Products Section -->
+                <div class="form-block">
+                    <h3 style="color: #007bff;">Add Products</h3>
+                    <div class="form-group">
+                        <label for="productName">Product Name:</label>
+                        <select id="productName" name="productName[]">
+                            <?php
                             // Your PHP code to fetch products from the database
                             $result = mysqli_query($conn, "SELECT * FROM Product");
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<option data-product-id='{$row['ProID']}' data-price='{$row['PricePerUnit']}' value='{$row['ProID']}'>{$row['ProName']}</option>";
                             }
-                        ?>
-                    </select>
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="text" id="quantity" name="quantity[]">
+                    </div>
+                    <button type="button" id="addProductBtn">Add Product</button>
                 </div>
-                <div class="form-group">
-                    <label for="quantity">Quantity:</label>
-                    <input type="text" id="quantity" name="quantity[]" >
-                </div>
-                <button type="button" id="addProductBtn">Add Product</button>
-            </div>
-    
 
-            <!-- Product Table -->
-            <h3 style="color: #007bff;">Product Information</h3>
-            <table id="productTable">
-                <thead>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Quantity</th>
-                        <th>Price Per Unit</th>
-                        <th>Total Price</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3" style="text-align: right;"><strong>VAT 7%:</strong></td>
-                        <td id="totalVatPriceInput">0</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="text-align: right;"><strong>Total Price:</strong></td>
-                        <td id="totalProductPrice">0</td>
-                    </tr>
-                </tfoot>
-            </table>
 
-            
-            <input type="hidden" id="selectedProductsInput" name="selectedProducts" value="">
-            <input type="hidden" id="totalProductPriceInput" name="totalProductPrice" value="0">
-            <input type="submit" value="Submit">
+                <!-- Product Table -->
+                <h3 style="color: #007bff;">Product Information</h3>
+                <table id="productTable">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price Per Unit</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right;"><strong>VAT 7%:</strong></td>
+                            <td id="totalVatPriceInput">0</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right;"><strong>Total Price:</strong></td>
+                            <td id="totalProductPrice">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+                <input type="hidden" id="selectedProductsInput" name="selectedProducts" value="">
+                <input type="hidden" id="totalProductPriceInput" name="totalProductPrice" value="0">
+                <input type="submit" value="Submit">
         </form>
     </div>
 
     <script>
-    // Initialize an array to store selected product names
-    var selectedProducts = [];   
+        // Initialize an array to store selected product names
+        var selectedProducts = [];
 
-    $(document).ready(function() {
+        $(document).ready(function() {
 
-    // Add Product Button Click Event using the 'on' method
-    $(document).on('click', '#addProductBtn', function() {
-        addProduct();
-    });
+            // Add Product Button Click Event using the 'on' method
+            $(document).on('click', '#addProductBtn', function() {
+                addProduct();
+            });
 
-    function addProduct() {
-        // Get values from inputs
-        var productId = $('#productName option:selected').data('product-id');
-        var productName = $('#productName option:selected').text();
-        var quantity = $('#quantity').val();
-        var pricePerUnit = $('#productName option:selected').data('price');
+            function addProduct() {
+                // Get values from inputs
+                var productId = $('#productName option:selected').data('product-id');
+                var productName = $('#productName option:selected').text();
+                var quantity = $('#quantity').val();
+                var pricePerUnit = $('#productName option:selected').data('price');
 
-        // Validate quantity
-        if (!quantity || isNaN(quantity) || quantity <= 0) {
-            alert("Please enter a valid quantity.");
-            return;
-        }
+                // Validate quantity
+                if (!quantity || isNaN(quantity) || quantity <= 0) {
+                    alert("Please enter a valid quantity.");
+                    return;
+                }
 
-        // Calculate total price
-        var totalPrice = quantity * pricePerUnit;
+                // Calculate total price
+                var totalPrice = quantity * pricePerUnit;
 
-        // Create table row
-        var row = '<tr>' +
-            '<td>' + productName + '</td>' +
-            '<td>' + quantity + '</td>' +
-            '<td>' + pricePerUnit + '</td>' +
-            '<td>' + totalPrice + '</td>' +
-            '</tr>';
+                // Create table row
+                var row = '<tr>' +
+                    '<td>' + productName + '</td>' +
+                    '<td>' + quantity + '</td>' +
+                    '<td>' + pricePerUnit + '</td>' +
+                    '<td>' + totalPrice + '</td>' +
+                    '</tr>';
 
-        // Append row to the table
-        $('#productTable tbody').append(row);
+                // Append row to the table
+                $('#productTable tbody').append(row);
 
-        // Update total price
-        updateTotalPrice();
+                // Update total price
+                updateTotalPrice();
 
-        // Store selected product details in array
-        var selectedProduct = {
-            productId: productId,
-            productName: productName,
-            quantity: quantity
-        };
+                // Store selected product details in array
+                var selectedProduct = {
+                    productId: productId,
+                    productName: productName,
+                    quantity: quantity
+                };
 
-        selectedProducts.push(selectedProduct);
-        $('#selectedProductsInput').val(JSON.stringify(selectedProducts));
+                selectedProducts.push(selectedProduct);
+                $('#selectedProductsInput').val(JSON.stringify(selectedProducts));
 
 
-        // Clear input fields
-        $('#productName').val('');
-        $('#quantity').val('');
+                // Clear input fields
+                $('#productName').val('');
+                $('#quantity').val('');
 
-        console.log(selectedProducts);
-    }
+                console.log(selectedProducts);
+            }
 
-    function updateTotalPrice() {
-        // Calculate total product price
-        var totalProductPrice = 0;
-        var vatPrice = 0;
-        $('#productTable tbody tr').each(function() {
-            var totalPriceCell = $(this).find('td:last-child').text();
-            totalProductPrice += parseFloat(totalPriceCell);
-            vatPrice = totalProductPrice * 0.07;
+            function updateTotalPrice() {
+                // Calculate total product price
+                var totalProductPrice = 0;
+                var vatPrice = 0;
+                $('#productTable tbody tr').each(function() {
+                    var totalPriceCell = $(this).find('td:last-child').text();
+                    totalProductPrice += parseFloat(totalPriceCell);
+                    vatPrice = totalProductPrice * 0.07;
+                });
+
+
+                $('#totalVatPriceInput').text(vatPrice.toFixed(2));
+                // Update total price in the footer
+                $('#totalProductPrice').text((totalProductPrice + vatPrice).toFixed(2));
+                // Update hidden input value
+                $('#totalProductPriceInput').val((totalProductPrice + vatPrice).toFixed(2));
+
+            }
         });
-
-        
-        $('#totalVatPriceInput').text(vatPrice.toFixed(2));
-        // Update total price in the footer
-        $('#totalProductPrice').text((totalProductPrice + vatPrice).toFixed(2));
-        // Update hidden input value
-        $('#totalProductPriceInput').val((totalProductPrice + vatPrice).toFixed(2));
-        
-    }
-    });
-       
     </script>
 
 </body>
