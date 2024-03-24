@@ -269,19 +269,29 @@
             echo "<select id='select_$index' data-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
 
             // Options for shipping_status
-            $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
-            foreach ($shipping_statusCompare as $value) {
-                if ($row['shipping_status'] == 'Canceled' && ($value == 'Pending' || $value == 'Inprogress' || $value == 'Delivered')) {
-                    echo "<option value='$value' style='background-color: #ffff; color: black;' disabled>{$value}</option>";
-                } else if ($row['shipping_status'] == 'Delivered' && ($value == 'Pending' || $value == 'Inprogress' || $value == 'Canceled')) {
-                    echo "<option value='$value' style='background-color: #ffff; color: black;' disabled>{$value}</option>";
-                } else if ($row['shipping_status'] == 'Inprogress' && $value == 'Pending') {
-                    echo "<option value='$value' style='background-color: #ffff; color: black;' disabled>{$value}</option>";
-                } else {
+            if ($_SESSION['admin'] == 'super_admin') {
+                $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
+                foreach ($shipping_statusCompare as $value) {
                     $selected = ($value == $row['shipping_status']) ? 'selected' : '';
                     echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
                 }
+            } elseif ($_SESSION['admin'] == 'user_admin') {
+                // Add your existing code for user_admin here
+                $shipping_statusCompare = ['Pending', 'Inprogress', 'Delivered', 'Canceled'];
+                foreach ($shipping_statusCompare as $value) {
+                    if ($row['shipping_status'] == 'Canceled' && ($value == 'Pending' || $value == 'Inprogress' || $value == 'Delivered')) {
+                        echo "<option value='$value' style='background-color: #ffff; color: black;' disabled>{$value}</option>";
+                    } else if ($row['shipping_status'] == 'Delivered' && ($value == 'Pending' || $value == 'Inprogress' || $value == 'Canceled')) {
+                        echo "<option value='$value' style='background-color: #ffff; color: black;' disabled>{$value}</option>";
+                    } else if ($row['shipping_status'] == 'Inprogress' && $value == 'Pending') {
+                        echo "<option value='$value' style='background-color: #ffff; color: black;' disabled>{$value}</option>";
+                    } else {
+                        $selected = ($value == $row['shipping_status']) ? 'selected' : '';
+                        echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+                    }
+                }
             }
+
             echo "</select>";
 
             echo "</div></td>";
