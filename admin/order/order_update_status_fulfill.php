@@ -1,14 +1,26 @@
 <?php
 // Include database configuration
+
+use PgSql\Result;
+
 include_once '../../dbConfig.php';
 
 // Function to update fullfill_status
 function updateFullfillStatus($order_id, $newfullfill_status) {
     global $conn;
+    if($newfullfill_status == 'Fulfilled' || $newfullfill_status == 'Unfulfiled' ) {
+        // Update query
+        $sql = "UPDATE orders SET fullfill_status = '$newfullfill_status' , shipping_status = 'Inprogress' , delivery_date = NOW() WHERE order_id = '$order_id'";
+    }
+    else {
+        // Update query
+        $sql = "UPDATE orders SET fullfill_status = 'Fulfilled' WHERE order_id = '$order_id'";
 
-    // Update query
-    $sql = "UPDATE orders SET fullfill_status = '$newfullfill_status' , shipping_status = 'Inprogress' , delivery_date = NOW() WHERE order_id = '$order_id'";
-
+        $result = "SELECT * FROM order_details INNER JOIN product ON  product.ProID = order_details.ProID WHERE order_id = '$order_id'";
+        
+        while($row = Result)
+        $sql = "UPDATE product SET StockQty = StockQty + 'quantity' WHERE order_id = '$order_id'";
+    }
     // Execute query
     if (mysqli_query($conn, $sql)) {
         echo "Status updated successfully";
@@ -42,6 +54,9 @@ if (isset($_POST['order_id']) && isset($_POST['newfullfill_status'])) {
     if($newfullfill_status == 'Fulfilled'){
         updateFullfillStatus($order_id, $newfullfill_status);
     } 
+    else if ($newfullfill_status == 'canceled_fulfilled'){
+        updateFullfillStatus($order_id, $newfullfill_status);
+    }
     else {
         updateCanceledStatus($order_id, $newfullfill_status);
     }

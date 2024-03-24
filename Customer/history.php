@@ -199,7 +199,7 @@
 
         <!-- Tab content -->
         <div id="pending" class="tabcontent">
-            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Pending'", $conn); ?>
+            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND (shipping_status = 'Pending' OR (shipping_status = 'Canceled' AND fullfill_status = 'Unfulfilled'))", $conn); ?>
         </div>
 
         <div id="inprogress" class="tabcontent">
@@ -211,7 +211,7 @@
         </div>
 
         <div id="canceled" class="tabcontent">
-            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Canceled'", $conn); ?>
+            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Canceled' AND fullfill_status = 'Fulfilled'", $conn); ?>
         </div>
 
     </div>
@@ -272,30 +272,26 @@
         $msresults = mysqli_query($conn, $query);
         
         while ($row = mysqli_fetch_array($msresults)) {
-
-                echo '<div class="order">';
-                echo "<div class='icon-container'>
-                        <form method='post' action='bill.php'>
-                            <input type='hidden' name='id_order' value='{$row['order_id']}'>
-                            <button type='submit'>
-                                <img src='./image/search-alt.png' alt='Order Icon' width='20'>
-                            </button>
-                        </form>
-                    </div>";
-                echo "<pf>Order ID: {$row['order_id']}</pf>";
-                echo "<hr>";
-                echo "<p>Total Amount: {$row['total_price']} ฿</p>";
-                echo "<p>Order Date: {$row['order_date']}</p>";
-                if ($row['delivery_date'] != null) {
-                    echo "<p>Delivery Date: {$row['delivery_date']}</p>";
-                }
-                echo "<hr>";
-
-               
-                
-                
-      
+   
                 if($row['shipping_status'] == 'Inprogress') {
+                    echo '<div class="order">';
+                    echo "<div class='icon-container'>
+                            <form method='post' action='bill.php'>
+                                <input type='hidden' name='id_order' value='{$row['order_id']}'>
+                                <button type='submit'>
+                                    <img src='./image/search-alt.png' alt='Order Icon' width='20'>
+                                </button>
+                            </form>
+                        </div>";
+                    echo "<pf>Order ID: {$row['order_id']}</pf>";
+                    echo "<hr>";
+                    echo "<p>Total Amount: {$row['total_price']} ฿</p>";
+                    echo "<p>Order Date: {$row['order_date']}</p>";
+                    if ($row['delivery_date'] != null) {
+                        echo "<p>Delivery Date: {$row['delivery_date']}</p>";
+                    }
+                    echo "<hr>";
+
                     echo "<pl id='{$row['shipping_status']}-status'><img src='./image/noun-shipping.png' alt='Shipping Fast Icon' width='20'> {$row['shipping_status']}</pl>";
                     echo "<hr>";
                     // echo "<button type='button' class='btn btn-primary' onclick='updateStatus({$row['order_id']}, 'Canceled')'>Canceled</button>";
@@ -304,16 +300,66 @@
                     
                 </div>";
                 }
-                else if($row['shipping_status'] == 'Pending') {
-                    echo "<pl id='{$row['shipping_status']}-status'><img src='./image/pending.png' alt='Pending Fast Icon' width='20'> {$row['shipping_status']}</pl>";
+
+                else if($row['shipping_status'] == 'Pending' || ($row['shipping_status'] == 'Canceled' && $row['fullfill_status'] == 'Unfulfilled')) {
+                    echo '<div class="order">';
+                    echo "<div class='icon-container'>
+                            <form method='post' action='bill.php'>
+                                <input type='hidden' name='id_order' value='{$row['order_id']}'>
+                                <button type='submit'>
+                                    <img src='./image/search-alt.png' alt='Order Icon' width='20'>
+                                </button>
+                            </form>
+                        </div>";
+                    echo "<pf>Order ID: {$row['order_id']}</pf>";
                     echo "<hr>";
-                    echo "<div class='button-container'>
-                    <button type='button' class='btn' onclick='updateStatus({$row['order_id']}, \"Canceled\")'>
-                        Canceled
-                    </button>
-                    </div>";
+                    echo "<p>Total Amount: {$row['total_price']} ฿</p>";
+                    echo "<p>Order Date: {$row['order_date']}</p>";
+                    if ($row['delivery_date'] != null) {
+                        echo "<p>Delivery Date: {$row['delivery_date']}</p>";
+                    }
+                    echo "<hr>";
+
+                   
+                    if($row['shipping_status'] == 'Canceled' && $row['fullfill_status'] == 'Unfulfilled'){
+                        echo "<div class='button-container'>
+                        <button type='button' class='btn btn-secondary' disabled style='color: #fff; border-color: #f8f9fa;'>
+                            Waiting for approval to cancel...
+                        </button>
+                        </div>";
+                    }
+                    else {
+                        echo "<pl id='{$row['shipping_status']}-status'><img src='./image/pending.png' alt='Pending Fast Icon' width='20'> {$row['shipping_status']}</pl>";
+                        echo "<hr>";
+    
+                        echo "<div class='button-container'>
+                        <button type='button' class='btn' onclick='updateStatus({$row['order_id']}, \"Canceled\")'>
+                            Canceled
+                        </button>
+                        </div>";
+                    }       
+
                 }
+
                 else if($row['shipping_status'] == 'Delivered') {
+                    echo '<div class="order">';
+                    echo "<div class='icon-container'>
+                            <form method='post' action='bill.php'>
+                                <input type='hidden' name='id_order' value='{$row['order_id']}'>
+                                <button type='submit'>
+                                    <img src='./image/search-alt.png' alt='Order Icon' width='20'>
+                                </button>
+                            </form>
+                        </div>";
+                    echo "<pf>Order ID: {$row['order_id']}</pf>";
+                    echo "<hr>";
+                    echo "<p>Total Amount: {$row['total_price']} ฿</p>";
+                    echo "<p>Order Date: {$row['order_date']}</p>";
+                    if ($row['delivery_date'] != null) {
+                        echo "<p>Delivery Date: {$row['delivery_date']}</p>";
+                    }
+                    echo "<hr>";
+
                     echo "<pl id='{$row['shipping_status']}-status'><img src='./image/shipping-fast.png' alt='Delivered Fast Icon' width='20'> {$row['shipping_status']}</pl>";
                     echo "<hr>";
                     echo "<div class='button-container'>
@@ -322,7 +368,26 @@
                         </button>
                     </div>";
                 }
-                else if($row['shipping_status'] == 'Canceled') {
+
+                else if($row['shipping_status'] == 'Canceled' && $row['fullfill_status'] == 'Fulfilled') {
+                    echo '<div class="order">';
+                    echo "<div class='icon-container'>
+                            <form method='post' action='bill.php'>
+                                <input type='hidden' name='id_order' value='{$row['order_id']}'>
+                                <button type='submit'>
+                                    <img src='./image/search-alt.png' alt='Order Icon' width='20'>
+                                </button>
+                            </form>
+                        </div>";
+                    echo "<pf>Order ID: {$row['order_id']}</pf>";
+                    echo "<hr>";
+                    echo "<p>Total Amount: {$row['total_price']} ฿</p>";
+                    echo "<p>Order Date: {$row['order_date']}</p>";
+                    if ($row['delivery_date'] != null) {
+                        echo "<p>Delivery Date: {$row['delivery_date']}</p>";
+                    }
+                    echo "<hr>";
+
                     echo "<pl id='{$row['shipping_status']}-status'><img src='./image/cross-circle.png' alt='Canceled Fast Icon' width='20'> {$row['shipping_status']}</pl>";
                     echo "<hr>";
                 }
@@ -333,5 +398,3 @@
             }          
         }
 ?>
-
-

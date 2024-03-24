@@ -231,7 +231,6 @@
                 <th>Delivery Date</th>
                 <th>Delivery Status</th>
                 <th>Payment Status</th>
-                <th>Action</th>
             </tr>";
 
     $index = 1;
@@ -331,13 +330,13 @@
             echo "</select>";
             echo "</div></td>";
 
-            echo "<td>
-                    <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
-                        <input type='hidden' name='id_order' value={$row['order_id']}>
-                        <input type='image' alt='update' src='../img/pencil.png'/>
-                    </form>
-                  </td>
-                  </tr>";
+            // echo "<td>
+            //         <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
+            //             <input type='hidden' name='id_order' value={$row['order_id']}>
+            //             <input type='image' alt='update' src='../img/pencil.png'/>
+            //         </form>
+            //       </td>
+                echo "</tr>";
             $index++;
         }
     } else {
@@ -395,13 +394,19 @@
                 if (buttonElement) {
                     buttonElement.addEventListener('click', function() {
                         var order_id = this.getAttribute('data-payment-order_id');
-                        var selectedValue = "Fulfilled"; // ให้กำหนดค่าตามที่คุณต้องการ
+                        var dataCanceled = this.getAttribute('data-canceled'); // Changed to camelCase
 
-                        // ทำการอัปเดตสถานะการชำระเงินโดยใช้ฟังก์ชัน updateFullfillStatus()
+                        if (dataCanceled === 'row_data_canceled') {
+                            var selectedValue = "canceled_fulfilled";
+                        } else {
+                            var selectedValue = "Fulfilled"; // Set as needed
+                        }
+
+                        // Update the fulfillment status using the updateFullfillStatus() function
                         updateFullfillStatus(order_id, selectedValue);
 
-                        // สามารถทำอย่างอื่น ๆ ตามที่ต้องการหลังจากอัปเดตสถานะการชำระเงินเสร็จสิ้น
-                        // เช่น รีเฟรชหน้าเว็บหรือแสดงข้อความยืนยันการอัปเดตเป็นเรียบร้อย
+                        // You can perform other actions after updating the payment status
+                        // such as refreshing the webpage or displaying a confirmation message
                     });
                 }
             }

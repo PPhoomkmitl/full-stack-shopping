@@ -28,6 +28,7 @@ include_once '../dbConfig.php';
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding-bottom: 10px;
+            
         }
 
         .checkout-header {
@@ -297,13 +298,18 @@ include_once '../dbConfig.php';
             width: 40px;
             height: 40px;
         }
+
+        .navBar {
+            margin-top: -20px;
+        }
     </style>
 </head>
 
+
 <body>
-    <div class="backButton">
-        <?php include('./component/backButton.php'); ?>
-    </div>
+    <div class="navBar">
+        <?php include('./component/checkoutNavbar.php'); ?>
+    <div>
     <?php
     if (isset($_SESSION['id_username'])) {
         $cusID = $_SESSION['id_username'];
@@ -347,12 +353,14 @@ include_once '../dbConfig.php';
 
         <div id="successForm" class="checkout-form" style="display: block; margin-left:50px;">
             <?php
-                if($orderResult['fullfill_status'] == 'Unfulfilled') {
+                if($orderResult['fullfill_status'] == 'Unfulfilled' && $orderResult['shipping_status'] != 'Canceled') {
                     echo '<h3>Order waiting for confirmation</h3>';
                     echo '<p>Your order has not been confirmed. Thank you for shopping with us.</p>';
-                } else if($orderResult['fullfill_status'] == 'Fulfilled'){
+                } else if($orderResult['fullfill_status'] == 'Fulfilled' && $orderResult['shipping_status'] != 'Canceled'){
                     echo '<h3>Your Order has been placed </h3>';
                     echo '<p>Your order has been confirmed. Thank you for shopping with us.</p>';
+                } else {
+                    echo '<h3>Your Order has been canceled </h3>';
                 }
             ?>
         </div>
@@ -444,7 +452,7 @@ include_once '../dbConfig.php';
                     <div class="card-header px-4 py-5 d-flex justify-content-between" >
                         <h5 class="text-muted mb-0">Thanks for your Order,<span style="color: #488978;"> ' . $orderResult['CusFName'] . '!</span></h5>
                         <div class="action-buttons">';
-                        if($orderResult['invoice_id'] !== null && $orderResult['fullfill_status'] == 'Fulfilled'){          
+                        if($orderResult['invoice_id'] !== null && $orderResult['fullfill_status'] == 'Fulfilled' && $orderResult['shipping_status'] != 'Canceled'){          
                            echo '<form class="action-button" action="pdf.php" method="post" target="_blank" style="display: inline-block;">
                                 <input type="hidden" name="order_id" value="' . $orderID . '">
                                 <input type="hidden" name="id_customer" value="' . $cusID . '">

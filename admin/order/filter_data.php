@@ -42,7 +42,7 @@ if (!empty($filterKeyword) && $filterKeyword != 'All') {
     FROM orders 
     INNER JOIN customer ON customer.CusID = orders.CusID
     INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
-    WHERE orders.fullfill_status = 'Unfulfilled' AND orders.shipping_status = 'Canceled'";
+    WHERE orders.shipping_status = 'Canceled'";
     $msresults = mysqli_query($conn, $cur);
     // Check for errors in query execution
     if (!$msresults) {
@@ -52,6 +52,7 @@ if (!empty($filterKeyword) && $filterKeyword != 'All') {
 
     $msresults = null;
 }
+
 if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
     echo "<tr>";
     echo "<th>Order ID</th>";
@@ -61,15 +62,28 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
 
     // Check if fullfill_status is Fulfilled
     while ($row = mysqli_fetch_array($msresults)) {
-        if ($row['fullfill_status'] == 'Unfulfilled' && $index == 1) {
+        if ($filterKeyword == 'All' && $index == 1){    
+            echo " 
+            <th>Delivery Date</th>
+            <th>Delivery Status</th>
+            <th>Payment Status</th>";
+        }
+        else if ($filterKeyword == 'Canceled' && $index == 1) {
+            echo "
+            <th>Delivery Status</th>
+            <th>Payment Status</th>
+            <th>Transfer</th>";
+            echo "</tr>";
+        }
+        else if ($row['fullfill_status'] == 'Unfulfilled' && $index == 1) {
             echo "<th>Approve</th>";
-            echo "<th>Action</th>";
+            // echo "<th>Action</th>";
             echo "</tr>";
         } else if (($row['fullfill_status'] == 'Fulfilled' && $index == 1)) {
             echo "<th>Delivery Date</th>";
             echo "<th>Delivery Status</th>";
             echo "<th>Payment Status</th>";
-            echo "<th>Action</th>";
+            // echo "<th>Action</th>";
             echo "</tr>";
         }
 
@@ -81,7 +95,10 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
 
         // Check if fullfill_status is Fulfilled
         if ((($row['fullfill_status'] == 'Unfulfilled') || ($row['fullfill_status'] == 'Fulfilled')) && ($filterKeyword != 'Unfulfilled' || $filterKeyword == 'Canceled')) {
-            echo "<td>{$row['delivery_date']}</td>";
+           
+            if($filterKeyword != 'Canceled') {
+                echo "<td>{$row['delivery_date']}</td>";
+            }
 
             /* Shipping Status */
             echo "<td>";
@@ -119,45 +136,106 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
                 }
             }
             
-
-
-
             echo "</select>";
 
             echo "</div></td>";
 
-            /* Payment Status */
+             /* Payment Status */
+            if ($filterKeyword == 'Canceled' && ($row['fullfill_status'] == 'Unfulfilled' || $row['fullfill_status'] == 'Fulfilled')) {
             echo "<td>";
-            echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:120px; margin: 0 auto; background-color:";
+                echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:120px; margin: 0 auto; background-color:";
 
-            // Conditions to set background color based on fullfill_status value
-            if ($row['fullfill_status'] == 'Unfulfilled') {
-                echo '#FF6868;';
-            } elseif ($row['fullfill_status'] == 'Fulfilled') {
-                echo '#06D6B1;';
-            } else {
-                echo '#06D6B1;';
+                // Conditions to set background color based on fullfill_status value
+                if ($row['fullfill_status'] == 'Unfulfilled' ) {
+                    echo '#FF6868;';
+                } elseif ($row['fullfill_status'] == 'Fulfilled') {
+                    echo '#06D6B1;';
+                } else {
+                    echo '#06D6B1;';
+                }
+                echo "'>";
+                echo "<select id='select_payment_$index' data-canceled='row_data_canceled' data-payment-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required>";
+                // Check if the fullfill_status is Fulfilled
+                if ($row['fullfill_status'] == 'Fulfilled') {
+                    // If it is Fulfilled, add the 'disabled' attribute to disable the select
+                    echo " disabled";
+                }
+
+                echo ">";
+
+                // Options for fullfill_status
+                $shipping_statusCompare = ['Unfulfilled', 'Fulfilled'];
+                foreach ($shipping_statusCompare as $value) {
+                    $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
+                    echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+                }
+                echo "</select>";
+                echo "</div></td>";
+
+           
+                echo "<td>";
+                echo "<button type='button' class='btn btn-primary px-4' data-bs-toggle='modal' data-bs-target='#exampleModal'><img src='../img/file.png' style='width:20px; height:'20px'></button>";
+                echo "<div class='modal fade' id='exampleModal' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>";
+                echo "<div class='modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl'>";
+                echo "<div class='modal-content'>";
+                echo "<div class='modal-header'>";
+                echo "<h5 class='modal-title' id='exampleModalLabel'>Approval</h5>";
+                echo "<button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>";
+                echo "</div>";
+                echo "<div class='modal-body'>";
+            
+                echo "<div>";
+                if (!empty($row['image_data'])) {
+                    echo "<img style='width:550px; height:450px; cursor:pointer;' src='data:image/*;base64," . base64_encode($row['image_data']) . "' data-bs-toggle='modal' data-bs-target='#imageModal'>";
+                } else {
+                    echo "-";
+                }
+                echo "</div>";
+            
+                echo "<p>Billing name :{$row['recipient_name']}</p>";
+                echo "<p>Order date :{$row['order_date']}</p>";
+            
+                echo "</div>";
+                echo "</div>";
+                echo "</div>";
+                echo "</div>";
+                echo "</td>";
             }
-            echo "'>";
-            echo "<select id='select_payment_$index' data-payment-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required";
+            else {
+                echo "<td>";
+                echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:120px; margin: 0 auto; background-color:";
 
+                // Conditions to set background color based on fullfill_status value
+                if ($row['fullfill_status'] == 'Unfulfilled' ) {
+                    echo '#FF6868;';
+                } elseif ($row['fullfill_status'] == 'Fulfilled') {
+                    echo '#06D6B1;';
+                } else {
+                    echo '#06D6B1;';
+                }
+                echo "'>";
+                echo "<select id='select_payment_$index' data-payment-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required";
 
-            // Check if the fullfill_status is Fulfilled
-            if ($row['fullfill_status'] == 'Fulfilled') {
-                // If it is Fulfilled, add the 'disabled' attribute to disable the select
-                echo " disabled";
+                // Check if the fullfill_status is Fulfilled
+                if ($row['fullfill_status'] == 'Fulfilled') {
+                    // If it is Fulfilled, add the 'disabled' attribute to disable the select
+                    echo " disabled";
+                }
+
+                echo ">";
+
+                // Options for fullfill_status
+                $shipping_statusCompare = ['Unfulfilled', 'Fulfilled'];
+                foreach ($shipping_statusCompare as $value) {
+                    $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
+                    echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+                }
+                echo "</select>";
+                echo "</div></td>";
             }
 
-            echo ">";
-
-            // Options for fullfill_status
-            $shipping_statusCompare = ['Unfulfilled', 'Fulfilled'];
-            foreach ($shipping_statusCompare as $value) {
-                $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
-                echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
-            }
-            echo "</select>";
-            echo "</div></td>";
+                
+            
         }
 
 
@@ -166,8 +244,8 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
 
             echo "
             <td>
-            <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#exampleModal'>
-              Launch demo modal
+            <button type='button' class='btn btn-success' data-bs-toggle='modal' data-bs-target='#exampleModal'>
+              Approve
             </button>
             
             <div class='modal fade' id='exampleModal' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
@@ -195,7 +273,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
 
             echo "</div>
                 <div class='modal-footer'>
-                    <button type='button' class='btn btn-secondary' data-bs-dismiss='modal' id='decline_payment_$index' data-payment-order_id='{$row['order_id']}'>Canceled</button>
+                    <button type='button' class='btn btn-danger' data-bs-dismiss='modal' id='decline_payment_$index' data-payment-order_id='{$row['order_id']}'>Canceled</button>
                     <button type='button' class='btn btn-success' style='margin-left:5px;' data-bs-dismiss='modal' id='select_payment_$index' data-payment-order_id='{$row['order_id']}'>Approve</button>
                 </div>
             </div>
@@ -204,13 +282,13 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
             </td>";
         }
 
-        echo "<td>
-                <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
-                    <input type='hidden' name='id_order' value={$row['order_id']}>
-                    <input type='image' alt='update' src='../img/pencil.png'/>
-                </form>
-            </td>
-            </tr>";
+        // echo "<td>
+        //         <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
+        //             <input type='hidden' name='id_order' value={$row['order_id']}>
+        //             <input type='image' alt='update' src='../img/pencil.png'/>
+        //         </form>
+        //     </td>
+           echo "</tr>";
         $index++;
     }
 } else {

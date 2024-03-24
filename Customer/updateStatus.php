@@ -10,8 +10,6 @@ if (isset($_POST['order_id']) && isset($_POST['new_status'])) {
     $new_status = $_POST['new_status'];
     $uid = $_SESSION['id_username'];
 
-
-
     if ($_POST['new_status'] == 'Add-new-cart') {
         // สร้างคำสั่ง SQL สำหรับอ่าน product_id จากตาราง order_details
         $cart_item = "SELECT * FROM cart WHERE CusID = $uid";

@@ -119,6 +119,14 @@
             z-index: 100;
             border: 1px solid #333;
         }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        #proName {
+            font-weight: 700;
+        }
     </style>
     <script>
         function updateTotalPrice() {
@@ -211,7 +219,7 @@
                     echo '<div class="product">';
                     echo "<img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>";
                     echo '<div class="product-details">';
-                    echo '<p>' . $row['ProName'] . '</p>';
+                    echo '<p id="proName">' . $row['ProName'] . '</p>';
                     echo '<p>Price: ' . $row['PricePerUnit'] . '</p>';
                     echo "<div class='button-increase'>
                             <button type='button' id='change-amount' class='change-amount' onclick='decrementAmount($index, {$row['ProID']})'>-</button>
@@ -235,17 +243,27 @@
                     $index++;
                 }
             }
-            echo '<div class="total">';
-            echo '<p>Total Price : ' . $totalPriceAllItems . '</p>';
-            echo "<hr>";
-            echo '</div>';
+            if ($totalPriceAllItems <= 0){
+                echo '<div class="total" style="text-align:center; padding:20px;">';
+                echo '<p style="padding-top:10px; color:#808080;">Emptry Cart</p>';
+                echo '</div>';
+            } else {
+                echo '<div class="total">';
+                echo '<p style="padding-top:10px">Total Price : ' . $totalPriceAllItems . '</p>';
+                echo '</div>';
+            }
 
             echo "<div class='buy-button-container'>
-                <form method='post' action='addressForm.php'>
-                    <input type='hidden' name='id_customer' value='$uid'>
-                    <input class='buy-button' type='submit' value='Check out'>
-                </form>
-                </div>";
+            <form method='post' action='addressForm.php'>";
+                if ($totalPriceAllItems <= 0){
+                    echo "<input class='buy-button' style='background-color:gray;' type='submit' value='Check out' disabled>";
+                }else{
+                    echo "<input type='hidden' name='id_customer' value='$uid'>";
+                    echo "<input class='buy-button' type='submit' value='Check out'>";
+                }
+            echo "</form>";
+
+
         }
         /* สำหรับ Guest */ 
         elseif(isset($_SESSION['cart']) && isset($_SESSION['guest'])) {
@@ -261,7 +279,7 @@
                 echo "<img src='data:image/*;base64," . base64_encode($row['ImageData']) . "'>";
 
                 echo '<div class="product-details">';
-                echo '<p>' . $row['ProName'] . '</p>';
+                echo '<p id="proName">' . $row['ProName'] . '</p>';
                 echo '<p>Price: ' . $row['PricePerUnit'] . '</p>';
 
                 /* Check if 'quantity' key exists in the $product array */
@@ -290,8 +308,8 @@
 
             // Move this bracket to the correct position
             echo '<div class="total">';
-            echo '<p>Total Price : ' . $totalPriceAllItems . '</p>';
-            echo "<hr>";
+            echo '<p style="padding-top:10px">Total Price : ' . $totalPriceAllItems . '</p>';
+         
             echo '</div>';
 
             echo "<div class='buy-button-container'>
