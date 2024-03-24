@@ -13,10 +13,9 @@ $user_data = mysqli_fetch_assoc($result);
 
 
 
-$query_address = "SELECT * FROM shipping_address 
-    INNER JOIN customer ON customer.CusID = shipping_address.CusID  
-    WHERE shipping_address.CusID = '$uid'";
+$query_address = "SELECT * FROM shipping_address WHERE CusID = '$uid'";
 $result_address = mysqli_query($conn, $query_address);
+$user_address = mysqli_fetch_assoc($result_address); // Fetch only one address
 
 
 
@@ -38,18 +37,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     mysqli_stmt_bind_param($stmt_customer, 'ssssi', $new_cusfname, $new_cuslname, $new_sex, $new_tel, $uid);
     $update_result_customer = mysqli_stmt_execute($stmt_customer);
 
-    // Insert into shipping_address table
+    // Update shipping_address table
     $recipient_name = $_POST['recipient_name'];
     $address_line1 = $_POST['address_line1'];
     $phone_number = $_POST['phone_number'];
 
-    $insert_query_address = "INSERT INTO shipping_address (CusID, recipient_name, address_line1, phone_number) VALUES (?, ?, ?, ?)";
-    $stmt_address = mysqli_prepare($conn, $insert_query_address);
-    mysqli_stmt_bind_param($stmt_address, 'isss', $uid, $recipient_name, $address_line1, $phone_number);
-    $insert_result_address = mysqli_stmt_execute($stmt_address);
+    $update_query_address = "UPDATE shipping_address SET recipient_name = ?, address_line1 = ?, phone_number = ? WHERE CusID = ?";
+    $stmt_address = mysqli_prepare($conn, $update_query_address);
+    mysqli_stmt_bind_param($stmt_address, 'sssi', $recipient_name, $address_line1, $phone_number, $uid);
+    $update_result_address = mysqli_stmt_execute($stmt_address);
 
     // Check if both updates were successful
-    if ($update_result_customer && $insert_result_address) {
+    if ($update_result_customer && $update_result_address) {
         echo "User data updated successfully!";
     } else {
         echo "Error updating user data: " . mysqli_error($conn);
@@ -59,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     mysqli_stmt_close($stmt_customer);
     mysqli_stmt_close($stmt_address);
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -313,42 +313,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <label for="address">Address:<span></span></label>
                     <?php
                     $user_address = mysqli_fetch_array($result_address);
-                    while ($user_address) {
-                        $addrID = $user_address['address_id'];
-                        echo '<div class="user-card" onclick="submitForm(\'' . $addrID . '\')">
-                                <p>' . $user_address['recipient_name'] . '</p>
-                                <p>' . $user_address['phone_number'] . '</p>
-                                <p>' . $user_address['address_line1'] . '</p>              
-                            </div>';
-                        echo '<div>
-                                <form method="post" action="./accessAddressProfile.php">
-                                    <input type="hidden" name="delete_id_customer" value="' . $uid . '">
-                                    <input type="hidden" name="delete_id_receiver" id="id_receiver" value="' . $addrID . '">
-                                    <button type="submit">ลบ</button>
-                                </form>
-                              </div>';
-
-                        $user_address = mysqli_fetch_array($result_address); // Update $user_address
-                    }
                     ?>
                     <!-- Add the hidden form outside the loop -->
                     <form id="addressForm" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-                        <input type="hidden" name="id_customer" value="<?php echo $uid ?>">
-                        <input type="hidden" name="id_receiver" value="<?php echo '' ?>">
-                        <div>
-                            <label for="recipient_name">Recipient Name:</label>
-                            <input type="text" name="recipient_name">
-                        </div>
-                        <div>
-                            <label for="address_line1">Address Line 1:</label>
-                            <input type="text" name="address_line1">
-                        </div>
-                        <div>
-                            <label for="phone_number">Phone Number:</label>
-                            <input type="tel" name="phone_number">
-                        </div>
+                        <label for="recipient_name">Recipient Name:</label>
+                        <input type="text" name="recipient_name" value="<?php echo isset($user_address['recipient_name']) ? $user_address['recipient_name'] : ''; ?>">
+                        <label for="address_line1">Address Line 1:</label>
+                        <input type="text" name="address_line1" value="<?php echo isset($user_address['address_line1']) ? $user_address['address_line1'] : ''; ?>">
+                        <label for="phone_number">Phone Number:</label>
+                        <input type="tel" name="phone_number" value="<?php echo isset($user_address['phone_number']) ? $user_address['phone_number'] : ''; ?>">
                         <br />
-                        <button type="submit" onclick="showOverlay()">บันทึกข้อมูล</button>
+                        <button type="submit">บันทึกข้อมูล</button>
                     </form>
                 </div>
 
