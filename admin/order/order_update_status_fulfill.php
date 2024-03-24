@@ -16,10 +16,27 @@ function updateFullfillStatus($order_id, $newfullfill_status) {
         // Update query
         $sql = "UPDATE orders SET fullfill_status = 'Fulfilled' WHERE order_id = '$order_id'";
 
-        $result = "SELECT * FROM order_details INNER JOIN product ON  product.ProID = order_details.ProID WHERE order_id = '$order_id'";
+        $handleOnHand = "SELECT * FROM order_details INNER JOIN product ON  product.ProID = order_details.ProID WHERE order_id = '$order_id'";
+        $result = mysqli_query($conn,  $handleOnHand);
+            // Check if query executed successfully
+        if ($result) {
+            // Fetch each row from the result set
+            while ($row = mysqli_fetch_array($result)) {
+                // Retrieve quantity from the order details
+                $quantity = $row['quantity'];
+                
+                // Update product stock quantity
+                $sql = "UPDATE product SET StockQty = StockQty + $quantity WHERE ProID = '{$row['ProID']}'";
+                
+                // Execute the update query
+                mysqli_query($conn, $sql);
+            }
+        } else {
+            // Handle query execution error
+            echo "Error: " . mysqli_error($conn);
+        }
+
         
-        while($row = Result)
-        $sql = "UPDATE product SET StockQty = StockQty + 'quantity' WHERE order_id = '$order_id'";
     }
     // Execute query
     if (mysqli_query($conn, $sql)) {
