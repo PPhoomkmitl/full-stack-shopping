@@ -312,7 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="address-container">
                     <label for="address">Address:<span></span></label>
                     <?php
-                    $user_address = mysqli_fetch_array($result_address);
+                    // $user_address = mysqli_fetch_array($result_address);
                     ?>
                     <!-- Add the hidden form outside the loop -->
                     <form id="addressForm" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
