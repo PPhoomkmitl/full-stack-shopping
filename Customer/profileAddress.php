@@ -6,11 +6,12 @@ include_once '../dbConfig.php';
 echo $_POST['id_receiver'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['id_receiver'])) {
+        $uid = $_SESSION['id_username'];
         $id_customer = $_POST['id_customer'];
         $id_receiver = $_POST['id_receiver'];
-        $query_address = "SELECT * FROM receiver 
-        INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
-        WHERE receiver_detail.CusID = '$uid' AND receiver.RecvID = '$id_receiver'";
+        $query_address = "SELECT * FROM shipping_address 
+        INNER JOIN customer ON shipping_address.CusID = customer.CusID
+        WHERE customer.CusID = '$uid' AND shipping_address.CusID = '$id_receiver'";
         $result_address = mysqli_query($conn, $query_address);
 
         // Check if there are rows returned

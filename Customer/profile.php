@@ -3,14 +3,19 @@ include('./component/session.php');
 
 include_once '../dbConfig.php';
 
+
+$uid = $_SESSION['id_username'];
+
+
 $query = "SELECT * FROM customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE  customer.CusID = '$uid'";
 $result = mysqli_query($conn, $query);
 $user_data = mysqli_fetch_assoc($result);
-$uid = $user_data['CusID'];
 
-$query_address = "SELECT * FROM receiver 
-    INNER JOIN receiver_detail ON receiver.RecvID = receiver_detail.RecvID  
-    WHERE receiver_detail.CusID = '$uid'";
+
+
+$query_address = "SELECT * FROM shipping_address 
+    INNER JOIN customer ON customer.CusID = shipping_address.CusID  
+    WHERE shipping_address.CusID = '$uid'";
 $result_address = mysqli_query($conn, $query_address);
 
 
@@ -20,31 +25,42 @@ if (!$result) {
 }
 
 
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $uid = $_POST['id_customer'];
-    $new_username = $_POST['username'];
+    $new_cusfname = $_POST['cus_fname'];
+    $new_cuslname = $_POST['cus_lname'];
+    $new_sex = $_POST['sex'];
     $new_tel = $_POST['tel'];
-    $new_address = $_POST['address'];
 
-    $update_query = "UPDATE customer SET UserName = '$new_username' ,Tel = '$new_tel' WHERE CusID = '$uid'";
-    $update_result = mysqli_query($conn, $update_query);
+    // Update customer table
+    $update_query_customer = "UPDATE customer SET CusFName = ?, CusLName = ?, Sex = ?, Tel = ? WHERE CusID = ?";
+    $stmt_customer = mysqli_prepare($conn, $update_query_customer);
+    mysqli_stmt_bind_param($stmt_customer, 'ssssi', $new_cusfname, $new_cuslname, $new_sex, $new_tel, $uid);
+    $update_result_customer = mysqli_stmt_execute($stmt_customer);
 
-    $update_query = "UPDATE customer_account SET Username = '$new_username' WHERE CusID = '$uid'";
-    $update_result = mysqli_query($conn, $update_query);
+    // Insert into shipping_address table
+    $recipient_name = $_POST['recipient_name'];
+    $address_line1 = $_POST['address_line1'];
+    $phone_number = $_POST['phone_number'];
 
-    if (!$update_result) {
-        die("Error updating user data: " . mysqli_error($conn));
+    $insert_query_address = "INSERT INTO shipping_address (CusID, recipient_name, address_line1, phone_number) VALUES (?, ?, ?, ?)";
+    $stmt_address = mysqli_prepare($conn, $insert_query_address);
+    mysqli_stmt_bind_param($stmt_address, 'isss', $uid, $recipient_name, $address_line1, $phone_number);
+    $insert_result_address = mysqli_stmt_execute($stmt_address);
+
+    // Check if both updates were successful
+    if ($update_result_customer && $insert_result_address) {
+        echo "User data updated successfully!";
+    } else {
+        echo "Error updating user data: " . mysqli_error($conn);
     }
 
-    // $_SESSION['username'] = $new_username;
-    // $_SESSION['tel'] = $new_tel;
-
+    // Close prepared statements
+    mysqli_stmt_close($stmt_customer);
+    mysqli_stmt_close($stmt_address);
 }
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,6 +71,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {;
     <title>Profile Setting</title>
 
     <style>
+        /* Updated styles for the sex container */
+        .sex-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .sex-container label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            /* Adjust the right margin to control spacing between radio buttons and text */
+        }
+
+        .sex-container input[type="radio"] {
+            margin-right: 15px;
+            position: relative;
+            /* Add this line */
+            left: 10px;
+            top: 8px;
+            /* Adjust this value as needed to vertically align the radio button with the text */
+        }
+
+
+
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -237,108 +278,130 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {;
 
                 <input type="hidden" name="id_customer" value="<?php echo $user_data['CusID'] ?>">
 
+                <label for="cus_fname">First Name:</label>
+                <input type="text" name="cus_fname" value="<?php echo $user_data['CusFName'] ?>">
+
+                <label for="cus_lname">Last Name:</label>
+                <input type="text" name="cus_lname" value="<?php echo $user_data['CusLName'] ?>">
+
+                <div class="sex-container">
+                    <label> Male
+                        <input type="radio" name="sex" value="Male" <?php echo ($user_data['Sex'] == 'M') ? 'checked' : ''; ?>>
+
+                    </label>
+                    <label> Female
+                        <input type="radio" name="sex" value="Female" <?php echo ($user_data['Sex'] == 'F') ? 'checked' : ''; ?>>
+
+                    </label>
+                </div>
+
                 <label for="username">Username:</label>
                 <input type="text" name="username" value="<?php echo $user_data['Username'] ?>">
 
                 <label for="password">Password:</label>
-                <input type="password" name="password" value="<?php echo $user_data['Password'] ?>" readonly>
+                <input type="password" name="password" value="<?php echo $user_data['Password'] ?>" required>
 
-                <label for="tel">Tel:<span>*</span></label>
+                <label for="tel">Tel:<span></span></label>
                 <input type="tel" name="tel" value="<?php echo $user_data['Tel'] ?>" required>
 
-                <button type="submit" onclick="showOverlay()">บันทึกข้อมูล</button>
-            </form>
 
-            <div class="address-container">
-                <label for="address">Address:<span>*</span></label>
-                <?php
-                $user_address = mysqli_fetch_array($result_address);
-                while ($user_address) {
-                    $recvID = $user_address['RecvID'];
-                    echo '<div class="user-card" onclick="submitForm(\'' . $recvID . '\')">
-                                <p>' . $user_address['RecvFName'] . '</p>
-                                <p>' . $user_address['RecvLName'] . '</p>
-                                <p>' . $user_address['Tel'] . '</p>
-                                <p>' . $user_address['Address'] . '</p>              
+
+
+
+
+                <div class="address-container">
+                    <label for="address">Address:<span></span></label>
+                    <?php
+                    $user_address = mysqli_fetch_array($result_address);
+                    while ($user_address) {
+                        $addrID = $user_address['address_id'];
+                        echo '<div class="user-card" onclick="submitForm(\'' . $addrID . '\')">
+                                <p>' . $user_address['recipient_name'] . '</p>
+                                <p>' . $user_address['phone_number'] . '</p>
+                                <p>' . $user_address['address_line1'] . '</p>              
                             </div>';
-                    echo   '<form method="post" action="./accessAddressProfile.php">
+                        echo '<div>
+                                <form method="post" action="./accessAddressProfile.php">
                                     <input type="hidden" name="delete_id_customer" value="' . $uid . '">
-                                    <input type="hidden" name="delete_id_receiver" id="id_receiver" value="' . $recvID . '">
+                                    <input type="hidden" name="delete_id_receiver" id="id_receiver" value="' . $addrID . '">
                                     <button type="submit">ลบ</button>
-                            </form>';
+                                </form>
+                              </div>';
 
-                    $user_address = mysqli_fetch_array($result_address); // Update $user_address
-                }
-                ?>
-                <!-- Add the hidden form outside the loop -->
-                <form id="addressForm" method="post" action="./profileAddress.php">
-                    <input type="hidden" name="id_customer" value="<?php echo $uid ?>">
-                    <input type="hidden" name="id_receiver" id="id_receiver" value="">
-                </form>
-
-                <form id="address" method="post" action="./profileAddress.php">
-                    <input type="hidden" name="id_customer" value="<?php echo $uid ?>">
-                    <input type="hidden" name="id_receiver" value="<?php echo '' ?>">
-                    <button class="long-button">
-                        <div class="circle-icon">
-                            <div class="plus-icon"></div>
-                        </div>
-                    </button>
-                    <form>
+                        $user_address = mysqli_fetch_array($result_address); // Update $user_address
+                    }
+                    ?>
+                    <!-- Add the hidden form outside the loop -->
+                    <form id="addressForm" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                        <input type="hidden" name="id_customer" value="<?php echo $uid ?>">
+                        <input type="hidden" name="id_receiver" value="<?php echo '' ?>">
                         <div>
-
+                            <label for="recipient_name">Recipient Name:</label>
+                            <input type="text" name="recipient_name">
                         </div>
-            </div>
-
-            <!-- Overlay -->
-            <div class="overlay" id="overlay">
-                <div class="overlay-content">
-                    <p>บันทึกข้อมูลสำเร็จ!</p>
-                    <button onclick="hideOverlay()">ตกลง</button>
+                        <div>
+                            <label for="address_line1">Address Line 1:</label>
+                            <input type="text" name="address_line1">
+                        </div>
+                        <div>
+                            <label for="phone_number">Phone Number:</label>
+                            <input type="tel" name="phone_number">
+                        </div>
+                        <br />
+                        <button type="submit" onclick="showOverlay()">บันทึกข้อมูล</button>
+                    </form>
                 </div>
-            </div>
 
-            <script>
-                // Function to submit the form with the specified receiver ID
-                function submitForm(id_receiver) {
-                    // Set the value of the hidden input in the form
-                    document.getElementById('id_receiver').value = id_receiver;
 
-                    // Submit the form
-                    document.getElementById('addressForm').submit();
-                }
+                <!-- Overlay -->
+                <div class="overlay" id="overlay">
+                    <div class="overlay-content">
+                        <p>บันทึกข้อมูลสำเร็จ!</p>
+                    </div>
+                </div>
 
-                document.getElementById('profileForm').addEventListener('submit', function(event) {
-                    event.preventDefault();
+                <script>
+                    // Function to submit the form with the specified receiver ID
+                    function submitForm(id_receiver) {
+                        // Set the value of the hidden input in the form
+                        document.getElementById('id_receiver').value = id_receiver;
 
-                    var formData = new FormData(this);
+                        // Submit the form
+                        document.getElementById('addressForm').submit();
+                    }
 
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', this.action, true);
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            // Form submitted successfully
-                            showOverlay();
-                        } else {
-                            // Handle error
-                            console.error('Error submitting form');
-                        }
-                    };
-                    xhr.send(formData);
-                });
+                    document.getElementById('profileForm').addEventListener('submit', function(event) {
+                        event.preventDefault();
 
-                function showOverlay() {
-                    document.getElementById('overlay').style.display = 'flex';
-                    // Delay the hideOverlay function
-                    setTimeout(hideOverlay, 1000); // Adjust the time (in milliseconds) as needed
-                }
+                        var formData = new FormData(this);
 
-                function hideOverlay() {
-                    document.getElementById('overlay').style.display = 'none';
-                    // Redirect to profileAddress.php after hiding the overlay
-                    // window.location.href = './profile.php';
-                }
-            </script>
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', this.action, true);
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                // Form submitted successfully
+                                showOverlay();
+                            } else {
+                                // Handle error
+                                console.error('Error submitting form');
+                            }
+                        };
+                        xhr.send(formData);
+                    });
+
+                    function showOverlay() {
+                        document.getElementById('overlay').style.display = 'flex';
+                        // Delay the hideOverlay function
+                        setTimeout(hideOverlay, 1000); // Adjust the time (in milliseconds) as needed
+                    }
+
+                    function hideOverlay() {
+                        document.getElementById('overlay').style.display = 'none';
+                        // Redirect to profileAddress.php after hiding the overlay
+                        // window.location.href = './profile.php';
+                    }
+                </script>
 </body>
 <?php mysqli_close($conn); ?>
+
 </html>
