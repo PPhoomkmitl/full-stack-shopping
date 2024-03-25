@@ -301,7 +301,7 @@
                 </div>";
                 }
 
-                else if($row['shipping_status'] == 'Pending' || ($row['shipping_status'] == 'Canceled' && $row['fullfill_status'] == 'Unfulfilled')) {
+                else if($row['shipping_status'] == 'Pending') {
                     echo '<div class="order">';
                     echo "<div class='icon-container'>
                             <form method='post' action='bill.php'>
@@ -321,14 +321,14 @@
                     echo "<hr>";
 
                    
-                    if($row['shipping_status'] == 'Canceled' && $row['fullfill_status'] == 'Unfulfilled'){
-                        echo "<div class='button-container'>
-                        <button type='button' class='btn btn-secondary' disabled style='color: #fff; border-color: #f8f9fa;'>
-                            Waiting for approval to cancel...
-                        </button>
-                        </div>";
-                    }
-                    else {
+                    // if($row['shipping_status'] == 'Canceled' && $row['fullfill_status'] == 'Unfulfilled'){
+                    //     echo "<div class='button-container'>
+                    //     <button type='button' class='btn btn-secondary' disabled style='color: #fff; border-color: #f8f9fa;'>
+                    //         Waiting for approval to cancel...
+                    //     </button>
+                    //     </div>";
+                    // }
+                    // else {
                         echo "<pl id='{$row['shipping_status']}-status'><img src='./image/pending.png' alt='Pending Fast Icon' width='20'> {$row['shipping_status']}</pl>";
                         echo "<hr>";
     
@@ -337,7 +337,7 @@
                             Canceled
                         </button>
                         </div>";
-                    }       
+                    // }       
 
                 }
 
@@ -369,7 +369,7 @@
                     </div>";
                 }
 
-                else if($row['shipping_status'] == 'Canceled' && $row['fullfill_status'] == 'Fulfilled') {
+                else if($row['shipping_status'] == 'Canceled') {
                     echo '<div class="order">';
                     echo "<div class='icon-container'>
                             <form method='post' action='bill.php'>
