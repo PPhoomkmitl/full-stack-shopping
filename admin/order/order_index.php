@@ -129,6 +129,7 @@
             SUM(CASE WHEN fullfill_status = 'Unfulfilled' THEN 1 ELSE 0 END) AS Unfulfilled_orders,
             SUM(CASE WHEN shipping_status = 'Pending' THEN 1 ELSE 0 END) AS pending_orders,
             SUM(CASE WHEN shipping_status = 'Inprogress' THEN 1 ELSE 0 END) AS inprogress_orders,
+            SUM(CASE WHEN shipping_status = 'Canceled' THEN 1 ELSE 0 END) AS cancel_orders,
             COUNT(*) AS total_orders
         FROM 
             orders";
@@ -139,7 +140,7 @@
     ?>
 
             <div class="row py-3 px-3 justify-content-between">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Pending Orders</h5>
@@ -147,7 +148,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Inprogress Orders</h5>
@@ -155,11 +156,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Total Orders</h5>
                             <p class="card-text"><?php echo $row['total_orders']; ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Canceled Orders</h5>
+                            <p class="card-text"><?php echo $row['cancel_orders']; ?></p>
                         </div>
                     </div>
                 </div>
@@ -217,7 +226,7 @@
     FROM orders 
     INNER JOIN customer ON customer.CusID = orders.CusID
     INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
-    WHERE orders.fullfill_status = 'Unfulfilled' AND orders.shipping_status = 'Canceled'";
+    WHERE orders.shipping_status = 'Canceled'";
     $msresults = mysqli_query($conn, $cur);
 
     echo "<center>";
@@ -306,7 +315,10 @@
                 echo '#FF6868;';
             } elseif ($row['fullfill_status'] == 'Fulfilled') {
                 echo '#06D6B1;';
-            } else {
+            } elseif ($row['fullfill_status'] == 'Return' && $row['shipping_status'] == 'Canceled') {
+                echo '#FFA500;';
+            }
+            else {
                 echo '#06D6B1;';
             }
             echo "'>";
@@ -314,29 +326,25 @@
 
 
             // Check if the fullfill_status is Fulfilled
-            if ($row['fullfill_status'] == 'Fulfilled') {
+            if ($row['fullfill_status'] == 'Fulfilled' && $row['shipping_status'] != 'Canceled') {
                 // If it is Fulfilled, add the 'disabled' attribute to disable the select
+                echo " disabled";
+            }
+            elseif ($row['fullfill_status'] == 'Return'){
                 echo " disabled";
             }
 
             echo ">";
 
             // Options for fullfill_status
-            $shipping_statusCompare = ['Unfulfilled', 'Fulfilled'];
+            $shipping_statusCompare = ['Unfulfilled', 'Fulfilled', 'Return'];
             foreach ($shipping_statusCompare as $value) {
                 $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
                 echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
             }
             echo "</select>";
             echo "</div></td>";
-
-            // echo "<td>
-            //         <form class='action-button' action='order_update.php' method='post' style='display: inline-block;'>  
-            //             <input type='hidden' name='id_order' value={$row['order_id']}>
-            //             <input type='image' alt='update' src='../img/pencil.png'/>
-            //         </form>
-            //       </td>
-                echo "</tr>";
+            echo "</tr>";
             $index++;
         }
     } else {
@@ -394,19 +402,27 @@
                 if (buttonElement) {
                     buttonElement.addEventListener('click', function() {
                         var order_id = this.getAttribute('data-payment-order_id');
-                        var dataCanceled = this.getAttribute('data-canceled'); // Changed to camelCase
+                        var selectedValue = this.value;
 
-                        if (dataCanceled === 'row_data_canceled') {
-                            var selectedValue = "canceled_fulfilled";
-                        } else {
-                            var selectedValue = "Fulfilled"; // Set as needed
+                        console.log(selectedValue);
+
+                        switch (selectedValue) {
+                            case 'Unfulfilled':
+                                selectDiv.style.backgroundColor = '#FF6868';
+                                break;
+                            case 'Fulfilled':
+                                selectDiv.style.backgroundColor = '#06D6B1';
+                                break;
+                            case 'Return':
+                                selectDiv.style.backgroundColor = '#FFA500';
+                                break;
+                            default:
+                                selectDiv.style.backgroundColor = '#06D6B1';
                         }
 
                         // Update the fulfillment status using the updateFullfillStatus() function
                         updateFullfillStatus(order_id, selectedValue);
 
-                        // You can perform other actions after updating the payment status
-                        // such as refreshing the webpage or displaying a confirmation message
                     });
                 }
             }
@@ -508,6 +524,41 @@
             };
             xhr.send('order_id=' + encodeURIComponent(order_id) + '&new_shipping_status=' + encodeURIComponent(newshipping_status));
         }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            for (var i = 1; i <= <?php echo $index; ?>; i++) {
+                var buttonElement = document.getElementById('select_payment_' + i);
+                if (buttonElement) {
+                    buttonElement.addEventListener('click', function() {
+                    var order_id = this.getAttribute('data-payment-order_id');
+                    var selectedValue = this.value;
+
+                    console.log(selectedValue);
+
+                    switch (selectedValue) {
+                        case 'Unfulfilled':
+                            selectDiv.style.backgroundColor = '#FF6868';
+                            break;
+                        case 'Fulfilled':
+                            selectDiv.style.backgroundColor = '#06D6B1';
+                            break;
+                        case 'Return':
+                            selectDiv.style.backgroundColor = '#FFA500';
+                            break;
+                        default:
+                            selectDiv.style.backgroundColor = '#06D6B1';
+                        }
+
+                        // Update the fulfillment status using the updateFullfillStatus() function
+                        updateFullfillStatus(order_id, selectedValue);
+
+                    });
+                }
+            }
+        });
+
+
 
         // Function to update fullfill status
         function updateFullfillStatus(order_id, newfullfill_status) {

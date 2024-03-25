@@ -199,7 +199,7 @@
 
         <!-- Tab content -->
         <div id="pending" class="tabcontent">
-            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND (shipping_status = 'Pending' OR (shipping_status = 'Canceled' AND fullfill_status = 'Unfulfilled'))", $conn); ?>
+            <?php includeOrders("SELECT * FROM orders WHERE CusID = '$uid' AND shipping_status = 'Pending'", $conn); ?>
         </div>
 
         <div id="inprogress" class="tabcontent">

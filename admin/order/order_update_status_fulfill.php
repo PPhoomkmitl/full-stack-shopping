@@ -10,11 +10,17 @@ function updateFullfillStatus($order_id, $newfullfill_status) {
     global $conn;
     if($newfullfill_status == 'Fulfilled' || $newfullfill_status == 'Unfulfiled' ) {
         // Update query
-        $sql = "UPDATE orders SET fullfill_status = '$newfullfill_status' , shipping_status = 'Inprogress' , delivery_date = NOW() WHERE order_id = '$order_id'";
+        $sql = "SELECT * FROM orders WHERE order_id = '$order_id'";
+        $checkOrder = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_array($checkOrder);
+        if($row['shipping_status'] != 'Canceled'){
+            $sql = "UPDATE orders SET fullfill_status = '$newfullfill_status' , shipping_status = 'Inprogress' , delivery_date = NOW() WHERE order_id = '$order_id'";
+        }      
     }
-    else {
+    else if($newfullfill_status == 'Return'){
         // Update query
-        $sql = "UPDATE orders SET fullfill_status = 'Fulfilled' WHERE order_id = '$order_id'";
+        $sql = "UPDATE orders SET fullfill_status = 'Return' WHERE order_id = '$order_id'";
+        mysqli_query($conn, $sql);
 
         $handleOnHand = "SELECT * FROM order_details INNER JOIN product ON  product.ProID = order_details.ProID WHERE order_id = '$order_id'";
         $result = mysqli_query($conn,  $handleOnHand);
@@ -27,9 +33,8 @@ function updateFullfillStatus($order_id, $newfullfill_status) {
                 
                 // Update product stock quantity
                 $sql = "UPDATE product SET StockQty = StockQty + $quantity WHERE ProID = '{$row['ProID']}'";
-                
-                // Execute the update query
                 mysqli_query($conn, $sql);
+                // Execute the update query
             }
         } else {
             // Handle query execution error
@@ -68,12 +73,9 @@ if (isset($_POST['order_id']) && isset($_POST['newfullfill_status'])) {
     $newfullfill_status = mysqli_real_escape_string($conn, $_POST['newfullfill_status']);
 
     // Call the function to update status
-    if($newfullfill_status == 'Fulfilled'){
+    if($newfullfill_status == 'Fulfilled' || $newfullfill_status == 'Unfulfilled' || $newfullfill_status == 'Return'){
         updateFullfillStatus($order_id, $newfullfill_status);
     } 
-    else if ($newfullfill_status == 'canceled_fulfilled'){
-        updateFullfillStatus($order_id, $newfullfill_status);
-    }
     else {
         updateCanceledStatus($order_id, $newfullfill_status);
     }
