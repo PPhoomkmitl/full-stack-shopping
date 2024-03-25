@@ -63,7 +63,7 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
                 
                 if(($stockQty-$quantity) >= 0 ){
                     mysqli_query($conn, "UPDATE product SET StockQty = StockQty - '$quantity', OnHands = OnHands WHERE ProID ='$product_id'");
-                } else if(($stockQty-$quantity) >= 0) {
+                } else {
                     mysqli_query($conn, "UPDATE product SET StockQty = StockQty - '$quantity', OnHands = OnHands - '$quantity' WHERE ProID ='$product_id'");
                 }    
             }
@@ -123,8 +123,8 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
             
             if(($stockQty-$quantity) >= 0 ){
                 mysqli_query($conn, "UPDATE product SET StockQty = StockQty - '$quantity', OnHands = OnHands WHERE ProID ='$product_id'");
-            } else if(($stockQty-$quantity) >= 0) {
-                mysqli_query($conn, "UPDATE product SET StockQty = StockQty - '$quantity', OnHands = OnHands - '$quantity' WHERE ProID ='$product_id'");
+            } else {
+                mysqli_query($conn, "UPDATE product SET StockQty = StockQty - '$quantity', OnHands = OnHands + '$quantity' WHERE ProID ='$product_id'");
             }    
         }
 
