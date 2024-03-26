@@ -1,4 +1,5 @@
 <?php
+header("location: ./customer_index.php");
 /* get connection */
 include_once '../../dbConfig.php'; 
 
@@ -10,15 +11,15 @@ $a3 = $_POST['a3'];
 $a4 = $_POST['a4'];
 $a5 = $_POST['a5'];
 
-/* run update */
-$stmt = mysqli_query($conn, "UPDATE customer SET CusFName = '$a1', CusLName = '$a2', sex = '$a3', Tel = '$a4' WHERE CusID = '$cusID'");
+/* run update */ 
+$stmt = mysqli_query($conn, "UPDATE customer SET CusFName = '$a1', CusLName = '$a2', sex = '$a3', Tel = '$a4' , role = '$a5' WHERE CusID = '$cusID'");
 
 if ($recvID == '') {
     // $stmt_receiver_head = mysqli_query($conn, "INSERT INTO shipping_address(RecvFName, RecvLName, sex, Tel, Address)
     //     VALUES('$a1', '$a2', '$a3', '$a4', '$a5')");
 
-    $stmt_receiver_head = mysqli_query($conn, "INSERT INTO shipping_address(recipient_name ,phone_number, address_line1)
-    VALUES('$a1.$a2', '$a4', '$a5')");
+    // $stmt_receiver_head = mysqli_query($conn, "INSERT INTO shipping_address(recipient_name ,phone_number, address_line1)
+    // VALUES('$a1.$a2', '$a4', '$a5')");
 
     // if ($stmt_receiver_head) {
         // Get the last inserted ID from the shipping_address table

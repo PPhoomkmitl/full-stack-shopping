@@ -1,5 +1,5 @@
 <?php /* get connection */
-    header( "location: ./stock_index.php");
+    // header( "location: ./stock_index.php");
     include_once '../../dbConfig.php'; 
     if (isset($_POST['id_stock'])){
         $code = $_POST['id_stock'];
@@ -18,7 +18,7 @@
                 color: #ef476f;             
                 text-decoration: none;
                 margin-right: 5px;
-                '>กลับหน้าหลัก</a>";
+                '>Back</a>";
         }
     }
     else if (isset($_POST['list_id_stock'])){
@@ -42,7 +42,7 @@
         color: #ef476f;             
         text-decoration: none;
         margin-right: 5px;
-        '>กลับหน้าหลัก</a>";
+        '>Back</a>";
     }
     /* close connection */
     mysqli_close($conn);

@@ -402,6 +402,7 @@
                 if (buttonElement) {
                     buttonElement.addEventListener('click', function() {
                         var order_id = this.getAttribute('data-payment-order_id');
+                        var selectDiv = this.parentElement;
                         var selectedValue = this.value;
 
                         console.log(selectedValue);
@@ -533,6 +534,7 @@
                     buttonElement.addEventListener('click', function() {
                     var order_id = this.getAttribute('data-payment-order_id');
                     var selectedValue = this.value;
+                    var selectDiv = this.parentElement;
 
                     console.log(selectedValue);
 

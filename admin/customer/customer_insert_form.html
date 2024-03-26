@@ -67,6 +67,24 @@
             display: block;
             margin-bottom: 10px;
         }
+
+        .role {
+            margin-bottom: 20px;
+        }
+
+        .role label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .role select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -81,9 +99,6 @@
         <label for="a3">เพศ:</label>
         <input type="text" id="a3" name="a3" maxlength="1" required>
 
-        <label for="a4">ที่อยู่:</label>
-        <textarea id="a4" name="a4" rows="a4" required></textarea>
-
         <label for="a5">เบอร์โทรศัพท์:</label>
         <input type="tel" id="a5" name="a5" maxlength="10" required>
 
@@ -96,8 +111,10 @@
         <div class="role">
             <label for="role">บทบาท:</label>
             <select name="role">
-                <option value="member">Member</option>
-                <option value="user_admin">User Admin</option>
+                <option value="member">member</option>
+                <option value="user_admin">user_admin</option>
+                <option value="user_admin">permission_admin</option>
+                <option value="user_admin">super_admin</option>
             </select>
         </div>
 

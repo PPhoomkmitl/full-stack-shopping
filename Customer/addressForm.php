@@ -143,15 +143,23 @@ include('./component/getFunction/getName.php'); ?>
     <form id="profileForm" method="post" action="accessOrder.php" enctype="multipart/form-data">
         <?php
             if (isset($_SESSION['member'])) {
-                $uid = $_SESSION['member'];
+                $uid = $_SESSION['id_username'];
+                $row = '';
+                $first_name = '';
+                $last_name = '';
 
                 include_once '../dbConfig.php'; 
-                $query_address = "SELECT * FROM shipping_address
-                WHERE shipping_address.CusID = '$uid'";
+                $query_address = "SELECT * FROM customer_address
+                WHERE customer_address.CusID = '$uid'";
                 $result_address = mysqli_query($conn, $query_address);
                 if (mysqli_num_rows($result_address) > 0) {
                     // Fetch a single row from the result set
                     $row = mysqli_fetch_assoc($result_address);
+                    $recipient_name = $row['recipient_name'];
+                    $name_parts = explode(' ', $recipient_name); 
+                    $first_name = $name_parts[0]; 
+                    $last_name = $name_parts[1]; 
+
                 }
             }
         ?>
@@ -175,25 +183,25 @@ include('./component/getFunction/getName.php'); ?>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">              
                                         <label for="fullname">First Name</label>
-                                        <input class="form-control" type="text" id="fullname" name="ship_fname" value="<?php echo $row['RecvFName'] ?? ''; ?>" required>              
+                                        <input class="form-control" type="text" id="fullname" name="ship_fname" value="<?php echo $first_name ?? ''; ?>" required>              
                                         <div class="invalid-feedback"> Valid first name is required. </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                 
                                         <label for="lastname">Last Name</label>
-                                        <input class="form-control" type="text" id="lastname" name="ship_lname" value="<?php echo $row['RecvLName'] ?? ''; ?>"required>
+                                        <input class="form-control" type="text" id="lastname" name="ship_lname" value="<?php echo $last_name ?? ''; ?>"required>
                                         <div class="invalid-feedback"> Valid last name is required. </div>
                                     </div>
                                 </div>
                             
                                 <div class="mb-3">
                                     <label for="tel">Tel<span>*</span></label>
-                                    <input class="form-control" required type="tel" name="ship_tel" value="<?php echo $row['Tel'] ?? ''; ?>">
+                                    <input class="form-control" required type="tel" name="ship_tel" value="<?php echo $row['phone_number'] ?? ''; ?>">
                                     <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="address">Address</label>
-                                    <textarea style="resize:none;" name="ship_address" id="address" rows="3" required><?php echo $row['Address'] ?? ''; ?></textarea>
+                                    <textarea style="resize:none;" name="ship_address" id="address" rows="3" required><?php echo $row['address_line1'] ?? ''; ?></textarea>
                                     <div class="invalid-feedback"> Please enter your shipping address. </div>
                                 </div>
                             </div>
@@ -244,7 +252,7 @@ include('./component/getFunction/getName.php'); ?>
                             <div class="payment-container">                             
                                     <div class="mb-3">                 
                                         <label for="QR">Payment Qr Scanning</label>                        
-                                        <img id="QR" src="https://www.globsub.com/wp-content/uploads/2021/12/QR-Code-Payment-Globsub.jpg" alt="Qr code" width="100%" height="70%" />                 
+                                        <img id="QR" src="https://media.discordapp.net/attachments/863782611570262017/1222208792586883202/IMG_3855.jpg?ex=661561a3&is=6602eca3&hm=4052db68b362c29084bb0c51a666ce94311db77064c9950b0ebd796c28ed3748&=&format=webp&width=558&height=993" alt="Qr code" width="100%" height="70%" />                 
                                     </div>
                                     <div class="mb-3">                  
                                         <label for="image">upload your slip:</label>

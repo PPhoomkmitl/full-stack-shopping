@@ -1,10 +1,11 @@
 <?php
 include_once '../../dbConfig.php'; 
+header("location: ./customer_index.php");
 
 $a1 = $_POST['a1'];
 $a2 = $_POST['a2'];
 $a3 = $_POST['a3'];
-$a4 = $_POST['a4'];
+// $a4 = $_POST['a4'];
 $a5 = $_POST['a5'];
 $a6 = $_POST['a6'];
 $a7 = $_POST['a7'];
@@ -47,7 +48,7 @@ else {
     // $stmt_receiver_detail = mysqli_query($conn, "INSERT INTO receiver_detail(CusID, RecvID, NumID)
     //     VALUES('$cusID', '$RecvID', '$NumID');");
 
-    if (!$stmt_customer || !$stmt_account || !$stmt_receiver_head || !$stmt_receiver_detail) {
+    if (!$stmt_customer || !$stmt_account ) {
         echo "Error";
     } else {
         echo 'Insert data is Successful.';

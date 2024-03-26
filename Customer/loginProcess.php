@@ -14,8 +14,6 @@
 
         if (mysqli_num_rows($run_qry) > 0) {
             while ($row = mysqli_fetch_assoc($run_qry)) {
-
-                echo 'hello';
                 if(password_verify($password, $row['Password'])) {
                     // ตรวจสอบรหัสผ่าน
                     if ($row['role'] === 'member') {
@@ -29,7 +27,7 @@
                         header("Location: ./index.php");
                         exit();
 
-                    } elseif($row['role'] === 'super_admin' || $row['role'] === 'user_admin'){
+                    } elseif($row['role'] === 'super_admin' || $row['role'] === 'user_admin' || $row['role'] === 'permission_admin'){
                         // ถ้าเป็น super admin
                         echo "Password match!";
                         $_SESSION['status'] = true;
@@ -38,8 +36,13 @@
                         unset($_SESSION['guest']);
                         if($row['role'] === 'user_admin'){
                             unset($_SESSION['super_admin']);
+                            unset($_SESSION['permission_admin']);
                         } else if($row['role'] === 'super_admin'){
                             unset($_SESSION['user_admin']);
+                            unset($_SESSION['permission_admin']);
+                        } else if($row['role'] === 'permission_admin'){
+                            unset($_SESSION['user_admin']);
+                            unset($_SESSION['super_admin']);
                         }
                         header("Location: ../admin/dashboard/dashboard.php");
                         exit();

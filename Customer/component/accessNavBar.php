@@ -14,7 +14,7 @@
             </a>
         </div>
 
-        <ul class="nav-links">
+        <ul class="nav-links" style="margin-bottom: 0px;">
             <?php if (isset($_SESSION['member']) && isset($_SESSION['status']) === true) : ?>
                 <li><a class="hover" style="color: #FFF;" <?php echo isActive('../history.php'); ?> href="./history.php">History</a></li>
             <?php endif; ?>

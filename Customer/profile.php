@@ -13,9 +13,13 @@ $user_data = mysqli_fetch_assoc($result);
 
 
 
-$query_address = "SELECT * FROM shipping_address WHERE CusID = '$uid'";
+// $query_address = "SELECT * FROM shipping_address WHERE CusID = '$uid'";
+// $result_address = mysqli_query($conn, $query_address);
+// $user_address = mysqli_fetch_assoc($result_address); // Fetch only one address
+
+$query_address = "SELECT * FROM customer_address WHERE CusID = '$uid'";
 $result_address = mysqli_query($conn, $query_address);
-$user_address = mysqli_fetch_assoc($result_address); // Fetch only one address
+$user_address = mysqli_fetch_assoc($result_address); 
 
 
 
@@ -42,10 +46,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $address_line1 = $_POST['address_line1'];
     $phone_number = $_POST['phone_number'];
 
-    $update_query_address = "UPDATE shipping_address SET recipient_name = ?, address_line1 = ?, phone_number = ? WHERE CusID = ?";
-    $stmt_address = mysqli_prepare($conn, $update_query_address);
-    mysqli_stmt_bind_param($stmt_address, 'sssi', $recipient_name, $address_line1, $phone_number, $uid);
-    $update_result_address = mysqli_stmt_execute($stmt_address);
+    $select_query_address = "SELECT * FROM customer_address WHERE CusID = ?";
+    $stmt_address = mysqli_prepare($conn, $select_query_address);
+    mysqli_stmt_bind_param($stmt_address, 'i', $uid);
+    mysqli_stmt_execute($stmt_address);
+    mysqli_stmt_store_result($stmt_address);
+
+
+    if(mysqli_stmt_num_rows($stmt_address) > 0) {
+        $update_query_address = "UPDATE customer_address SET recipient_name = ?, address_line1 = ?, phone_number = ? WHERE CusID = ?";
+        $stmt_address = mysqli_prepare($conn, $update_query_address);
+        mysqli_stmt_bind_param($stmt_address, 'sssi', $recipient_name, $address_line1, $phone_number, $uid);
+        $update_result_address = mysqli_stmt_execute($stmt_address);
+    } 
+    else {
+        $insert_query_address = "INSERT INTO customer_address (recipient_name, address_line1, phone_number, CusID) VALUES (?, ?, ?, ?)";
+        $stmt_address = mysqli_prepare($conn, $insert_query_address);
+        mysqli_stmt_bind_param($stmt_address, 'sssi', $recipient_name, $address_line1, $phone_number, $uid);
+        $insert_result_address = mysqli_stmt_execute($stmt_address);
+    }
 
     // Check if both updates were successful
     if ($update_result_customer && $update_result_address) {
@@ -92,8 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             top: 8px;
             /* Adjust this value as needed to vertically align the radio button with the text */
         }
-
-
 
 
         body {
@@ -299,14 +316,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="text" name="username" value="<?php echo $user_data['Username'] ?>">
 
                 <label for="password">Password:</label>
-                <input type="password" name="password" value="<?php echo $user_data['Password'] ?>" required>
+                <input type="password" name="password" value="<?php echo $user_data['Password'] ?>" disabled>
 
                 <label for="tel">Tel:<span></span></label>
                 <input type="tel" name="tel" value="<?php echo $user_data['Tel'] ?>" required>
-
-
-
-
 
 
                 <div class="address-container">

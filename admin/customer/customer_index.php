@@ -144,6 +144,7 @@
                 <th>Name</th>
                 <th>Sex</th>
                 <th>Tel</th>
+                <th>Permission</th>
                 <th>Action</th>
             </tr>";
 
@@ -156,11 +157,12 @@
                     <td>{$row['CusFName']} {$row['CusLName']}</td>
                     <td>{$row['Sex']}</td>
                     <td>{$row['Tel']}</td>
+                    <td>{$row['role']}</td>
                     <td class='action-buttons'>
                         <form class='action-button' action='customer_update.php' method='post'>  
                             <input type='hidden' name='id_customer' value={$row['CusID']}>
                             <input type='image' alt='update' src='../img/pencil.png'>
-                        </form>:";
+                        </form>";
                 if($_SESSION['admin'] == 'super_admin'){
                     echo"<form class='action-button' action='customer_delete_confirm.php' method='post'>
                                 <input type='hidden' name='id_customer' value={$row['CusID']}>

@@ -78,13 +78,13 @@
         $codesArray = explode(',', $code);
         echo "<center>";
         echo "<form method='POST' action='stock_delete.php'>";
-        echo "<h4>จำนวนชุดข้อมูลที่จะลบ</h4><font size='8'>";
+        echo "<h4>Number of data sets to delete</h4><font size='8'>";
         echo count($codesArray);
         echo "</font><br>";
-        echo "⚠️โปรดให้เเน่ใจที่จะต้องการลบข้อมูล⚠️<br><br>";
+        echo "⚠️Please make sure you want to delete the information.⚠️<br><br>";
         echo "<input type='hidden' name='list_id_stock' value={$_POST['list_id_stock']}>";
-        echo "<a href='stock_index.php'>ยกเลิก</a>"; 
-        echo "<input type='submit' value='ยืนยัน'>";
+        echo "<a href='stock_index.php'>Cancel</a>"; 
+        echo "<input type='submit' value='Confirm'>";
         echo "</form>\n";
         echo "</center>";
 
@@ -94,7 +94,7 @@
         color: #ffff;             
         text-decoration: none;
         margin-right: 5px;
-        '>ยกเลิก</a>";
+        '>Cancel</a>";
         echo "</form>\n"; 
         echo "</center>";
     }
@@ -107,20 +107,20 @@
             echo "<center>";
             echo "<form method='post' action='stock_delete.php'>";
             echo "<h1> Delete stock Form </h1>";
-            echo "<h2>รหัสลูกค้า ". $row['ProID'] ."</h2><br>";
+            echo "<h2>No. ". $row['ProID'] ."</h2><br>";
             echo "<input type='hidden' name='id_stock' value='" . $row['ProID'] . "'>";
-            echo "ชื่อ : {$row['ProName']}<br>";
-            echo "ราคา/ชิ้น : {$row['PricePerUnit']}<br>";
-            echo "จำนวนสินค้า : {$row['StockQty']}<br><br>";
-            echo "⚠️โปรดให้เเน่ใจที่จะต้องการลบข้อมูล⚠️<br><br>";
+            echo "product name : {$row['ProName']}<br>";
+            echo "price/unit : {$row['PricePerUnit']}<br>";
+            echo "Quantity : {$row['StockQty']}<br><br>";
+            echo "⚠️Please make sure you want to delete the information.⚠️<br><br>";
             echo "<a href='stock_index.php' 
                     style='
                     padding: 9px 14px;
                     color: #ffff;             
                     text-decoration: none;
                     margin-right: 5px;
-                    '>ยกเลิก</a>";
-            echo "<input type='submit' value='ยืนยัน'>";
+                    '>Cancel</a>";
+            echo "<input type='submit' value='Confirm'>";
             echo "</form>\n"; 
             echo "</center>";
         }

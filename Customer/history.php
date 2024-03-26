@@ -387,8 +387,10 @@
                         echo "<p>Delivery Date: {$row['delivery_date']}</p>";
                     }
                     echo "<hr>";
+                    echo "<pl id='{$row['shipping_status']}-status'><img src='./image/cross-circle.png' alt='Canceled Fast Icon' width='20'> {$row['shipping_status']} ";
+                    echo $row['fullfill_status'] == 'Refund' ? '('.$row['fullfill_status'].')' : '';
+                    echo "</pl>";
 
-                    echo "<pl id='{$row['shipping_status']}-status'><img src='./image/cross-circle.png' alt='Canceled Fast Icon' width='20'> {$row['shipping_status']}</pl>";
                     echo "<hr>";
                 }
          

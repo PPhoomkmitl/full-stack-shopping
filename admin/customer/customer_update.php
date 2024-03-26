@@ -88,23 +88,49 @@ if (mysqli_num_rows($msresults) > 0) {
     echo "<center>";
 
     echo "<h1> Update Customer Form </h1>";
-    echo "<h2>รหัสลูกค้า " . $row['CusID'] . "</h2><br>";
+    echo "<h2>No. " . $row['CusID'] . "</h2><br>";
     echo "<input type='hidden' name='id_customer' value='" . $row['CusID'] . "'>";
     echo "<input type='hidden' name='id_receiver' value='" . (isset($row_recv['address_id']) ? $row_recv['address_id'] : "") . "'>";
-    echo "ชื่อ <input type='text' name='a1' value='" . $row['CusFName'] . "'><br>";
-    echo "นามสกุล <input type='text' name='a2' value='" . $row['CusLName'] . "'><br>";
-    // echo "เพศ <input type='text' name='a3' value='" . $row['Sex'] . "'><br>";
-    echo "เพศ <select name='a3'>";
+    echo "Firstname <input type='text' name='a1' value='" . $row['CusFName'] . "'><br>";
+    echo "Lastname <input type='text' name='a2' value='" . $row['CusLName'] . "'><br>";
+    // echo "Sex <input type='text' name='a3' value='" . $row['Sex'] . "'><br>";
+    echo "Sex <select name='a3'>";
     echo "<option value='F'" . ($row['Sex'] == 'F' ? " selected" : "") . ">F</option>";
     echo "<option value='M'" . ($row['Sex'] == 'M' ? " selected" : "") . ">M</option>";
     echo "<option value='N'" . ($row['Sex'] == 'N' ? " selected" : "") . ">None</option>";
     echo "</select><br>";
-    echo "เบอร์โทรศัพท์ <input type='text' name='a4' value='" . $row['Tel'] . "'><br>";
-    echo "ที่อยู่ <textarea name='a5'>" . (isset($row_recv['Address']) ? $row_recv['Address'] : "") . "</textarea><br>";
-    echo "⚠️โปรดให้เเน่ใจที่จะต้องการอัปเดตข้อมูล⚠️<br><br>";
+    echo "Tel <input type='text' name='a4' value='" . $row['Tel'] . "'><br>";
+    echo "Role: <select name='a5'>";
+        echo "<option value='member' ";
+        if ($row['role'] == 'member') {
+            echo " selected";
+        }
+        echo ">Member</option>";
+        
+        echo "<option value='user_admin'";
+        if ($row['role'] == 'user_admin') {
+            echo " selected";
+        }
+        echo ">User Admin</option>";
+        
+        echo "<option value='permission_admin'";
+        if ($row['role'] == 'permission_admin') {
+            echo " selected";
+        }
+        echo ">Permission Admin</option>";
+        
+        echo "<option value='super_admin'";
+        if ($row['role'] == 'super_admin') {
+            echo " selected";
+        }
+        echo ">Super Admin</option>"; 
+    echo "</select><br>";
+  
+
+    echo "⚠️Please make sure you want to update your information.⚠️<br><br>";
     echo "<div style='display:flex;'>";
-    echo "<input type='button' value='กลับ' style='margin-right:1rem;' onclick='history.back();'>";
-    echo "<input type='submit' value='ยืนยัน''>";
+    echo "<input type='button' value='Cancel' style='margin-right:1rem;' onclick='history.back();'>";
+    echo "<input type='submit' value='Confirm''>";
     echo "</div>";
 
     echo "</form>\n";
