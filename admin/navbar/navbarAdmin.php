@@ -10,6 +10,7 @@
         body {
             margin: 0;
             padding: 0;
+            z-index: 100;
         }
 
         nav {
@@ -18,6 +19,7 @@
             position: fixed;
             width: 100%;
             top: 0;
+            z-index: 100;
             /* display: flex; */
             /* justify-content: space-between; */
             /* Added to align items to the left and right */
