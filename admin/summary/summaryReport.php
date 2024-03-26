@@ -170,7 +170,7 @@
                     <option value="no-filter">No Filter</option>
                     <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
-                    <option value="weekly">Weekly</option>
+                    <option value="daily">Daily</option>
                     <option value="custom">Custom</option>
                 </select>
 
@@ -193,23 +193,23 @@
                             <option value="12">December</option>
                         </select>
                         <label for="filter-year">Year:</label>
-                        <input type="number" id="filter-year" min="2000" max="2100" value="2024">
+                        <input type="number" id="filter-month-year" min="2000" max="2100" value="2024">
                     </div>
-                    <div id="yearly-options">
+                    <div id="yearly-options" onchange="handleYearlyChange()">
                         <label for="filter-year">Year:</label>
                         <input type="number" id="filter-year" min="2000" max="2100" value="2024">
                     </div>
                     <div id="daily-options">
                         <label for="filter-day">Day:</label>
-                        <input type="date" id="filter-day">
+                        <input type="date" id="filter-date" onchange="handleDailyChange()">
                     </div>
                 </div>
                 <div id="custom-filter" style="display: none;">
                     <label for="start-date">Start Date:</label>
-                    <input type="date" id="start-date">
+                    <input type="date" id="start-date" onchange="handleCustomChange()">
                     <br />
                     <label for="end-date">End Date:</label>
-                    <input type="date" id="end-date">
+                    <input type="date" id="end-date" onchange="handleCustomChange()">
                 </div>
                 <button onclick="resetFilters()">Reset</button>
             </div>
@@ -448,7 +448,82 @@
         </div>
     </div>
     </div>
+    <div class="data-container" id="custom-summary" style="display : none">
+        <div class="data-card" id='card-1'>
+            <h2 id='PQ'>Custom Summary</h2>
+            <?php
+            // Establish database connection
+            $cx = mysqli_connect("localhost", "root", "", "shopping");
 
+            // Check if custom filter dates are set
+            if (isset($_POST['start-date']) && isset($_POST['end-date'])) {
+                // Retrieve start and end dates from form inputs
+                $startDate = $_POST['start-date'];
+                $endDate = $_POST['end-date'];
+
+                // Construct SQL queries with custom date range
+                $totalQuantityAllProducts_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyAllProducts
+                FROM order_details
+                INNER JOIN orders ON order_details.order_id = orders.order_id
+                WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
+
+                // Execute the query
+                $totalQuantityAllProducts_row = mysqli_fetch_assoc($totalQuantityAllProducts_Query);
+                $totalQuantityAllProducts = $totalQuantityAllProducts_row['TotalQtyAllProducts'];
+
+                // Query for best selling products within the custom date range
+                $bestSell_Query = mysqli_query($cx, "
+                SELECT
+                    product.ProID,
+                    product.ProName,
+                    product.Description,
+                    product.PricePerUnit,
+                    SUM(order_details.quantity) AS TotalQty
+                FROM
+                    product
+                    INNER JOIN order_details ON product.ProID = order_details.ProID
+                    INNER JOIN orders ON order_details.order_id = orders.order_id
+                WHERE
+                    DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'
+                GROUP BY
+                    product.ProID
+                ORDER BY
+                    TotalQty DESC
+            ");
+
+                // Loop through the results and display them in a table
+                while ($row = mysqli_fetch_assoc($bestSell_Query)) {
+                    $totalSum = $row['PricePerUnit'] * $row['TotalQty'];
+                    $percentageSold = ($row['TotalQty'] / $totalQuantityAllProducts) * 100;
+
+                    echo "<tr>";
+                    echo "<td>" . $row['ProID'] . "</td>";
+                    echo "<td>" . $row['ProName'] . "</td>";
+                    echo "<td>" . $row['PricePerUnit'] . "</td>";
+                    echo "<td>" . $row['TotalQty'] . "</td>";
+                    echo "<td>" . $totalSum . "</td>";
+                    echo "<td>" . number_format($percentageSold, 2) . "%</td>";
+                    echo "</tr>";
+                }
+
+                // Query for total income within the custom date range
+                $income_Query = mysqli_query($cx, "SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalIncome
+                FROM product 
+                INNER JOIN order_details ON product.ProID = order_details.ProID
+                INNER JOIN orders ON order_details.order_id = orders.order_id
+                WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
+
+                // Fetch and display total income
+                $total_income_row = mysqli_fetch_assoc($income_Query);
+                $total_income = $total_income_row['TotalIncome'];
+                echo "<h2>Total Income: ฿" . number_format($total_income, 2) . "</h2>";
+            } else {
+                // If custom filter dates are not set, display a message or handle accordingly
+                echo "<p>Please select a custom date range.</p>";
+            }
+            ?>
+        </div>
+    </div>
 
 
     <script>
@@ -463,9 +538,23 @@
             var yearlyOptions = document.getElementById('yearly-options');
             var dailyOptions = document.getElementById('daily-options');
 
+            // Filter daily, monthly, yearly summary data based on the selected filter type
+            var summarySections = document.querySelectorAll('.data-container');
+            summarySections.forEach(section => {
+                if (section.id === filterType + '-summary') {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+
+            // Change filter icon and set filter status
+            document.getElementById('filter-icon-img').src = '../img/filter.png';
+            filterApplied = true;
+
             if (filterType === 'no-filter') {
                 filterOptions.style.display = 'none';
-                handleNoFilter();
+                resetFilters();
                 logFilterDetails(); // Log filter details
             } else if (filterType === 'monthly') {
                 handleMonthChange();
@@ -473,6 +562,7 @@
                 monthlyOptions.style.display = 'block';
                 yearlyOptions.style.display = 'none';
                 dailyOptions.style.display = 'none';
+                document.getElementById('custom-filter').style.display = 'none';
                 logFilterDetails(); // Log filter details
             } else if (filterType === 'yearly') {
                 handleYearlyChange();
@@ -480,15 +570,21 @@
                 monthlyOptions.style.display = 'none';
                 yearlyOptions.style.display = 'block';
                 dailyOptions.style.display = 'none';
-                // logFilterDetails(); // Log filter details
+                document.getElementById('custom-filter').style.display = 'none';
+                logFilterDetails(); // Log filter details
             } else if (filterType === 'daily') {
                 handleDailyChange()
                 filterOptions.style.display = 'block';
                 monthlyOptions.style.display = 'none';
                 yearlyOptions.style.display = 'none';
                 dailyOptions.style.display = 'block';
-                // logFilterDetails(); // Log filter details
+                document.getElementById('custom-filter').style.display = 'none';
+                logFilterDetails(); // Log filter details
             } else if (filterType === 'custom') {
+                filterOptions.style.display = 'block';
+                monthlyOptions.style.display = 'none';
+                yearlyOptions.style.display = 'none';
+                dailyOptions.style.display = 'none';
                 // Show date format box beside filter icon if 'custom' filter applied
                 document.getElementById('custom-filter').style.display = 'block';
                 // logFilterDetails(); // Log filter details
@@ -511,35 +607,8 @@
                 // applyFilter();
             } else {
                 console.log("Filtering by:", filterType);
-                applyFilter();
+                // applyFilter();
             }
-        }
-
-        function applyFilter() {
-
-            var filterType = document.getElementById('filter-type').value;
-
-            if (filterType === 'custom') {
-                var startDate = document.getElementById('start-date').value;
-                var endDate = document.getElementById('end-date').value;
-                filterDetails = `Custom Range: ${startDate} to ${endDate}`;
-            } else {
-                filterDetails = `Filter Type: ${filterType}`;
-            }
-
-            // Filter daily, monthly, yearly summary data based on the selected filter type
-            var summarySections = document.querySelectorAll('.data-container');
-            summarySections.forEach(section => {
-                if (section.id === filterType + '-summary') {
-                    section.style.display = 'block';
-                } else {
-                    section.style.display = 'none';
-                }
-            });
-
-            // Change filter icon and set filter status
-            document.getElementById('filter-icon-img').src = '../img/filter.png';
-            filterApplied = true;
         }
 
         // Function to reset filters and filter icon
@@ -565,6 +634,10 @@
             // Hide custom filter options
             var customFilter = document.getElementById('custom-filter');
             customFilter.style.display = 'none';
+
+            document.getElementById('monthly-options').style.display = 'none';
+            document.getElementById('yearly-options').style.display = 'none';
+            document.getElementById('daily-options').style.display = 'none';
         }
 
         // Add event listener to filter type dropdown to handle changes
@@ -573,7 +646,7 @@
         // Function to handle month change event
         function handleMonthChange() {
             var selectedMonth = document.getElementById('filter-month').value;
-            var selectedYear = document.getElementById('filter-year').value; // Assuming you have a year filter as well
+            var selectedYear = document.getElementById('filter-month-year').value; // Assuming you have a year filter as well
             var startDate, endDate;
 
             if (selectedMonth == 0) {
@@ -607,6 +680,7 @@
         // Function to handle daily filter change
         function handleDailyChange() {
             var selectedDate = document.getElementById('filter-date').value;
+            console.log(selectedDate)
 
             // Send an AJAX request to fetch data for the selected date
             $.ajax({
@@ -630,6 +704,7 @@
         function handleYearlyChange() {
             var selectedYear = document.getElementById('filter-year').value;
 
+
             // Send an AJAX request to fetch data for the selected year
             $.ajax({
                 url: 'fetch_yearly_data.php', // Change the URL to your PHP script
@@ -648,15 +723,60 @@
             });
         }
 
+        function handleCustomChange() {
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+            logFilterDetails();
+
+            // Send an AJAX request to fetch data for the selected date range
+            $.ajax({
+                url: 'fetch_custom_data.php', // Change the URL to your PHP script
+                method: 'POST',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate
+                },
+                success: function(response) {
+                    // Update the HTML with the fetched data
+                    $('#custom-summary').html(response);
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+
+        // Function to handle no-filter option
         // Function to handle no-filter option
         function handleNoFilter() {
+            // Reset filter icon
+            document.getElementById('filter-icon-img').src = '../img/filtered.png';
+
+            // Reset filter options
+            document.getElementById('filter-type').value = 'no-filter';
+            document.getElementById('start-date').value = '';
+            document.getElementById('end-date').value = '';
+            document.getElementById('filter-month').value = 0;
+            document.getElementById('filter-year').value = new Date().getFullYear(); // Set current year
+
+            // Hide custom filter options
+            document.getElementById('monthly-options').style.display = 'none';
+            document.getElementById('yearly-options').style.display = 'none';
+            document.getElementById('daily-options').style.display = 'none';
+            document.getElementById('custom-filter').style.display = 'none';
+
             // Send an AJAX request to fetch data without any filter
             $.ajax({
                 url: 'fetch_all_data.php', // Change the URL to your PHP script
                 method: 'POST',
                 success: function(response) {
                     // Update the HTML with the fetched data
-                    $('#no-filter-summary').html(response);
+                    $('#daily-summary').html(response);
+                    $('#monthly-summary').html(response);
+                    $('#yearly-summary').html(response);
+                    $('#custom-summary').html(response);
                 },
                 error: function(xhr, status, error) {
                     // Handle errors
