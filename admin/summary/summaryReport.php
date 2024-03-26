@@ -93,17 +93,17 @@
 
         /* Filter Icon */
         .filter-icon {
-            position: fixed;
+            position: absolute;
             cursor: pointer;
             z-index: 100;
             width: 25px;
             /* Adjust size as needed */
             height: 25px;
-            left: 10px;
+            margin-left: 70px;
             /* Distance from the left side */
-            top: 55%;
-            left: 5%;
+            top: 50px;
             transform: translateY(-50%);
+            z-index: 1;
         }
 
         .filter-icon img {
@@ -124,18 +124,17 @@
         /* Filter Zone */
         .filter-zone {
             display: box;
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 1;
-            border: 1px solid #000;
         }
 
         .filter-content {
+            margin-left: 5%;
             border: 1px solid #000;
-            top: 50%;
+            top: 25%;
             position: absolute;
             background-color: white;
             padding: 20px;
@@ -158,12 +157,13 @@
 
 
         <div id="filter-zone" class="filter-zone">
-            <div id="filter-icon" class="filter-icon" onclick="resetFilters()">
-                <img id="filter-icon-img" src="../img/filtered.png" alt="Filter Icon">
-            </div>
             <!-- Filter content -->
+
             <div class="filter-content">
                 <h2>Filters</h2>
+                <div id="filter-icon" class="filter-icon" onclick="resetFilters()">
+                    <img id="filter-icon-img" src="../img/filtered.png" alt="Filter Icon">
+                </div>
                 <!-- Filter options here -->
                 <label for="filter-type">Filter Type:</label>
                 <select id="filter-type" onchange="handleFilterTypeChange()">
