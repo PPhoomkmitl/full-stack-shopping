@@ -28,35 +28,46 @@ $result = mysqli_query($conn, $query);
 
 // Process the fetched data and generate HTML for display
 if ($result) {
-    // Start building the HTML data card
-    $output = "<div class='data-container' id='daily-summary'>
+    // Check if any rows were returned
+    if (mysqli_num_rows($result) > 0) {
+        // Start building the HTML data card
+        $output = "<div class='data-container' id='daily-summary'>
+                        <div class='data-card' id='card-1'>
+                            <h2 id='PQ'>Product Summary - Daily</h2>
+                            <table>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Price Per Unit</th>
+                                    <th>Total Unit Sold</th>
+                                </tr>";
+
+        // Loop through the query results and append rows to the table
+        while ($row = mysqli_fetch_assoc($result)) {
+            $output .= "<tr>";
+            $output .= "<td>" . $row['ProID'] . "</td>";
+            $output .= "<td>" . $row['ProName'] . "</td>";
+            $output .= "<td>" . $row['Description'] . "</td>";
+            $output .= "<td>" . $row['PricePerUnit'] . "</td>";
+            $output .= "<td>" . $row['TotalQty'] . "</td>";
+            $output .= "</tr>";
+        }
+
+        // Close the table and data card
+        $output .= "</table></div></div>";
+
+        // Output the generated HTML
+        echo $output;
+    } else {
+        // If no data is found, display a message
+        echo "<div class='data-container' id='daily-summary'>
                     <div class='data-card' id='card-1'>
                         <h2 id='PQ'>Product Summary - Daily</h2>
-                        <table>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Price Per Unit</th>
-                                <th>Total Unit Sold</th>
-                            </tr>";
-
-    // Loop through the query results and append rows to the table
-    while ($row = mysqli_fetch_assoc($result)) {
-        $output .= "<tr>";
-        $output .= "<td>" . $row['ProID'] . "</td>";
-        $output .= "<td>" . $row['ProName'] . "</td>";
-        $output .= "<td>" . $row['Description'] . "</td>";
-        $output .= "<td>" . $row['PricePerUnit'] . "</td>";
-        $output .= "<td>" . $row['TotalQty'] . "</td>";
-        $output .= "</tr>";
+                        <p>No data available for the selected date.</p>
+                    </div>
+                </div>";
     }
-
-    // Close the table and data card
-    $output .= "</table></div></div>";
-
-    // Output the generated HTML
-    echo $output;
 } else {
     // Handle query errors
     echo "Error executing query: " . mysqli_error($cx);

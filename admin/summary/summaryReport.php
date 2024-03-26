@@ -1,3 +1,4 @@
+<?php include_once '../../dbConfig.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -153,7 +154,25 @@
         <?php
         date_default_timezone_set('Asia/Bangkok');
         $currentDateTime = date("d-m-Y");
+
+
         ?>
+
+        <?php
+        // Set the timezone
+        date_default_timezone_set('GMT');
+
+        // Get the current date and time
+        $currentDate = date("j F Y"); // Format: Day Month Year (e.g., 27 March 2024)
+        $currentTime = date("H:i"); // Format: Hour:Minute:Second (e.g., 15:30:00)
+
+        // Get the GMT offset
+        $gmtOffset = date("7"); // Format: +HH:MM (e.g., +03:00)
+
+        // Output the message
+        echo "<center><h2>Today is $currentDate, Time $currentTime GMT+$gmtOffset</h2></center>";
+        ?>
+
 
 
         <div id="filter-zone" class="filter-zone">
@@ -214,90 +233,90 @@
                 <button onclick="resetFilters()">Reset</button>
             </div>
         </div>
-
         <div class="data-container" id="daily-summary">
             <div class="data-card" id='card-1'>
                 <h2 id='PQ'>Product Summary</h2>
                 <?php
                 // Establish database connection
-                $cx = mysqli_connect("localhost", "root", "", "shopping");
 
                 // Check if custom filter dates are set
-                if (isset($_POST['start-date']) && isset($_POST['end-date'])) {
+                if (isset($_POST['date']) && !empty($_POST['date'])) {
                     // Retrieve start and end dates from form inputs
                     $startDate = $_POST['start-date'];
                     $endDate = $_POST['end-date'];
 
                     // Construct SQL queries with custom date range
-                    $totalQuantityAllProducts_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyAllProducts
-                FROM order_details
-                INNER JOIN orders ON order_details.order_id = orders.order_id
-                WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
+                    $totalQuantityAllProducts_Query = mysqli_query($conn, "SELECT SUM(order_details.quantity) AS TotalQtyAllProducts
+            FROM order_details
+            INNER JOIN orders ON order_details.order_id = orders.order_id
+            WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
 
                     // Execute the query
                     $totalQuantityAllProducts_row = mysqli_fetch_assoc($totalQuantityAllProducts_Query);
                     $totalQuantityAllProducts = $totalQuantityAllProducts_row['TotalQtyAllProducts'];
 
                     // Query for best selling products within the custom date range
-                    $bestSell_Query = mysqli_query($cx, "
-                SELECT
-                    product.ProID,
-                    product.ProName,
-                    product.Description,
-                    product.PricePerUnit,
-                    SUM(order_details.quantity) AS TotalQty
-                FROM
-                    product
-                    INNER JOIN order_details ON product.ProID = order_details.ProID
-                    INNER JOIN orders ON order_details.order_id = orders.order_id
-                WHERE
-                    DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'
-                GROUP BY
-                    product.ProID
-                ORDER BY
-                    TotalQty DESC
+                    $bestSell_Query = mysqli_query($conn, "
+            SELECT
+                product.ProID,
+                product.ProName,
+                product.Description,
+                product.PricePerUnit,
+                SUM(order_details.quantity) AS TotalQty
+            FROM
+                product
+                INNER JOIN order_details ON product.ProID = order_details.ProID
+                INNER JOIN orders ON order_details.order_id = orders.order_id
+            WHERE
+                DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'
+            GROUP BY
+                product.ProID
+            ORDER BY
+                TotalQty DESC
             ");
 
-                    // Loop through the results and display them in a table
-                    while ($row = mysqli_fetch_assoc($bestSell_Query)) {
-                        $totalSum = $row['PricePerUnit'] * $row['TotalQty'];
-                        $percentageSold = ($row['TotalQty'] / $totalQuantityAllProducts) * 100;
+                    // Check if any rows were returned
+                    if (mysqli_num_rows($bestSell_Query) > 0) {
+                        // Loop through the results and display them in a table
+                        while ($row = mysqli_fetch_assoc($bestSell_Query)) {
+                            $totalSum = $row['PricePerUnit'] * $row['TotalQty'];
+                            $percentageSold = ($row['TotalQty'] / $totalQuantityAllProducts) * 100;
 
-                        echo "<tr>";
-                        echo "<td>" . $row['ProID'] . "</td>";
-                        echo "<td>" . $row['ProName'] . "</td>";
-                        echo "<td>" . $row['PricePerUnit'] . "</td>";
-                        echo "<td>" . $row['TotalQty'] . "</td>";
-                        echo "<td>" . $totalSum . "</td>";
-                        echo "<td>" . number_format($percentageSold, 2) . "%</td>";
-                        echo "</tr>";
-                    }
+                            echo "<tr>";
+                            echo "<td>" . $row['ProID'] . "</td>";
+                            echo "<td>" . $row['ProName'] . "</td>";
+                            echo "<td>" . $row['PricePerUnit'] . "</td>";
+                            echo "<td>" . $row['TotalQty'] . "</td>";
+                            echo "<td>" . $totalSum . "</td>";
+                            echo "<td>" . number_format($percentageSold, 2) . "%</td>";
+                            echo "</tr>";
+                        }
 
-                    // Query for total income within the custom date range
-                    $income_Query = mysqli_query($cx, "SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalIncome
+                        // Query for total income within the custom date range
+                        $income_Query = mysqli_query($conn, "SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalIncome
                 FROM product 
                 INNER JOIN order_details ON product.ProID = order_details.ProID
                 INNER JOIN orders ON order_details.order_id = orders.order_id
                 WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
 
-                    // Fetch and display total income
-                    $total_income_row = mysqli_fetch_assoc($income_Query);
-                    $total_income = $total_income_row['TotalIncome'];
-                    echo "<h2>Total Income: ฿" . number_format($total_income, 2) . "</h2>";
+                        // Fetch and display total income
+                        $total_income_row = mysqli_fetch_assoc($income_Query);
+                        $total_income = $total_income_row['TotalIncome'];
+                        echo "<h2>Total Income: ฿" . number_format($total_income, 2) . "</h2>";
+                    } else {
+                        // If no data is found, display a message
+                        echo "<p>No data available for the selected date range.</p>";
+                    }
                 } else {
                     // If custom filter dates are not set, display a message or handle accordingly
-                    echo "<p>Please select a custom date range.</p>";
+                    echo "<p>No data available for the selected date.</p>";
                 }
                 ?>
             </div>
         </div>
 
+
         <!-- Monthly Summary -->
-        <?php
-        // Display the month
-        $currentMonth = date('F');
-        echo "<center><h2>Month: $currentMonth</h2></center>";
-        ?>
         <div class="data-container" id="monthly-summary">
             <div class="data-card" id='card-2'>
                 <h2 id='PQ'>Product Summary - Monthly</h2>
@@ -312,14 +331,14 @@
                     </tr>
                     <?php
                     // Calculate the total quantity sold across all products for the month
-                    $totalQuantityMonthly_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyMonthly
+                    $totalQuantityMonthly_Query = mysqli_query($conn, "SELECT SUM(order_details.quantity) AS TotalQtyMonthly
                     FROM order_details
                     INNER JOIN orders ON order_details.order_id = orders.order_id
                     WHERE MONTH(orders.order_date) = MONTH(CURDATE()) AND YEAR(orders.order_date) = YEAR(CURDATE())");
                     $totalQuantityMonthly_row = mysqli_fetch_assoc($totalQuantityMonthly_Query);
                     $totalQuantityMonthly = $totalQuantityMonthly_row['TotalQtyMonthly'];
 
-                    $monthlySell_Query = mysqli_query($cx, "
+                    $monthlySell_Query = mysqli_query($conn, "
                     SELECT
                         product.ProID,
                         product.ProName,
@@ -356,7 +375,7 @@
                 </table>
                 <h1 id='Re'></h1>
                 <?php
-                $monthlyIncome_Query = mysqli_query($cx, "
+                $monthlyIncome_Query = mysqli_query($conn, "
                     SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalMonthlyIncome
                     FROM product 
                     INNER JOIN order_details ON product.ProID = order_details.ProID
@@ -372,11 +391,6 @@
     </div>
 
     <!-- Yearly Summary -->
-    <?php
-    // Display the month
-    $currentMonth = date('Y');
-    echo "<center><h2>Year: $currentMonth</h2></center>";
-    ?>
     <div class="data-container" id="yearly-summary">
         <div class="data-card" id='card-3'>
             <h2 id='PQ'>Product Summary - Yearly</h2>
@@ -391,14 +405,14 @@
                 </tr>
                 <?php
                 // Calculate the total quantity sold across all products for the year
-                $totalQuantityYearly_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyYearly
+                $totalQuantityYearly_Query = mysqli_query($conn, "SELECT SUM(order_details.quantity) AS TotalQtyYearly
                     FROM order_details
                     INNER JOIN orders ON order_details.order_id = orders.order_id
                     WHERE YEAR(orders.order_date) = YEAR(CURDATE())");
                 $totalQuantityYearly_row = mysqli_fetch_assoc($totalQuantityYearly_Query);
                 $totalQuantityYearly = $totalQuantityYearly_row['TotalQtyYearly'];
 
-                $yearlySell_Query = mysqli_query($cx, "
+                $yearlySell_Query = mysqli_query($conn, "
                     SELECT
                         product.ProID,
                         product.ProName,
@@ -434,7 +448,7 @@
             </table>
             <h1 id='Re'></h1>
             <?php
-            $yearlyIncome_Query = mysqli_query($cx, "
+            $yearlyIncome_Query = mysqli_query($conn, "
                     SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalYearlyIncome
                     FROM product 
                     INNER JOIN order_details ON product.ProID = order_details.ProID
@@ -448,12 +462,12 @@
         </div>
     </div>
     </div>
-    <div class="data-container" id="custom-summary" style="display : none">
-        <div class="data-card" id='card-1'>
+    <div class="data-container" id="custom-summary" <?php if (!isset($_POST['startDate']) || !isset($_POST['endDate'])) echo 'style="display: none;"'; ?>>
+        <div class="data-card" id='card-4'>
             <h2 id='PQ'>Custom Summary</h2>
             <?php
             // Establish database connection
-            $cx = mysqli_connect("localhost", "root", "", "shopping");
+            $conn = mysqli_connect("localhost", "root", "", "shopping");
 
             // Check if custom filter dates are set
             if (isset($_POST['start-date']) && isset($_POST['end-date'])) {
@@ -462,34 +476,34 @@
                 $endDate = $_POST['end-date'];
 
                 // Construct SQL queries with custom date range
-                $totalQuantityAllProducts_Query = mysqli_query($cx, "SELECT SUM(order_details.quantity) AS TotalQtyAllProducts
-                FROM order_details
-                INNER JOIN orders ON order_details.order_id = orders.order_id
-                WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
+                $totalQuantityAllProducts_Query = mysqli_query($conn, "SELECT SUM(order_details.quantity) AS TotalQtyAllProducts
+            FROM order_details
+            INNER JOIN orders ON order_details.order_id = orders.order_id
+            WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
 
                 // Execute the query
                 $totalQuantityAllProducts_row = mysqli_fetch_assoc($totalQuantityAllProducts_Query);
                 $totalQuantityAllProducts = $totalQuantityAllProducts_row['TotalQtyAllProducts'];
 
                 // Query for best selling products within the custom date range
-                $bestSell_Query = mysqli_query($cx, "
-                SELECT
-                    product.ProID,
-                    product.ProName,
-                    product.Description,
-                    product.PricePerUnit,
-                    SUM(order_details.quantity) AS TotalQty
-                FROM
-                    product
-                    INNER JOIN order_details ON product.ProID = order_details.ProID
-                    INNER JOIN orders ON order_details.order_id = orders.order_id
-                WHERE
-                    DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'
-                GROUP BY
-                    product.ProID
-                ORDER BY
-                    TotalQty DESC
-            ");
+                $bestSell_Query = mysqli_query($conn, "
+            SELECT
+                product.ProID,
+                product.ProName,
+                product.Description,
+                product.PricePerUnit,
+                SUM(order_details.quantity) AS TotalQty
+            FROM
+                product
+                INNER JOIN order_details ON product.ProID = order_details.ProID
+                INNER JOIN orders ON order_details.order_id = orders.order_id
+            WHERE
+                DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'
+            GROUP BY
+                product.ProID
+            ORDER BY
+                TotalQty DESC
+        ");
 
                 // Loop through the results and display them in a table
                 while ($row = mysqli_fetch_assoc($bestSell_Query)) {
@@ -507,11 +521,11 @@
                 }
 
                 // Query for total income within the custom date range
-                $income_Query = mysqli_query($cx, "SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalIncome
-                FROM product 
-                INNER JOIN order_details ON product.ProID = order_details.ProID
-                INNER JOIN orders ON order_details.order_id = orders.order_id
-                WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
+                $income_Query = mysqli_query($conn, "SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalIncome
+            FROM product 
+            INNER JOIN order_details ON product.ProID = order_details.ProID
+            INNER JOIN orders ON order_details.order_id = orders.order_id
+            WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
 
                 // Fetch and display total income
                 $total_income_row = mysqli_fetch_assoc($income_Query);
@@ -524,6 +538,8 @@
             ?>
         </div>
     </div>
+
+
 
 
     <script>
@@ -553,7 +569,13 @@
             filterApplied = true;
 
             if (filterType === 'no-filter') {
+                handleNoFilter();
                 filterOptions.style.display = 'none';
+                monthlyOptions.style.display = 'none';
+                yearlyOptions.style.display = 'none';
+                dailyOptions.style.display = 'none';
+                document.getElementById('custom-filter').style.display = 'none';
+                document.getElementById('custom-summary').style.display = 'none';
                 resetFilters();
                 logFilterDetails(); // Log filter details
             } else if (filterType === 'monthly') {
@@ -630,14 +652,7 @@
             summarySections.forEach(section => {
                 section.style.display = 'block';
             });
-
-            // Hide custom filter options
-            var customFilter = document.getElementById('custom-filter');
-            customFilter.style.display = 'none';
-
-            document.getElementById('monthly-options').style.display = 'none';
-            document.getElementById('yearly-options').style.display = 'none';
-            document.getElementById('daily-options').style.display = 'none';
+            document.getElementById('custom-summary').style.display = 'none';
         }
 
         // Add event listener to filter type dropdown to handle changes
@@ -748,7 +763,7 @@
         }
 
 
-        // Function to handle no-filter option
+
         // Function to handle no-filter option
         function handleNoFilter() {
             // Reset filter icon
@@ -756,8 +771,6 @@
 
             // Reset filter options
             document.getElementById('filter-type').value = 'no-filter';
-            document.getElementById('start-date').value = '';
-            document.getElementById('end-date').value = '';
             document.getElementById('filter-month').value = 0;
             document.getElementById('filter-year').value = new Date().getFullYear(); // Set current year
 
@@ -766,23 +779,7 @@
             document.getElementById('yearly-options').style.display = 'none';
             document.getElementById('daily-options').style.display = 'none';
             document.getElementById('custom-filter').style.display = 'none';
-
-            // Send an AJAX request to fetch data without any filter
-            $.ajax({
-                url: 'fetch_all_data.php', // Change the URL to your PHP script
-                method: 'POST',
-                success: function(response) {
-                    // Update the HTML with the fetched data
-                    $('#daily-summary').html(response);
-                    $('#monthly-summary').html(response);
-                    $('#yearly-summary').html(response);
-                    $('#custom-summary').html(response);
-                },
-                error: function(xhr, status, error) {
-                    // Handle errors
-                    console.error(xhr.responseText);
-                }
-            });
+            document.getElementById('custom-summary').style.display = 'none';
         }
     </script>
 
