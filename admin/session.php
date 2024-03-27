@@ -7,6 +7,6 @@ if (!isset($_SESSION['admin'])) {
     header("Location: ../../Customer/login.php");
     exit();
 }
-var_dump($_SESSION);
+// var_dump($_SESSION);
 ?>
 
