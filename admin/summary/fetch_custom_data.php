@@ -2,7 +2,7 @@
 // Include database configuration file
 include_once '../../dbConfig.php';
 
-// Retrieve the selected date from the AJAX request
+// Retrieve the selected start and end dates from the AJAX request
 $startDate = $_POST['startDate'];
 $endDate = $_POST['endDate'];
 
@@ -13,7 +13,15 @@ if (isset($startDate) && isset($endDate)) {
     echo "console.log('End Date: " . $endDate . "');";
     echo "</script>";
 
-    // Construct the SQL query with the provided date
+    // Extract month and year from start date
+    $startMonth = date('F', strtotime($startDate));
+    $startYear = date('Y', strtotime($startDate));
+
+    // Extract month and year from end date
+    $endMonth = date('F', strtotime($endDate));
+    $endYear = date('Y', strtotime($endDate));
+
+    // Construct the SQL query with the provided date range
     $query = "SELECT
                 product.ProID,
                 product.ProName,
@@ -22,10 +30,8 @@ if (isset($startDate) && isset($endDate)) {
                 SUM(order_details.quantity) AS TotalQty
             FROM
                 product
-                INNER JOIN
-                order_details ON product.ProID = order_details.ProID
-                INNER JOIN
-                orders ON order_details.order_id = orders.order_id
+                INNER JOIN order_details ON product.ProID = order_details.ProID
+                INNER JOIN orders ON order_details.order_id = orders.order_id
             WHERE
                 DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'
             GROUP BY
@@ -39,9 +45,9 @@ if (isset($startDate) && isset($endDate)) {
     // Process the fetched data and generate HTML for display
     if ($result) {
         // Start building the HTML data card
-        $output = "<div class='data-container' id='custom-summary'>
+        $output = "
                         <div class='data-card' id='card-4'>
-                            <h2 id='PQ'>Product Summary - Daily</h2>
+                            <h2 id='PQ'>Product Summary - Custom Range ($startMonth $startYear to $endMonth $endYear)</h2>
                             <table>
                                 <tr>
                                     <th>ID</th>
@@ -63,14 +69,16 @@ if (isset($startDate) && isset($endDate)) {
         }
 
         // Close the table and data card
-        $output .= "</table></div></div>";
+        $output .= "</table></div>";
 
         // Output the generated HTML
         echo $output;
     } else {
         // Handle query errors
+        echo "<script>";
         echo "console.log('SUCCESS');";
         echo "Error executing query: " . mysqli_error($cx);
+        echo "</script>";
     }
 } else {
     // If start date or end date is not set, do nothing or handle accordingly

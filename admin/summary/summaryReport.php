@@ -34,7 +34,7 @@
         }
 
         .data-container {
-            width: 60%;
+            width: 50%;
             margin: auto;
             display: flex;
             flex-wrap: wrap;
@@ -44,17 +44,11 @@
 
         .data-card {
             flex-grow: 1;
-            flex-basis: calc(50% - 20px);
             margin: 0 10px 20px;
             background-color: #E3F4F4;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .data-card:hover {
-            transform: scale(1.0);
         }
 
         .data-card h2,
@@ -180,7 +174,7 @@
 
             <div class="filter-content">
                 <h2>Filters</h2>
-                <div id="filter-icon" class="filter-icon" onclick="resetFilters()">
+                <div id="filter-icon" class="filter-icon" onclick="handleReset()">
                     <img id="filter-icon-img" src="../img/filtered.png" alt="Filter Icon">
                 </div>
                 <!-- Filter options here -->
@@ -230,7 +224,7 @@
                     <label for="end-date">End Date:</label>
                     <input type="date" id="end-date" onchange="handleCustomChange()">
                 </div>
-                <button onclick="resetFilters()">Reset</button>
+                <button onclick="handleReset()">Reset</button>
             </div>
         </div>
         <div class="data-container" id="daily-summary">
@@ -316,10 +310,25 @@
         </div>
 
 
+        <?php
+        // Include database configuration file
+        include_once '../../dbConfig.php';
+
+        // Initialize start and end dates as current month if not set
+        $startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date('Y-m-01');
+        $endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date('Y-m-t');
+
+        // Calculate the start and end months along with their respective years
+        $startMonthYear = date('F Y', strtotime($startDate));
+        $endMonthYear = date('F Y', strtotime($endDate));
+
+        // Construct the header for the monthly summary
+        $summaryHeader = "Current Product Summary - Monthly ($startMonthYear - $endMonthYear)";
+        ?>
         <!-- Monthly Summary -->
         <div class="data-container" id="monthly-summary">
             <div class="data-card" id='card-2'>
-                <h2 id='PQ'>Product Summary - Monthly</h2>
+                <h2 id='PQ'><?php echo $summaryHeader; ?></h2>
                 <table>
                     <tr>
                         <th>ID</th>
@@ -332,30 +341,29 @@
                     <?php
                     // Calculate the total quantity sold across all products for the month
                     $totalQuantityMonthly_Query = mysqli_query($conn, "SELECT SUM(order_details.quantity) AS TotalQtyMonthly
-                    FROM order_details
-                    INNER JOIN orders ON order_details.order_id = orders.order_id
-                    WHERE MONTH(orders.order_date) = MONTH(CURDATE()) AND YEAR(orders.order_date) = YEAR(CURDATE())");
+                FROM order_details
+                INNER JOIN orders ON order_details.order_id = orders.order_id
+                WHERE MONTH(orders.order_date) = MONTH('$startDate') AND YEAR(orders.order_date) = YEAR('$startDate')");
                     $totalQuantityMonthly_row = mysqli_fetch_assoc($totalQuantityMonthly_Query);
                     $totalQuantityMonthly = $totalQuantityMonthly_row['TotalQtyMonthly'];
 
                     $monthlySell_Query = mysqli_query($conn, "
-                    SELECT
-                        product.ProID,
-                        product.ProName,
-                        product.Description,
-                        product.PricePerUnit,
-                        SUM(order_details.quantity) AS TotalQty
-                    FROM
-                        product
-                        INNER JOIN order_details ON product.ProID = order_details.ProID
-                        INNER JOIN orders ON order_details.order_id = orders.order_id
-                    WHERE
-                        MONTH(orders.order_date) = MONTH(CURDATE()) AND YEAR(orders.order_date) = YEAR(CURDATE())
-                    GROUP BY
-                        product.ProID
-                    ORDER BY
-                        TotalQty DESC
-                ");
+                SELECT
+                    product.ProID,
+                    product.ProName,
+                    product.Description,
+                    product.PricePerUnit,
+                    SUM(order_details.quantity) AS TotalQty
+                FROM
+                    product
+                    INNER JOIN order_details ON product.ProID = order_details.ProID
+                    INNER JOIN orders ON order_details.order_id = orders.order_id
+                WHERE
+                    MONTH(orders.order_date) = MONTH('$startDate') AND YEAR(orders.order_date) = YEAR('$startDate')
+                GROUP BY
+                    product.ProID
+                ORDER BY
+                    TotalQty DESC");
 
                     while ($row = mysqli_fetch_assoc($monthlySell_Query)) {
                         $totalSum = $row['PricePerUnit'] * $row['TotalQty'];
@@ -370,18 +378,16 @@
                         echo "<td>" . number_format($percentageSold, 2) . "%</td>";
                         echo "</tr>";
                     }
-
                     ?>
                 </table>
                 <h1 id='Re'></h1>
                 <?php
                 $monthlyIncome_Query = mysqli_query($conn, "
-                    SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalMonthlyIncome
-                    FROM product 
-                    INNER JOIN order_details ON product.ProID = order_details.ProID
-                    INNER JOIN orders ON order_details.order_id = orders.order_id
-                    WHERE MONTH(orders.order_date) = MONTH(CURDATE()) AND YEAR(orders.order_date) = YEAR(CURDATE())
-                ");
+            SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalMonthlyIncome
+            FROM product 
+            INNER JOIN order_details ON product.ProID = order_details.ProID
+            INNER JOIN orders ON order_details.order_id = orders.order_id
+            WHERE MONTH(orders.order_date) = MONTH('$startDate') AND YEAR(orders.order_date) = YEAR('$startDate')");
                 $total_monthly_income_row = mysqli_fetch_assoc($monthlyIncome_Query);
                 $total_monthly_income = $total_monthly_income_row['TotalMonthlyIncome'];
                 echo "<h2>Total Income: ฿" . number_format($total_monthly_income, 2) . "</h2>";
@@ -389,6 +395,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Yearly Summary -->
     <div class="data-container" id="yearly-summary">
@@ -780,6 +787,7 @@
             document.getElementById('daily-options').style.display = 'none';
             document.getElementById('custom-filter').style.display = 'none';
             document.getElementById('custom-summary').style.display = 'none';
+            resetFilters();
         }
     </script>
 

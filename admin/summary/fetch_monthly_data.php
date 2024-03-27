@@ -6,6 +6,17 @@ include_once '../../dbConfig.php';
 $startDate = $_POST['startDate'];
 $endDate = $_POST['endDate'];
 
+// Extract month and year from start date
+$startMonth = date('F', strtotime($startDate));
+$startYear = date('Y', strtotime($startDate));
+
+// Extract month and year from end date
+$endMonth = date('F', strtotime($endDate));
+$endYear = date('Y', strtotime($endDate));
+
+// Calculate the number of days in the selected month
+$endDay = date('t', strtotime($endDate));
+
 // Construct the SQL query with the provided start and end dates
 $query = "SELECT
             product.ProID,
@@ -40,9 +51,9 @@ $totalQuantityMonthly = $totalQuantityRow['TotalQtyMonthly'];
 // Process the fetched data and generate HTML for display
 if ($result) {
     // Start building the HTML data card
-    $output = "<div class='data-container' id='monthly-summary'>
+    $output = "
                     <div class='data-card' id='card-2'>
-                        <h2 id='PQ'>Product Summary - Monthly</h2>
+                        <h2 id='PQ'>Product Summary - Monthly ($startMonth $startYear - $endMonth $endYear)</h2>
                         <table>
                             <tr>
                                 <th>ID</th>
@@ -71,7 +82,7 @@ if ($result) {
     }
 
     // Close the table and data card
-    $output .= "</table></div></div>";
+    $output .= "</table></div>";
 
     // Output the generated HTML
     echo $output;
@@ -79,4 +90,3 @@ if ($result) {
     // Handle query errors
     echo "Error executing query: " . mysqli_error($cx);
 }
-?>
