@@ -174,7 +174,7 @@
 
             <div class="filter-content">
                 <h2>Filters</h2>
-                <div id="filter-icon" class="filter-icon" onclick="handleReset()">
+                <div id="filter-icon" class="filter-icon" onclick="resetFilters()">
                     <img id="filter-icon-img" src="../img/filtered.png" alt="Filter Icon">
                 </div>
                 <!-- Filter options here -->
@@ -224,7 +224,7 @@
                     <label for="end-date">End Date:</label>
                     <input type="date" id="end-date" onchange="handleCustomChange()">
                 </div>
-                <button onclick="handleReset()">Reset</button>
+                <button onclick="resetFilters()">Reset</button>
             </div>
         </div>
         <div class="data-container" id="daily-summary">
