@@ -253,7 +253,8 @@
                         </div>
                     </div>
                     <div class="row"> 
-                        <div class="data-card">
+                    <h2 id='PQ'>Total Sales Today</h2>  
+                        <div class="data-card">          
                             <canvas id="barChart" width="500" height="250"></canvas>
                         </div>
                     </div>
@@ -567,27 +568,25 @@
     }
     
     
-    // ตั้งค่าวันที่เริ่มต้นและสิ้นสุดของช่วงเวลาที่ต้องการดึงข้อมูล (ในที่นี้คือวันนี้)
-    $start_date = date('Y-m-d');
-    $end_date = date('Y-m-d');
+    $start_date = date('Y-m-d'); // วันที่เริ่มต้นคือวันนี้
+    $end_date = date('Y-m-d'); // วันที่สิ้นสุดคือวันนี้
     
     // คำสั่ง SQL เพื่อดึงข้อมูลยอดขายสินค้าตามวันนี้
     $bestSell_query = mysqli_query($conn, "SELECT 
-        product.ProName, 
-        DATE_FORMAT(`orders`.order_date, '%Y-%m-%d') AS OrderDate, 
-        SUM(orders.total_price) AS TotalQty
-        FROM 
-            product 
-        INNER JOIN 
-            order_details ON product.ProID = order_details.ProID 
-        INNER JOIN 
-            `orders` ON order_details.order_id = `orders`.order_id 
-        WHERE 
-            DATE_FORMAT(`orders`.order_date, '%Y-%m-%d') = '$start_date' 
-        GROUP BY 
-            product.ProID
-        ORDER BY 
-            TotalQty DESC;");
+    product.ProName, 
+    DATE_FORMAT(MAX(`orders`.order_date), '%Y-%m-%d') AS OrderDate, 
+    SUM(orders.total_price) AS TotalQty
+    FROM 
+        product 
+    INNER JOIN 
+        order_details ON product.ProID = order_details.ProID 
+    INNER JOIN 
+        `orders` ON order_details.order_id = `orders`.order_id 
+    GROUP BY 
+        product.ProID
+    ORDER BY 
+    TotalQty DESC;");
+
     
     $data = [];
     
