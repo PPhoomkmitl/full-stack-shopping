@@ -2,7 +2,7 @@
 include_once '../../dbConfig.php';
 
 $filterKeyword = isset($_GET['filterKeyword']) ? mysqli_real_escape_string($conn, $_GET['filterKeyword']) : '';
-$index = isset($_GET['index']) ? $_GET['index'] : ''; // เพิ่มบรรทัดนี้เพื่อรับค่า index จาก AJAX
+// $index = isset($_GET['index']) ? $_GET['index'] : ''; // เพิ่มบรรทัดนี้เพื่อรับค่า index จาก AJAX
 
 // echo "<script>console.log('Row data: " . json_encode($filterKeyword) . "');</script>";
 
@@ -12,7 +12,7 @@ $index = 1;
 
 ?>
 <?php
-if (!empty($filterKeyword) && $filterKeyword != 'All') {
+if (!empty($filterKeyword) && $filterKeyword != 'All' && $filterKeyword != 'Unfulfilled') {
     $cur = "SELECT * FROM orders
                 INNER JOIN customer ON customer.CusID = orders.CusID
                 INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
@@ -48,7 +48,21 @@ if (!empty($filterKeyword) && $filterKeyword != 'All') {
     if (!$msresults) {
         die("Query failed: " . mysqli_error($conn));
     }
-} else {
+} else if ($filterKeyword == 'Unfulfilled') {
+    // If $filterKeyword is empty, select all records
+    $cur = "SELECT * 
+        FROM orders 
+        INNER JOIN customer ON customer.CusID = orders.CusID
+        INNER JOIN image_slip ON image_slip.image_slip_id = orders.image_slip_id
+        INNER JOIN billing_address ON orders.billing_address_id = billing_address.address_id
+        WHERE orders.fullfill_status = 'Unfulfilled' AND orders.shipping_status != 'Canceled'";
+    $msresults = mysqli_query($conn, $cur);
+    // Check for errors in query execution
+    if (!$msresults) {
+        die("Query failed: " . mysqli_error($conn));
+    }
+} 
+else {
 
     $msresults = null;
 }
@@ -75,7 +89,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
             <th>Transfer</th>";
             echo "</tr>";
         }
-        else if ($row['fullfill_status'] == 'Unfulfilled' && $index == 1) {
+        else if ($filterKeyword == 'Unfulfilled' && $index == 1) {
             echo "<th>Approve</th>";
             // echo "<th>Action</th>";
             echo "</tr>";
@@ -87,6 +101,9 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
             echo "</tr>";
         }
 
+        if($filterKeyword == 'Canceled') {
+
+        }
         echo "<tr class='user-row'>
         <td>{$row['order_id']}</td>
         <td>{$row['CusFName']} {$row['CusLName']}</td>
@@ -139,6 +156,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
             echo "</select>";
 
             echo "</div></td>";
+
 
              /* Payment Status */
             if ($filterKeyword == 'Canceled') {
@@ -252,7 +270,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
 
 
         // Check if fullfill_status is Unfulfilled
-        if ($row['fullfill_status'] == 'Unfulfilled' && ($filterKeyword != 'All' && $filterKeyword != 'Canceled')  ) {
+        if ($row['fullfill_status'] == 'Unfulfilled' && ($filterKeyword != 'All' && $filterKeyword != 'Canceled' && $row['shipping_status'] != 'Canceled')  ) {
 
             echo "
             <td>
@@ -286,7 +304,7 @@ if ($msresults !== null && mysqli_num_rows($msresults) > 0) {
             echo "</div>
                 <div class='modal-footer'>
                     <button type='button' class='btn btn-danger' data-bs-dismiss='modal' id='decline_payment_$index' data-payment-order_id='{$row['order_id']}'>Canceled</button>
-                    <button type='button' class='btn btn-success' style='margin-left:5px;' data-bs-dismiss='modal' id='select_payment_$index' data-payment-order_id='{$row['order_id']}'>Approve</button>
+                    <button type='button' class='btn btn-success' style='margin-left:5px;' data-bs-dismiss='modal' id='select_payment_$index' value='Fulfilled' data-payment-order_id='{$row['order_id']}'>Approve</button>
                 </div>
             </div>
             </div>

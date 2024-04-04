@@ -34,7 +34,7 @@ if (isset($_GET['aBack'])) {
 
     // Redirect to index.php
     header("Location: index.php");
-    exit();// สามารถเพิ่มการ redirect ไปที่หน้าหลักหรือหน้าอื่น ๆ ได้ตามต้องการ
+    exit();
 }
 ?>
     <a class="aBack" href="index.php">

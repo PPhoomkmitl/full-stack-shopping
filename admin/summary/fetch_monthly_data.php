@@ -83,9 +83,20 @@ if ($result) {
 
     // Close the table and data card
     $output .= "</table></div>";
-
-    // Output the generated HTML
+    
     echo $output;
+    // Construct the AJAX response data with both startDate and HTML output
+    // $responseData = array(
+    //     'startDate' => $startDate, 
+    //     'endDate' => $endDate, 
+    //     'html' => $output
+    // );
+
+    // // Encode the response data as JSON
+    // $jsonResponse = json_encode($responseData);
+
+    // // Output the JSON response
+    // echo $jsonResponse;
 } else {
     // Handle query errors
     echo "Error executing query: " . mysqli_error($cx);

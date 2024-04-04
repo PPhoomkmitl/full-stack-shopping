@@ -7,10 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $a3 = $_POST['a3'];
     $a4 = $_POST['a4'];
     $a5 = $_POST['a5'];
+    $category = $_POST['category'];
+
 
     /* run insert */
-    $stmt = mysqli_query($conn, "INSERT INTO product(ProName, Description ,PricePerUnit, StockQty)
-        VALUES('$a2', '$a5' ,'$a3', '$a4')");
+    $stmt = mysqli_query($conn, "INSERT INTO product(ProName, Description ,PricePerUnit, StockQty , product_type_id)
+        VALUES('$a2', '$a5' ,'$a3', '$a4', $category)");
     
     /* check for errors */
     if ($stmt) {

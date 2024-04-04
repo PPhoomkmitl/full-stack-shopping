@@ -453,7 +453,7 @@ include_once '../dbConfig.php';
                         <h5 class="text-muted mb-0">Thanks for your Order,<span style="color: #488978;"> ' . $orderResult['CusFName'] . '!</span></h5>
                         <div class="action-buttons">';
                         if($orderResult['invoice_id'] !== null && $orderResult['fullfill_status'] == 'Fulfilled' && $orderResult['shipping_status'] != 'Canceled'){          
-                           echo '<form class="action-button" action="pdf.php" method="post" target="_blank" style="display: inline-block;">
+                           echo '<form class="action-button" action="invoicePDF.php" method="post" target="_blank" style="display: inline-block;">
                                 <input type="hidden" name="order_id" value="' . $orderID . '">
                                 <input type="hidden" name="id_customer" value="' . $cusID . '">
                                 <button type="submit">

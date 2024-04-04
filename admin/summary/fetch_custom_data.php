@@ -69,15 +69,21 @@ if (isset($startDate) && isset($endDate)) {
         }
 
         // Close the table and data card
-        $output .= "</table></div>";
+        // $output .= "</table>
+        //     <form action=\"./reportPDF_custom.php\" method=\"post\" id=\"printForm\">
+        //         <input type=\"hidden\" name=\"print\" value=\"1\">
+        //         <input type=\"hidden\" name=\"startDate\" value=\"" . $startDate . "\">
+        //         <input type=\"hidden\" name=\"endDate\" value=\"" . $endDate . "\">
+        //         <button type=\"submit\">Print PDF</button>
+        //     </form>
+        // </div>";
 
-        // Output the generated HTML
         echo $output;
     } else {
         // Handle query errors
         echo "<script>";
         echo "console.log('SUCCESS');";
-        echo "Error executing query: " . mysqli_error($cx);
+        echo "Error executing query: " . mysqli_error($conn);
         echo "</script>";
     }
 } else {

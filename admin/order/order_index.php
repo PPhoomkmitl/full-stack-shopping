@@ -405,8 +405,8 @@
                         var selectDiv = this.parentElement;
                         var selectedValue = this.value;
 
-                        console.log(selectedValue);
-
+                        console.log(selectedValue , order_id);
+                      
                         switch (selectedValue) {
                             case 'Unfulfilled':
                                 selectDiv.style.backgroundColor = '#FF6868';

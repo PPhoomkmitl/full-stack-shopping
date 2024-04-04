@@ -126,8 +126,8 @@
             <input type="text" name="filter" id="filter" placeholder="Enter name to filter">
             <!------------------------------------------>
             <?php
-                if ($_SESSION['admin'] !== 'user_admin') {
-                    echo '<form class="add-user-form" action="stock_insert_form.html" method="post">
+                if ($_SESSION['admin'] == 'user_admin') {
+                    echo '<form class="add-user-form" action="stock_insert_form.php" method="post">
                             <input type="submit" id="addUserButton" value="Add Product"/>
                         </form>';
                 }
@@ -168,13 +168,14 @@
                             <input type='hidden' name='id_stock' value={$row['ProID']}>
                             <input type='image' alt='update' src='../img/pencil.png'/>
                         </form>
-                        <form class='action-button' action='stock_delete_confirm.php' method='post' style='display: inline-block;'>
-                            <input type='hidden' name='id_stock' value={$row['ProID']}>
-                            <input type='image' alt='delete' src='../img/trash.png'/>
-                        </form>
+               
                     </td>
                 </tr>";
         }
+    //     <form class='action-button' action='stock_delete_confirm.php' method='post' style='display: inline-block;'>
+    //     <input type='hidden' name='id_stock' value={$row['ProID']}>
+    //     <input type='image' alt='delete' src='../img/trash.png'/>
+    // </form>
       
     }
 

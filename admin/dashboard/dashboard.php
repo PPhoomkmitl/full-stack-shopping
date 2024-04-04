@@ -17,6 +17,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #343a40;
             box-sizing: border-box;
+            height: 100vh;
         }
 
         .container {
@@ -63,28 +64,6 @@
             transform: scale(1.0);
         }
 
-        /* .data-card h2,
-        .data-card h3,
-        .data-card p {
-            margin: 0;
-            color: #343a40;
-        }
-        #card-1 {
-            background-color: #ffffff;
-        }
-        #card-2 {
-            background-color: #ffffff;
-        }
-        #card-3 {
-            background-color: #ffffff;
-        }
-        #card-4 {
-            background-color: #D2E9E9;
-        }
-        #card-5 {
-            background-color: #C4DFDF;
-        } */
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -100,25 +79,7 @@
         th {
             background-color: #f8f9fa;
         }
-        /* #PQ {
-            color:#323837 ;
-        }
-        #PR {
-            color:#323837 ;
-        }
-        #BSP {
-            color:#323837 ;
-        }
-        #Re {
-            color: #323837;
-        }
-
-        #card-4 h1 {
-            text-align: center;
-            padding: auto;
-            margin-top: 35px;
-            margin-bottom: 35px;
-        } */
+ 
 
     </style>
 </head>
@@ -164,7 +125,7 @@
                 <div class="col-md-6">
                     <div class="data-card" id="card-3">
                         <h2 id='PR'>Monthly Sales Products</h2>
-                        <canvas id="myChart" width="500" height="300"></canvas>
+                        <canvas id="myChart" width="500" height="252"></canvas>
                     </div>
                 </div>
             </div>
@@ -180,7 +141,7 @@
                             <th>Remaining Quantity</th>
                         </tr>
                         <?php
-                            $ProductQuery = mysqli_query($conn, "SELECT * FROM product");  
+                            $ProductQuery = mysqli_query($conn, "SELECT * FROM product LIMIT 4");  
                             while($row = mysqli_fetch_assoc($ProductQuery)) {
                             $total = (double)$row['PricePerUnit'] * (double)$row['StockQty'];
                                 echo "<tr>";
@@ -277,7 +238,7 @@
                                         <th>Remaining Quantity</th>
                                     </tr>
                                     <?php
-                                        $ProductQuery = mysqli_query($conn, "SELECT * FROM product");  
+                                        $ProductQuery = mysqli_query($conn, "SELECT * FROM product LIMIT 5 ");  
                                         while($row = mysqli_fetch_assoc($ProductQuery)) {
                                         $total = (double)$row['PricePerUnit'] * (double)$row['StockQty'];
                                             echo "<tr>";
@@ -563,8 +524,10 @@
     
     $product_name_query = mysqli_query($conn, "SELECT product.ProName FROM product;");
     $product_data = [];
+    $i = 0;
     while ($row = mysqli_fetch_assoc($product_name_query)) {
-        $product_data[] = $row['ProName'];
+        $product_data[$i] = $row['ProName'];
+        $i++;
     }
     
     
@@ -575,7 +538,7 @@
     $bestSell_query = mysqli_query($conn, "SELECT 
     product.ProName, 
     DATE_FORMAT(MAX(`orders`.order_date), '%Y-%m-%d') AS OrderDate, 
-    SUM(orders.total_price) AS TotalQty
+    SUM(order_details.quantity) AS TotalQty
     FROM 
         product 
     INNER JOIN 
@@ -588,19 +551,20 @@
     TotalQty DESC;");
 
     
-    $data = [];
-    
+    $data = [];  
     while ($row = mysqli_fetch_assoc($bestSell_query)) {
         $index = array_search($row['ProName'], $product_data );
         if ($index !== false) {
-            $data[$index] = $row['TotalQty'];
+            $data[$row['ProName']] = $row['TotalQty'];
+        } else {
+            $data[$row['ProName']] = 0;
         }
     }
     ?>
     <script>
         // ข้อมูลสำหรับกราฟแท่ง
         var barData = {
-            labels: <?php echo json_encode($product_data); ?>, // ชื่อสินค้า
+            labels: <?php echo json_encode($product_data); ?>, 
             datasets: [{
                 label: 'ยอดขาย',
                 backgroundColor: 'rgba(54, 162, 235, 0.5)', 
