@@ -30,23 +30,7 @@ else {
     $stmt_account = mysqli_query($conn, "INSERT INTO customer_account(Username, Password, CusID)
         VALUES('$a6', '$password', '$cusID');");
 
-    // Insert into receiver table
-    // $stmt_receiver_head = mysqli_query($conn, "INSERT INTO receiver(RecvFName, RecvLName, sex, Tel, Address)
-    //     VALUES('$a1', '$a2', '$a3', '$a5', '$a4');");
-
     $RecvID = mysqli_insert_id($conn);
-
-    // Generate a new NumID for receiver_detail
-    // $resultDetail = mysqli_query($conn, "SELECT MAX(NumID) AS num_id FROM receiver_detail WHERE RecvID = '$RecvID'");
-    // $row2 = mysqli_fetch_assoc($resultDetail);
-    // $lastID = $row2['num_id'];
-    // $numericPart = intval(substr($lastID, 3));
-    // $newNumericPart = $numericPart + 1;
-    // $NumID = 'Num' . str_pad($newNumericPart, 3, '0', STR_PAD_LEFT);
-
-    // Insert into receiver_detail table
-    // $stmt_receiver_detail = mysqli_query($conn, "INSERT INTO receiver_detail(CusID, RecvID, NumID)
-    //     VALUES('$cusID', '$RecvID', '$NumID');");
 
     if (!$stmt_customer || !$stmt_account ) {
         echo "Error";
@@ -62,7 +46,7 @@ echo "<a href='customer_index.php'
     color: #ef476f;             
     text-decoration: none;
     margin-right: 5px;
-    '>กลับหน้าหลัก</a>";
+    '>Back</a>";
 
 mysqli_close($conn);
 ?>

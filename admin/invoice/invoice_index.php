@@ -98,6 +98,45 @@
         select {
             border: none;
         }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        .action-buttons h1 {
+            margin-top: 0px;
+            margin-bottom: 10px;
+
+        }
+
+
+        .action-button {
+            display: inline-block;
+
+        }
+
+        .action-button button[type='submit'] {
+            background-color: #364856;
+            cursor: pointer;
+            border: none;
+            width: 73px;
+            height: 33px;
+        }
+
+        .action-button button[type='submit']:hover {
+            background-color: #9BA4AB;
+            cursor: pointer;
+            border: none;
+            width: 73px;
+            height: 33px;
+        }
+
+        .action-button img {
+            width: 20px;
+            height: 20px;
+        }
     </style>
 </head>
 
@@ -131,13 +170,16 @@
     $cur = "SELECT 
     invoice.*,
     customer.CusFName,
-    customer.CusLName
+    customer.CusLName,
+    orders.order_id
     FROM
         invoice
-    JOIN
+    INNER JOIN
         customer ON invoice.CusID = customer.CusID
-    JOIN
+    INNER JOIN
         invoice_detail ON invoice.invoice_id = invoice_detail.invoice_id
+    INNER JOIN
+        orders ON orders.invoice_id = invoice.invoice_id
     ";
 
     $msresults = mysqli_query($conn, $cur);
@@ -149,16 +191,27 @@
                 <th>Customer</th>
                 <th>Date</th>
                 <th>Amount</th>
+                <th>Inspect</th>
             </tr>";
 
     // $index = 1;
     if (mysqli_num_rows($msresults) > 0) {
         while ($row = mysqli_fetch_array($msresults)) {
             echo "<tr class='user-row'>
-                    <td>{$row['invoice_id']}</td>
-                    <td>{$row['CusFName']} {$row['CusLName']}</td>
-                    <td>{$row['invoice_date']}</td>
-                    <td>{$row['total_amount']}</td>";
+                <td>{$row['invoice_id']}</td>
+                <td>{$row['CusFName']} {$row['CusLName']}</td>
+                <td>{$row['invoice_date']}</td>
+                <td>{$row['total_amount']}</td>
+                <td>
+                    <form class='action-button' action='invoicePDF.php' method='post' target='_blank' style='display: inline-block;'>
+                        <input type='hidden' name='order_id' value='{$row['order_id']}'>
+                        <input type='hidden' name='id_customer' value='{$row['CusID']}'>
+                        <button type='submit'>
+                            <img src='../../Customer/image/print.png' alt='print'>
+                        </button>
+                    </form>
+                </td>
+            </tr>";
 
 
             // echo "<td><div style='border-radius:10px; padding: 3.920px 7.280px; width:90px; margin: 0 auto; background-color:";                

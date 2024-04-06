@@ -16,7 +16,7 @@
             while ($row = mysqli_fetch_assoc($run_qry)) {
                 if(password_verify($password, $row['Password'])) {
                     // ตรวจสอบรหัสผ่าน
-                    if ($row['role'] === 'member') {
+                    if ($row['role'] === 'member' && $row['active'] === '1') {
                         // ถ้าเป็นสมาชิก
                         echo "Password match!";
                         $_SESSION['status'] = true;
@@ -27,7 +27,7 @@
                         header("Location: ./index.php");
                         exit();
 
-                    } elseif($row['role'] === 'super_admin' || $row['role'] === 'user_admin' || $row['role'] === 'permission_admin'){
+                    } elseif($row['role'] === 'super_admin' || $row['role'] === 'user_admin' || $row['role'] === 'permission_admin' && $row['active'] === '1'){
                         // ถ้าเป็น super admin
                         echo "Password match!";
                         $_SESSION['status'] = true;

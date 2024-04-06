@@ -88,39 +88,48 @@
     </style>
 </head>
 <body>
-    <form method="post" action="customer_insert.php">
-        <h1>ใส่ข้อมูลลูกค้าที่ต้องการ</h1>
-        <label for="a1">ชื่อ:</label>
+    <form method="post" action="http://localhost:8000/user/createUser">
+        <h1>Enter Customer Information</h1>
+        <label for="a1">First Name:</label>
         <input type="text" id="a1" name="a1" maxlength="20" required>
 
-        <label for="a2">นามสกุล:</label>
+        <label for="a2">Last Name:</label>
         <input type="text" id="a2" name="a2" maxlength="20" required>
 
-        <label for="a3">เพศ:</label>
+        <label for="a3">Gender:</label>
         <input type="text" id="a3" name="a3" maxlength="1" required>
 
-        <label for="a5">เบอร์โทรศัพท์:</label>
+        <label for="a5">Phone Number:</label>
         <input type="tel" id="a5" name="a5" maxlength="10" required>
 
-        <label for="a6">ชื่อผู้ใช้:</label>
-        <input type="tel" id="a6" name="a6" maxlength="10" required>
+        <label for="a6">Username:</label>
+        <input type="text" id="a6" name="a6" maxlength="10" required>
 
-        <label for="a7">รหัสผ่าน:</label>
-        <input type="tel" id="a7" name="a7" maxlength="10" required>
+        <label for="a7">Password:</label>
+        <input type="password" id="a7" name="a7" maxlength="10" required>
 
         <div class="role">
-            <label for="role">บทบาท:</label>
+            <label for="role">Role:</label>
             <select name="role">
-                <option value="member">member</option>
-                <option value="user_admin">user_admin</option>
-                <option value="user_admin">permission_admin</option>
-                <option value="user_admin">super_admin</option>
+                <option value="member">Member</option>
+                <option value="user_admin">User Admin</option>
+                <option value="permission_admin">Permission Admin</option>
+                <option value="super_admin">Super Admin</option>
             </select>
         </div>
 
-        <input type="submit" value="ยืนยัน">
-        <input type="reset" value="รีเซ็ต">
+        <input type="submit" value="Submit">
+        <input type="reset" value="Reset">
     </form>
+    <script>
+        // Check if there's a query parameter indicating success
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('success');
+
+        // If success parameter is present, redirect to index page
+        if (success === 'true') {
+            window.location.href = './customer_index.php'; // Redirect to index page
+        }
+    </script>
 </body>
 </html>
-

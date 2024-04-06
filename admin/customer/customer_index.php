@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User List</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,7 +17,7 @@
             text-align: center;
         }
 
-        .container {
+        .main {
             display: flex;
             justify-content: space-between;
             background-color: #C4DFDF;
@@ -99,7 +100,20 @@
 <body>
     <div class="navbar"> <?php include('../navbar/navbarAdmin.php') ?></div>
     <h1>User List</h1>
-    <div class="container">
+
+        <div class="row justify-content-end mb-2">
+            <div class="col-auto">
+                <button id="activeMember" class="btn btn-primary">Active Member</button>
+            </div>
+            <div class="col-auto">
+                <button id="activeUserAdmin" class="btn btn-primary">Active User Admin</button>
+            </div>
+            <div class="col-auto">
+                <button id="activePermissionAdmin" class="btn btn-primary">Active Permission Admin</button>
+            </div>
+        </div>
+
+    <div class="main">
         <?php
             if ($_SESSION['admin'] !== 'user_admin') {
                 echo '<div>
@@ -131,52 +145,82 @@
     </div>
 
     <?php
-    $cx =  mysqli_connect("localhost", "root", "", "shopping");
-    $cur = "SELECT * FROM Customer";
-    $msresults = mysqli_query($cx, $cur);
+        include_once '../../dbConfig.php'; 
 
-    echo "<center>";
-    echo "<div>
-        <table>
-            <tr>
-                <th><img src='http://localhost/phpmyadmin/themes/pmahomme/img/arrow_ltr.png'></th>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Sex</th>
-                <th>Tel</th>
-                <th>Permission</th>
-                <th>Action</th>
-            </tr>";
-
-    if (mysqli_num_rows($msresults) > 0) {
-        while ($row = mysqli_fetch_array($msresults)) {
-            /* class='user-row' */
-            echo "<tr class='user-row'>
-                    <td><input type='checkbox' name='checkbox[]' value='{$row['CusID']}'></td>
-                    <td>{$row['CusID']}</td>
-                    <td>{$row['CusFName']} {$row['CusLName']}</td>
-                    <td>{$row['Sex']}</td>
-                    <td>{$row['Tel']}</td>
-                    <td>{$row['role']}</td>
-                    <td class='action-buttons'>
-                        <form class='action-button' action='customer_update.php' method='post'>  
-                            <input type='hidden' name='id_customer' value={$row['CusID']}>
-                            <input type='image' alt='update' src='../img/pencil.png'>
-                        </form>";
-                if($_SESSION['admin'] == 'super_admin'){
-                    echo"<form class='action-button' action='customer_delete_confirm.php' method='post'>
-                                <input type='hidden' name='id_customer' value={$row['CusID']}>
-                                <input type='image' alt='delete' src='../img/trash.png'>
-                            </form>
-                        </td>
-                    </tr>";
-                }
+        // Check if the 'active' parameter is set in the URL
+        if(isset($_GET['activeMember'])) {
+            $cur = "SELECT * FROM Customer WHERE role = 'member';";
+            $msresults = mysqli_query($conn, $cur);
+        } elseif(isset($_GET['activeUserAdmin'])) {
+            $cur = "SELECT * FROM Customer WHERE role = 'user_admin';";
+            $msresults = mysqli_query($conn, $cur);
+        } elseif(isset($_GET['activePermissionAdmin'])) {
+            $cur = "SELECT * FROM Customer WHERE role = 'permission_admin';";
+            $msresults = mysqli_query($conn, $cur);
+        } else {
+            $cur = "SELECT * FROM Customer WHERE role != 'guest';";
+            $msresults = mysqli_query($conn, $cur);
         }
-    }
-    echo "</table></div>";
-    echo "</center>";
-    mysqli_close($cx);
+
+    
+        echo "<center>";
+        echo "<div>
+            <table>
+                <tr>
+                    <th><img src='http://localhost/phpmyadmin/themes/pmahomme/img/arrow_ltr.png'></th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Sex</th>
+                    <th>Tel</th>
+                    <th>Permission</th>
+                    <th>Action</th>
+                </tr>";
+
+        if (mysqli_num_rows($msresults) > 0) {
+            while ($row = mysqli_fetch_array($msresults)) {
+                /* class='user-row' */
+                echo "<tr class='user-row'>
+                        <td><input type='checkbox' name='checkbox[]' value='{$row['CusID']}'></td>
+                        <td>{$row['CusID']}</td>
+                        <td>{$row['CusFName']} {$row['CusLName']}</td>
+                        <td>{$row['Sex']}</td>
+                        <td>{$row['Tel']}</td>
+                        <td>{$row['role']}</td>
+                        <td class='action-buttons'>
+                            <form class='action-button' action='customer_update.php' method='post'>  
+                                <input type='hidden' name='id_customer' value={$row['CusID']}>
+                                <input type='image' alt='update' src='../img/pencil.png'>
+                            </form>";
+                    if($_SESSION['admin'] == 'super_admin'){
+                        echo"<form class='action-button' action='customer_delete_confirm.php' method='post'>
+                                    <input type='hidden' name='id_customer' value={$row['CusID']}>
+                                    <input type='image' alt='delete' src='../img/trash.png'>
+                                </form>
+                            </td>
+                        </tr>";
+                    }
+            }
+        }
+        echo "</table></div>";
+        echo "</center>";
+        mysqli_close($conn);
+
+
     ?>
+
+    <script>
+        document.getElementById("activeMember").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1/shoppingCart/admin/customer/customer_index.php?activeMember=true";
+        });
+
+        document.getElementById("activeUserAdmin").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1/shoppingCart/admin/customer/customer_index.php?activeUserAdmin=true";
+        });
+
+        document.getElementById("activePermissionAdmin").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1/shoppingCart/admin/customer/customer_index.php?activePermissionAdmin=true";
+        });
+    </script>
     <script>
         function updateDeleteButtonStatus() {
             var checkboxes = document.getElementsByName('checkbox[]');
@@ -259,6 +303,11 @@
             updateTable(filterKeyword);
         });
 
+    </script>
+    <script>
+        document.getElementById("activeButton").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1/shoppingCart/admin/customer/customer_index.php.?active=true";
+        });
     </script>
 </body>
 

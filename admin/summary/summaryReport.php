@@ -522,12 +522,6 @@
                         TotalQty DESC
                 ");
 
-                // echo '<form action="reportPDF.php" method="post" id="printForm">
-                // <input type="hidden" name="print" value="1">
-                // <input type="hidden" name="startDate" value="' . $startDate . '">
-                // <input type="hidden" name="endDate" value="' . $endDate . '">
-                // <button type="submit">Print PDF</button>
-                // </form>';
                 while ($row = mysqli_fetch_assoc($yearlySell_Query)) {
                     $totalSum = $row['PricePerUnit'] * $row['TotalQty'];
                     $percentageSold = ($row['TotalQty'] / $totalQuantityYearly) * 100;
@@ -660,29 +654,7 @@
             ORDER BY
                 TotalQty DESC
         ");
-
-                // Your code to retrieve $startDate and $endDate from the database or any other source
-                // $startDate = $_POST['startDate'];
-                // $endDate = $_POST['endDate'];
-
-                // // Create an array to store the data to be sent back
-                // $responseData = array(
-                //     'startDate' => $startDate,
-                //     'endDate' => $endDate
-                // );
-
-                // // Encode the array into a JSON string
-                // $responseJson = json_encode($responseData);
-
-                // Send the JSON string back in the response
-                // echo $responseJson;
-                // echo '<form action="reportPDF.php" method="post" id="printForm">
-                // <input type="hidden" name="print" value="1">
-                // <input type="hidden" name="startDate" value="' . $startDate . '">
-                // <input type="hidden" name="endDate" value="' . $endDate . '">
-                // <button type="submit">Print PDF</button>
-                // </form>';
-            
+        
                 // Loop through the results and display them in a table
                 while ($row = mysqli_fetch_assoc($bestSell_Query)) {
                     $totalSum = $row['PricePerUnit'] * $row['TotalQty'];
