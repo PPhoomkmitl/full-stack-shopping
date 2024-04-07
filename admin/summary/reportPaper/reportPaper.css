@@ -1,0 +1,117 @@
+.Header {
+  text-align: right;
+  padding: 20px 0;
+  margin-right: 20%;
+} 
+
+table.dataTable th,
+table.dataTable td {
+  white-space: nowrap;
+}
+
+.Standard {
+  display: inline-block; /* Display the asides as inline-block elements */
+  vertical-align: top; /* Align them to the top of the line */
+  width: 60%; /* Set a width to prevent them from filling the entire line */
+  margin: 0 20% 0 20%; /* Add some margin between the asides */
+  background-color: #f0f0f0; /* Example background color */
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc; /* Example border */
+}
+
+.Standard .right {
+  display: flex;
+  justify-content: space-between;
+  width: 45%;
+  gap: 10%;
+  float: right;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+}
+
+.Standard .right img,
+.Standard .left img {
+  width: 20px;
+  height: 20px;
+}
+
+.Standard .left {
+  display: flex;
+  justify-content: space-between;
+  width: 45%;
+  gap: 10%;
+  float: left;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+}
+
+.Graph{
+  position: relative;
+  margin: 0 20% 0 20%;
+  width: auto;
+  height: 330px;
+}
+
+#chartContainer {
+  float: left;
+  height: 100%;
+  width: 40%;
+}
+
+#LinechartContainer {
+  float: right;
+  width: 40%;
+  height: 100%;
+}
+
+.Top10Head, .Top10Body{
+  display: flex;
+  align-items: center;
+  width: 60%;
+  margin: 0 20% 0 20%;
+}
+
+.Top10Body{
+  justify-content: space-between;
+}
+
+.Top10Head img {
+  margin-right: 1%;
+  width: 20px;
+  height: 20px;
+}
+
+.Top10Body table { 
+  border-collapse: collapse; /* remove gap between <th> */ 
+  display: flex;
+  justify-content: space-between;
+}
+
+.Top10Body table tr th{
+  border-bottom: 4px solid #333;
+  background-color: #ccc;
+  padding: 12px 24px;
+}
+
+.Top10Body table tr .indexTable{
+  padding: 12px 12px;
+}
+.Top10Body table tr .nameTable{
+  padding: 12px 100px;
+}
+.Top10Body table tr .priceTable{
+  padding: 12px 24px;
+}
+
+.Top10Body table tr td{
+  padding: 12px 24px;
+  border-bottom:1px solid #333;
+}
+
+.Top10Body .leftTable{
+  float: left;
+}
+
+.Top10Body .rightTable{
+  float: right;
+}
