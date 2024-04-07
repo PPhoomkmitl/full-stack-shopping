@@ -151,18 +151,21 @@
                 <th>ProductName</th>
                 <th>ProductPerUnit</th>
                 <th>StockQty</th>
+                <th>Available</th>
                 <th>Action</th>
             </tr>";
 
     if (mysqli_num_rows($msresults) > 0) {
         while ($row = mysqli_fetch_array($msresults)) {
             /* class='user-row' */
+            $result = $row['StockQty'] - $row['OnHands'];
             echo "<tr class='user-row'>
                     <td><input type='checkbox' name='checkbox[]' value='{$row['ProID']}'></td>
                     <td>{$row['ProID']}</td>
                     <td>{$row['ProName']}</td>
                     <td>{$row['PricePerUnit']}</td>
                     <td>{$row['StockQty']}</td>
+                    <td>{$result}</td>
                     <td>
                         <form class='action-button' action='stock_update.php' method='post' style='display: inline-block;'>  
                             <input type='hidden' name='id_stock' value={$row['ProID']}>

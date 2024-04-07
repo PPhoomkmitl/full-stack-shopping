@@ -210,7 +210,7 @@ $code = $_POST['id_product'];
 $cur = "SELECT * FROM product WHERE ProID = $code ";
 $msresults = mysqli_query($conn, $cur);
 $row = mysqli_fetch_array($msresults);
-$onHandStock = $row['StockQty'];
+$onHandStock = $row['StockQty'] - $row['onHands'];
 echo " <div class='container-body'>
             <div class='container-1'>
                 <div class='product-image'>

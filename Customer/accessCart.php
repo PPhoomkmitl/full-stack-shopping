@@ -27,6 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     $ipAddress = $_SERVER['REMOTE_ADDR'];
                 }
+                $stmt2 = mysqli_query($conn, "UPDATE product SET OnHands = OnHands + '$amount' WHERE ProID = '$productId'");
                 $callingFile = __FILE__;
                 $action = 'UPDATE'; // Static Change Action
                 CallLog::callLog($ipAddress, $conn, $uid, $productId, $callingFile, $action);
@@ -36,7 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 //insert in cart
                 $stmt = "INSERT INTO cart(CusID, ProID, Qty) VALUES('$uid', '$productId', '$amount')";
-
+                $msresults = mysqli_query($conn, $stmt);
+                $stmt2 = mysqli_query($conn, "UPDATE product SET OnHands = OnHands + '$amount' WHERE ProID = '$productId'");
                 // ACCESS LOG
                 if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
                     $ipAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -47,10 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $action = 'INSERT'; // Static Change Action
                 CallLog::callLog($ipAddress, $conn, $uid, $productId, $callingFile, $action);
                 //END LOG
-
-                $msresults = mysqli_query($conn, $stmt);
-                $stmt2 = mysqli_query($conn, "UPDATE product SET OnHands = OnHands + '$amount' WHERE ProID = '$productId'");
-
                 header("Location: ./index.php");
                 exit();
             }

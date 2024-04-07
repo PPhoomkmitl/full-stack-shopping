@@ -95,7 +95,7 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
 
         // Get the ID of the newly inserted order
         $orderId = $conn->insert_id;
-
+ 
 
 
         foreach ($_SESSION['cart'] as $product_id => $item) {
@@ -153,8 +153,8 @@ function createOrder($shippingAddressData, $billingAddressData, $cusID ,$conn, $
     
     // Create Invoice if member needed
     if($tax_id !== null && $tax_id !== ''){
-      createInvoice($cusID, $orderId , $conn , $tax_id);
-      echo 'Im in!';
+        createInvoiceAPI($cusID, $orderId , $tax_id);
+        echo 'Im in!';
     }
 
     mysqli_query($conn, "DELETE FROM cart WHERE CusID = '$cusID'");

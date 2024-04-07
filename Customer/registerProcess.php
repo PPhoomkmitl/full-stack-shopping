@@ -18,8 +18,8 @@
             VALUES('$fname', '$lname' ,'$sex','$tel','member');");
             $last_inserted_id = mysqli_insert_id($conn);
 
-            $stmt_2 = mysqli_query($conn, "INSERT INTO customer_account (UserName , PassWord , CusID)
-            VALUES('$username' , '$password' , '$last_inserted_id' );");
+            $stmt_2 = mysqli_query($conn, "INSERT INTO customer_account (UserName , PassWord , CusID , active)
+            VALUES('$username' , '$password' , '$last_inserted_id' , '1' );");
 
             if (!$stmt_1 && !$stmt_2) {
                 echo "Error";

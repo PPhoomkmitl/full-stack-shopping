@@ -101,15 +101,18 @@
     <div class="navbar"> <?php include('../navbar/navbarAdmin.php') ?></div>
     <h1>User List</h1>
 
-        <div class="row justify-content-end mb-2">
+        <div class="row justify-content-end mb-2 me-2">
             <div class="col-auto">
-                <button id="activeMember" class="btn btn-primary">Active Member</button>
+                <button id="activeAll" class="btn btn-secondary">All</button>
             </div>
             <div class="col-auto">
-                <button id="activeUserAdmin" class="btn btn-primary">Active User Admin</button>
+                <button id="activeMember" class="btn btn-secondary">Member</button>
             </div>
             <div class="col-auto">
-                <button id="activePermissionAdmin" class="btn btn-primary">Active Permission Admin</button>
+                <button id="activeUserAdmin" class="btn btn-secondary">User Admin</button>
+            </div>
+            <div class="col-auto">
+                <button id="activePermissionAdmin" class="btn btn-secondary">Permission Admin</button>
             </div>
         </div>
 
@@ -149,16 +152,19 @@
 
         // Check if the 'active' parameter is set in the URL
         if(isset($_GET['activeMember'])) {
-            $cur = "SELECT * FROM Customer WHERE role = 'member';";
+            $cur = "SELECT * FROM Customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE role = 'member';";
             $msresults = mysqli_query($conn, $cur);
         } elseif(isset($_GET['activeUserAdmin'])) {
-            $cur = "SELECT * FROM Customer WHERE role = 'user_admin';";
+            $cur = "SELECT * FROM Customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE role = 'user_admin';";
             $msresults = mysqli_query($conn, $cur);
         } elseif(isset($_GET['activePermissionAdmin'])) {
-            $cur = "SELECT * FROM Customer WHERE role = 'permission_admin';";
+            $cur = "SELECT * FROM Customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE role = 'permission_admin';";
+            $msresults = mysqli_query($conn, $cur);
+        } elseif(isset($_GET['activeAll'])) {
+            $cur = "SELECT * FROM Customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE role != 'guest';";
             $msresults = mysqli_query($conn, $cur);
         } else {
-            $cur = "SELECT * FROM Customer WHERE role != 'guest';";
+            $cur = "SELECT * FROM Customer INNER JOIN customer_account ON customer_account.CusID = customer.CusID WHERE role != 'guest';";
             $msresults = mysqli_query($conn, $cur);
         }
 
@@ -173,6 +179,7 @@
                     <th>Sex</th>
                     <th>Tel</th>
                     <th>Permission</th>
+                    <th>Active/InActive</th>
                     <th>Action</th>
                 </tr>";
 
@@ -180,12 +187,21 @@
             while ($row = mysqli_fetch_array($msresults)) {
                 /* class='user-row' */
                 echo "<tr class='user-row'>
-                        <td><input type='checkbox' name='checkbox[]' value='{$row['CusID']}'></td>
-                        <td>{$row['CusID']}</td>
-                        <td>{$row['CusFName']} {$row['CusLName']}</td>
-                        <td>{$row['Sex']}</td>
+                <td><input type='checkbox' name='checkbox[]' value='{$row['CusID']}'></td>
+                <td>{$row['CusID']}</td>
+                    <td>{$row['CusFName']} {$row['CusLName']}</td>
+                    <td>{$row['Sex']}</td>
                         <td>{$row['Tel']}</td>
                         <td>{$row['role']}</td>
+                        <td class='action-buttons'>
+                            <div class='col-auto'>";
+                                if($row['active'] == 0) {
+                                    echo "<button class='btn btn-secondary activeBlockUser' data-user-id='{$row['CusID']}' data-active='1' onclick='unblockUser({$row['CusID']}, 1)'>UnBlock</button>";
+                                } else if($row['active'] == 1) {
+                                    echo "<button class='btn btn-danger activeBlockUser' data-user-id='{$row['CusID']}' data-active='0' onclick='blockUser({$row['CusID']}, 0)'>Block</button>";
+                                }
+                        echo  "</div>
+                        </td>
                         <td class='action-buttons'>
                             <form class='action-button' action='customer_update.php' method='post'>  
                                 <input type='hidden' name='id_customer' value={$row['CusID']}>
@@ -220,6 +236,39 @@
         document.getElementById("activePermissionAdmin").addEventListener("click", function() {
             window.location.href = "http://127.0.0.1/shoppingCart/admin/customer/customer_index.php?activePermissionAdmin=true";
         });
+
+        document.getElementById("activeAll").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1/shoppingCart/admin/customer/customer_index.php?activeAll=true";
+        });
+
+        function blockUser(userId , activeValue) {
+            fetch(`http://localhost:8000/user/blockUser/${userId}`, {
+                method: 'PUT' ,
+                headers: {
+                    'Content-Type': 'application/json' // ระบุ Content-Type เป็น application/json
+                },
+                body: JSON.stringify({ active: activeValue })
+            }).then(response => {
+                // Handle response
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function unblockUser(userId , activeValue) {
+            fetch(`http://localhost:8000/user/blockUser/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json' // ระบุ Content-Type เป็น application/json
+                },
+                body: JSON.stringify({ active: activeValue })
+            }).then(response => {
+                // Handle response
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
     </script>
     <script>
         function updateDeleteButtonStatus() {
