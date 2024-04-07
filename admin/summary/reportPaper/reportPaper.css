@@ -2,7 +2,7 @@
   text-align: right;
   padding: 20px 0;
   margin-right: 20%;
-} 
+}
 
 table.dataTable th,
 table.dataTable td {
@@ -45,7 +45,7 @@ table.dataTable td {
   margin-right: 2.5%;
 }
 
-.Graph{
+.Graph {
   position: relative;
   margin: 0 20% 0 20%;
   width: auto;
@@ -64,14 +64,15 @@ table.dataTable td {
   height: 100%;
 }
 
-.Top10Head, .Top10Body{
+.Top10Head,
+.Top10Body {
   display: flex;
   align-items: center;
   width: 60%;
   margin: 0 20% 0 20%;
 }
 
-.Top10Body{
+.Top10Body {
   justify-content: space-between;
 }
 
@@ -81,37 +82,40 @@ table.dataTable td {
   height: 20px;
 }
 
-.Top10Body table { 
-  border-collapse: collapse; /* remove gap between <th> */ 
+.Top10Body table {
+  border-collapse: collapse; /* remove gap between <th> */
   display: flex;
   justify-content: space-between;
 }
 
-.Top10Body table tr th{
+.Top10Body table tr th {
   border-bottom: 4px solid #333;
   background-color: #ccc;
   padding: 12px 24px;
 }
 
-.Top10Body table tr .indexTable{
+.Top10Body table tr .indexTable {
   padding: 12px 12px;
+  text-align: center;
 }
-.Top10Body table tr .nameTable{
-  padding: 12px 100px;
+.Top10Body table tr .nameTable {
+  padding: 12px 128px;
+  text-align: left;
 }
-.Top10Body table tr .priceTable{
-  padding: 12px 24px;
-}
-
-.Top10Body table tr td{
-  padding: 12px 24px;
-  border-bottom:1px solid #333;
+.Top10Body table tr .priceTable {
+  padding: 12px 72px;
+  text-align: right;
 }
 
-.Top10Body .leftTable{
+.Top10Body table tr td {
+  padding: 12px 24px;
+  border-bottom: 1px solid #333;
+}
+
+.Top10Body .leftTable {
   float: left;
 }
 
-.Top10Body .rightTable{
+.Top10Body .rightTable {
   float: right;
 }

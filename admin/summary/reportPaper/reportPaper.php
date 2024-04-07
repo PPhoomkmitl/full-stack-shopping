@@ -148,12 +148,12 @@ $LineDataPoints = array(
       <tr>
         <td>1</td>
         <td>Maria Anders</td>
-        <td>Germany</td>
+        <td>94859343.284</td>
       </tr>
       <tr>
         <td>2</td>
         <td>Francisco Chang</td>
-        <td>Mexico</td>
+        <td>12495812945.12</td>
       </tr>
     </table>
 
@@ -166,12 +166,12 @@ $LineDataPoints = array(
       <tr>
         <td>1</td>
         <td>Maria Anders</td>
-        <td>Germany</td>
+        <td>2938392.13</td>
       </tr>
       <tr>
         <td>2</td>
         <td>Francisco Chang</td>
-        <td>Mexico</td>
+        <td>23492435.53</td>
       </tr>
     </table>
   </section>
