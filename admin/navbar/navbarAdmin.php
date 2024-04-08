@@ -100,17 +100,18 @@
                 if($_SESSION['admin'] == 'super_admin'){
                     echo '<li><a class="a" href="../dashboard/dashboard.php">Dashboard</a></li>
                     <li><a class="a" href="../log/log_index.php?page=1">AccessLog</a></li>
+                    <li><a class="a" href="../summary/summaryReport.php">Report</a></li>
                     <li class="nav-right"><a class="a" href="../../Customer/login.php">Logout</a></li>';
                 } elseif($_SESSION['admin'] == 'permission_admin') {
                     echo '<li><a class="a" href="../dashboard/dashboard.php">Dashboard</a></li>
                     <li><a class="a" href="../customer/customer_index.php">Customer</a></li>
-                    <li><a class="a" href="../summary/summaryReport.php">Report</a></li>
                     <li><a class="a" href="../log/log_index.php?page=1">AccessLog</a></li>
                     <li class="nav-right"><a class="a" href="../../Customer/login.php">Logout</a></li>';
                 }
                 elseif($_SESSION['admin'] == 'user_admin') {
                     echo '<li><a class="a" href="../dashboard/dashboard.php">Dashboard</a></li>
                     <li><a class="a" href="../stock/stock_index.php">Stock</a></li>
+                    <li><a class="a" href="../category/category_index.php">Category</a></li>
                     <li><a class="a" href="../invoice/invoice_index.php">Invoice</a></li>
                     <li><a class="a" href="../order/order_index.php">Order</a></li>
                     <li class="nav-right"><a class="a" href="../../Customer/logoutProcess.php">Logout</a></li>';

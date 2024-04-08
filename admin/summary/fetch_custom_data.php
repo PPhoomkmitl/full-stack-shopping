@@ -2,9 +2,14 @@
 // Include database configuration file
 include_once '../../dbConfig.php';
 
+session_start();
 // Retrieve the selected start and end dates from the AJAX request
 $startDate = $_POST['startDate'];
 $endDate = $_POST['endDate'];
+
+$_SESSION['startDate'] = $startDate;
+$_SESSION['endDate'] = $endDate;
+
 
 // Check if both start date and end date are set
 if (isset($startDate) && isset($endDate)) {
@@ -67,17 +72,7 @@ if (isset($startDate) && isset($endDate)) {
             $output .= "<td>" . $row['TotalQty'] . "</td>";
             $output .= "</tr>";
         }
-
-        // Close the table and data card
-        // $output .= "</table>
-        //     <form action=\"./reportPDF_custom.php\" method=\"post\" id=\"printForm\">
-        //         <input type=\"hidden\" name=\"print\" value=\"1\">
-        //         <input type=\"hidden\" name=\"startDate\" value=\"" . $startDate . "\">
-        //         <input type=\"hidden\" name=\"endDate\" value=\"" . $endDate . "\">
-        //         <button type=\"submit\">Print PDF</button>
-        //     </form>
-        // </div>";
-
+   
         echo $output;
     } else {
         // Handle query errors

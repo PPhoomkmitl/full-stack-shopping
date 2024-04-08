@@ -1,6 +1,7 @@
 <?php
 //DB QUERY
 include_once '../../../dbConfig.php';
+session_start();
 $ProductQuery = mysqli_query($conn, "SELECT COUNT(*) AS total_products FROM product");
 $ProductDetails = mysqli_fetch_assoc($ProductQuery);
 
@@ -10,8 +11,8 @@ $statData = "increase"; // Assume as increase
 $statsArrow = ($statData == "increase") ? "increase.png" : "decrease.png";
 
 // Initialize variables
-$StartDate = isset($_POST['StartDate']) ? $_POST['StartDate'] : date("Y-m-d", strtotime("-1 week")); // Example: One week ago if not provided
-$EndDate = isset($_POST['EndDate']) ? $_POST['EndDate'] : date("Y-m-d"); // Today's date if not provided
+$StartDate = isset($_SESSION['startDate']) ? $_SESSION['startDate'] : date("Y-m-d", strtotime("-1 week")); // Example: One week ago if not provided
+$EndDate = isset($_SESSION['endDate']) ?$_SESSION['endDate'] : date("Y-m-d"); // Today's date if not provided
 
 // SQL query to count the number of orders within the specified date range
 $query = "SELECT COUNT(order_id) AS order_count FROM orders 
@@ -178,7 +179,7 @@ if ($dateOrdersQuery) {
     <div class="globalContainer">
       <section class="Header">
         <h2>Sales Summary Report</h2>
-        <h3><?php echo $StartDate; ?> - <?php echo $EndDate; ?> </h3>
+        <h3><?php echo $_SESSION['startDate']; ?> - <?php echo $_SESSION['endDate']; ?> </h3>
         <button id="convertToPDF" style="display:block;">Convert to PDF</button>
       </section>
 

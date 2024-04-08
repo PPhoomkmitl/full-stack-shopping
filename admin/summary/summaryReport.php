@@ -1,4 +1,11 @@
-<?php include_once '../../dbConfig.php'; ?>
+<?php 
+include_once '../../dbConfig.php'; 
+// <div class="navCon">
+    include('../navbar/navbarAdmin.php');
+
+// </div>
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -122,7 +129,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            /* height: 100%; */
             z-index: 1;
         }
 
@@ -151,15 +158,25 @@
         #printForm button:hover {
             background-color: #0056b3; /* Darker blue on hover */
         }
+
+        
+        #resetForm button {
+            background-color: #FE6233; /* Blue background color */
+            color: #fff; /* White text color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Add padding */
+            cursor: pointer; /* Change cursor to pointer on hover */
+            border-radius: 5px; /* Add border radius */
+        }
+
+        #resetForm button:hover {
+            background-color: #EE4D2D; /* Darker blue on hover */
+        }
     </style>
 
 </head>
 
 <body>
-    <div class="navCon">
-        <?php include('../navbar/navbarAdmin.php') ?>
-        <?php include('../../dbConfig.php') ?>
-    </div>
     <div class="container">
         <h1 class="dashboard-heading">Summary Report</h1>
         <?php
@@ -240,10 +257,13 @@
                     <br />
                     <label for="end-date">End Date:</label>
                     <input type="date" id="end-date" onchange="handleCustomChange()">
+                    <form action='./reportPaper/reportPaper.php' method='post' id='printForm'>
+                        <button type='submit'>Print PDF</button>
+                    </form>
                     <!-- Change -->
 
                 </div>
-                <button onclick="resetFilters()">Reset</button>
+                <button id="resetForm" onclick="resetFilters()">Reset</button>
             </div>
         </div>
         <div class="data-container" id="daily-summary">
@@ -624,7 +644,11 @@
                 $startDate = $_POST['start-date'];
                 $endDate = $_POST['end-date'];
 
-               
+                // session_start();
+                // $_SESSION['startDate'] = $startDate;
+                // $_SESSION['endDate'] = $endDate;
+
+ 
                 // Construct SQL queries with custom date range
                 $totalQuantityAllProducts_Query = mysqli_query($conn, "SELECT SUM(order_details.quantity) AS TotalQtyAllProducts
             FROM order_details
@@ -670,17 +694,22 @@
                     echo "</tr>";
                 }
 
+                // echo '<form action="./reportPaper/reportPaper.php" method="post"">
+                //     <button type="submit">Print PDF</button>
+                // </form>';
+
                 // Query for total income within the custom date range
                 $income_Query = mysqli_query($conn, "SELECT SUM(product.PricePerUnit * order_details.quantity) AS TotalIncome
-            FROM product 
-            INNER JOIN order_details ON product.ProID = order_details.ProID
-            INNER JOIN orders ON order_details.order_id = orders.order_id
-            WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
+                FROM product 
+                INNER JOIN order_details ON product.ProID = order_details.ProID
+                INNER JOIN orders ON order_details.order_id = orders.order_id
+                WHERE DATE(orders.order_date) BETWEEN '$startDate' AND '$endDate'");
 
                 // Fetch and display total income
                 $total_income_row = mysqli_fetch_assoc($income_Query);
                 $total_income = $total_income_row['TotalIncome'];
                 echo "<h2>Total Income: ฿" . number_format($total_income, 2) . "</h2>";
+
             } else {
                 // If custom filter dates are not set, display a message or handle accordingly
                 echo "<p>Please select a custom date range.</p>";
@@ -836,12 +865,6 @@
                     // Update the HTML with the fetched data
                     $('#monthly-summary').html(response);
 
-                    // // Create the form dynamically
-                    // var startDate = response.startDate;
-                    // var endDate = response.endDate; // Add this line to get endDate from response
-    
-                    // $('#start-date').html(startDate);
-                    // $('#end-date').html(endDate);
                                 
                 },
                 error: function(xhr, status, error) {
@@ -899,6 +922,7 @@
         function handleCustomChange() {
             var startDate = document.getElementById('start-date').value;
             var endDate = document.getElementById('end-date').value;
+    
             logFilterDetails();
 
             // Send an AJAX request to fetch data for the selected date range

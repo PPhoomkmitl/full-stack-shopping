@@ -6,6 +6,9 @@ include_once '../../dbConfig.php';
 $startDate = $_POST['startDate'];
 $endDate = $_POST['endDate'];
 
+$_SESSION['startDate'] = $startDate;
+$_SESSION['endDate'] = $endDate;
+
 // Extract month and year from start date
 $startMonth = date('F', strtotime($startDate));
 $startYear = date('Y', strtotime($startDate));

@@ -1,5 +1,5 @@
 <?php
-function createInvoiceAPI($cusID, $orderId,$tax_id) {
+function createInvoiceAPI($cusID, $orderId, $tax_id) {
     // API endpoint URL
     $apiEndpoint = 'http://localhost:8000/invoice/createInvoice';
     // Prepare the data to be sent in the request body
