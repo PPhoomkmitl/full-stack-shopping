@@ -6,6 +6,9 @@ $ProductDetails = mysqli_fetch_assoc($ProductQuery);
 
 setlocale(LC_TIME, 'th_TH.UTF-8');
 
+$statData = "increase"; // Assume as increase
+$statsArrow = ($statData == "increase") ? "increase.png" : "decrease.png";
+
 // Initialize variables
 $StartDate = isset($_POST['StartDate']) ? $_POST['StartDate'] : date("Y-m-d", strtotime("-1 week")); // Example: One week ago if not provided
 $EndDate = isset($_POST['EndDate']) ? $_POST['EndDate'] : date("Y-m-d"); // Today's date if not provided
@@ -28,104 +31,77 @@ if ($result) {
   echo "Error: " . mysqli_error($conn);
 }
 
-// SQL query to count the total of successful orders within the specified date range
-$successfulQuery = "SELECT COUNT(order_id) AS successful_count FROM orders 
-                    WHERE order_date BETWEEN '$StartDate' AND '$EndDate' AND fullfill_status = 'Fulfilled'";
-
-// Execute the query for successful orders
-$successfulResult = mysqli_query($conn, $successfulQuery);
+// Query to count the number of fulfilled orders within the specified date range
+$fulfilledQuery = mysqli_query($conn, "SELECT COUNT(order_id) AS fulfilled_order_count FROM orders 
+          WHERE order_date BETWEEN '$StartDate' AND '$EndDate'
+          AND fullfill_status = 'Fulfilled'");
 
 // Check if the query was successful
-if ($successfulResult) {
+if ($fulfilledQuery) {
   // Fetch the result row
-  $row = mysqli_fetch_assoc($successfulResult);
-  // Assign the successful order count to the $purchaseTotal variable
-  $purchaseTotal = $row['successful_count'];
+  $fulfilledRow = mysqli_fetch_assoc($fulfilledQuery);
+  // Assign the fulfilled order count to the $purchaseTotal variable
+  $purchaseTotal = $fulfilledRow['fulfilled_order_count'];
 } else {
   // Handle the case where the query failed
   echo "Error: " . mysqli_error($conn);
 }
 
-// SQL query to count the total number of orders within the specified date range
-$totalQuery = "SELECT COUNT(order_id) AS total_count FROM orders 
-               WHERE order_date BETWEEN '$StartDate' AND '$EndDate'";
-
-// Execute the query for total orders
-$totalResult = mysqli_query($conn, $totalQuery);
+// Query to count the number of unfulfilled orders within the specified date range
+$unfulfilledQuery = mysqli_query($conn, "SELECT COUNT(order_id) AS unfulfilled_order_count FROM orders 
+          WHERE order_date BETWEEN '$StartDate' AND '$EndDate'
+          AND fullfill_status != 'Fulfilled'");
 
 // Check if the query was successful
-if ($totalResult) {
+if ($unfulfilledQuery) {
   // Fetch the result row
-  $row = mysqli_fetch_assoc($totalResult);
-  // Assign the total order count to the $no_purchaseTotal variable
-  $no_purchaseTotal = $row['total_count']; // Subtract successful orders from total orders
+  $unfulfilledRow = mysqli_fetch_assoc($unfulfilledQuery);
+  // Assign the unfulfilled order count to the $no_purchaseTotal variable
+  $no_purchaseTotal = $unfulfilledRow['unfulfilled_order_count'];
 } else {
   // Handle the case where the query failed
   echo "Error: " . mysqli_error($conn);
 }
 
-
-$statData = "increase"; // Assume as increase
-$statsArrow = ($statData == "increase") ? "increase.png" : "decrease.png";
-
-//BAR CHARTS SET Dynamic
-$dataPoints = array();
-
-// Modify the query to get counts by date within the specified date range
+// Modify the query to get counts by date within the specified date range for only fulfilled orders
 $dateOrdersQuery = mysqli_query($conn, "SELECT DATE(order_date) AS formatted_date, 
-                                            COUNT(order_id) AS all_orders_count, 
-                                            SUM(CASE WHEN fullfill_status = 'fulfilled' THEN 1 ELSE 0 END) AS fulfilled_orders_count
+                                            COUNT(order_id) AS fulfilled_orders_count
                                         FROM Orders 
                                         WHERE order_date BETWEEN '$StartDate' AND '$EndDate'
+                                        AND fullfill_status = 'Fulfilled'
                                         GROUP BY formatted_date");
 
 // Check if the query was successful
 if ($dateOrdersQuery) {
-  // Loop through the results and add data points
+  // Initialize arrays to store data points for bar and line charts
+  $dataPoints = array();
+  $LineDataPoints = array();
+
+  // Loop through the results and add data points for the bar chart
   while ($row = mysqli_fetch_assoc($dateOrdersQuery)) {
-    // Format the data point
+    // Format the data point for the bar chart
     $dataPoint = array(
       "label" => $row['formatted_date'], // Using the formatted date
-      "y1" => (int)$row['all_orders_count'],
-      "y2" => (int)$row['fulfilled_orders_count']
+      "y1" => (int)$row['fulfilled_orders_count'], // Count of fulfilled orders
+      "y2" => $no_purchaseTotal // Count of unfulfilled orders
     );
-    // Add the data point to the array
+    // Add the data point to the array for the bar chart
     array_push($dataPoints, $dataPoint);
+
+    // Format the data point for the line chart
+    $lineDataPoint = array(
+      "label" => $row['formatted_date'], // Using the formatted date
+      "y" => $row['fulfilled_orders_count'] // Count of fulfilled orders
+    );
+    // Add the data point to the array for the line chart
+    array_push($LineDataPoints, $lineDataPoint);
   }
 } else {
   // Handle the case where the query failed
   echo "Error: " . mysqli_error($conn);
 }
-
-//LINE CHARTS SET Dynamic
-$LineDataPoints = array();
-
-// Modify the query to get data points for the line chart
-$lineOrdersQuery = mysqli_query($conn, "SELECT DATE(order_date) AS formatted_date,
-                                            COUNT(order_id) AS orders_count
-                                        FROM Orders 
-                                        WHERE order_date BETWEEN '$StartDate' AND '$EndDate'
-                                        GROUP BY formatted_date");
-
-// Check if the query was successful
-if ($lineOrdersQuery) {
-    // Loop through the results and add data points
-    while ($row = mysqli_fetch_assoc($lineOrdersQuery)) {
-        // Format the data point
-        $dataPoint = array(
-            "label" => $row['formatted_date'], // Using the formatted date
-            "y" => (int)$row['orders_count']
-        );
-        // Add the data point to the array
-        array_push($LineDataPoints, $dataPoint);
-    }
-} else {
-    // Handle the case where the query failed
-    echo "Error: " . mysqli_error($conn);
-}
-
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -212,17 +188,6 @@ if ($lineOrdersQuery) {
       <aside class="right">
         <h3 class="right-gap">ยอดขาย/WON SO (บาท)</h3>
         <h3 class="right-gap"><?php echo $purchaseTotal; ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
-      </aside>
-    </section>
-
-    <section class="Standard">
-      <aside class="left">
-        <h3 class="left-gap">Sales Order (ครั้ง)</h3>
-        <h3 class="left-gap"><?php echo $no_purchaseTotal ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
-      </aside>
-      <aside class="right">
-        <h3 class="right-gap">ยอดขาย/PAID SO (บาท)</h3>
-        <h3 class="right-gap"><?php echo $purchaseTotal ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
       </aside>
     </section>
   </section>
