@@ -156,10 +156,10 @@ if ($dateOrdersQuery) {
       // LINE CHART
       var chart2 = new CanvasJS.Chart("LinechartContainer", {
         title: {
-          text: "Push-ups Over a Week"
+          text: "Overall Sales Performance"
         },
         axisY: {
-          title: "Number of Push-ups"
+          title: "Number of Sales"
         },
         data: [{
           type: "line",
@@ -174,49 +174,52 @@ if ($dateOrdersQuery) {
 </head>
 
 <body>
-  <section class="Header">
-    <h2>Sales Summary Report</h2>
-    <h3><?php echo $StartDate; ?> - <?php echo $EndDate; ?> </h3>
-  </section>
+  <center>
+    <div class="globalContainer">
+      <section class="Header">
+        <h2>Sales Summary Report</h2>
+        <h3><?php echo $StartDate; ?> - <?php echo $EndDate; ?> </h3>
+        <button id="convertToPDF" style="display:block;">Convert to PDF</button>
+      </section>
 
-  <section class="Topic">
-    <section class="Standard">
-      <aside class="left">
-        <h3 class="left-gap">กิจกรรม (ครั้ง)</h3>
-        <h3 class="left-gap"><?php echo $eventCount; ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
-      </aside>
-      <aside class="right">
-        <h3 class="right-gap">ยอดขาย/WON SO (บาท)</h3>
-        <h3 class="right-gap"><?php echo $purchaseTotal; ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
-      </aside>
-    </section>
-  </section>
+      <section class="Topic">
+        <section class="Standard">
+          <aside class="left">
+            <h3 class="left-gap">กิจกรรม (ครั้ง)</h3>
+            <h3 class="left-gap"><?php echo $eventCount; ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
+          </aside>
+          <aside class="right">
+            <h3 class="right-gap">ยอดขาย/WON SO (บาท)</h3>
+            <h3 class="right-gap"><?php echo $purchaseTotal; ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
+          </aside>
+        </section>
+      </section>
 
-  <section class="Graph">
-    <div id="chartContainer"></div>
-    <div id="LinechartContainer"></div>
-  </section>
-  <main class="Top10Container">
-    <section class="Top10Head">
-      <img src="../../img/top-10.png">
-      <h3>10 อันดับ ลูกค้าที่มีกิจกรรมสูงสุด</h3>
-    </section>
-    <section class="Top10Head">
-      <img src="../../img/top-10.png">
-      <h3>10 อันดับ สินค้าที่มียอดขายสูงสุด</h3>
-    </section>
-  </main>
-  <main class="Top10Container">
-    <section class="Top10Body">
-      <table class="leftTable">
-        <tr>
-          <th class="indexTable">ลำดับ</th>
-          <th class="nameTable">ลูกค้า</th>
-          <th class="priceTable">Interaction</th>
-        </tr>
-        <?php
-        // Execute the SQL query to get the frequency of orders from each customer within the specified date range
-        $ProductQuery = mysqli_query($conn, "SELECT
+      <section class="Graph">
+        <div id="chartContainer"></div>
+        <div id="LinechartContainer"></div>
+      </section>
+      <main class="Top10Container">
+        <section class="Top10Head">
+          <img src="../../img/top-10.png">
+          <h3>10 อันดับ ลูกค้าที่มีกิจกรรมสูงสุด</h3>
+        </section>
+        <section class="Top10Head">
+          <img src="../../img/top-10.png">
+          <h3>10 อันดับ สินค้าที่มียอดขายสูงสุด</h3>
+        </section>
+      </main>
+      <main class="Top10Container">
+        <section class="Top10Body">
+          <table class="leftTable">
+            <tr>
+              <th class="indexTable">ลำดับ</th>
+              <th class="nameTable">ลูกค้า</th>
+              <th class="priceTable">Interaction</th>
+            </tr>
+            <?php
+            // Execute the SQL query to get the frequency of orders from each customer within the specified date range
+            $ProductQuery = mysqli_query($conn, "SELECT
                 CONCAT(c.CusFName, ' ', c.CusLName) AS customer_name,
                 COUNT(o.order_id) AS orders_count
                 FROM
@@ -232,56 +235,84 @@ if ($dateOrdersQuery) {
                 LIMIT 10
                 ");
 
-        // Check if the query was successful
-        if ($ProductQuery) {
-          $counter = 1; // Initialize the counter variable
+            // Check if the query was successful
+            if ($ProductQuery) {
+              $counter = 1; // Initialize the counter variable
 
-          // Loop through the results and display them in a table
-          while ($row = mysqli_fetch_assoc($ProductQuery)) {
-            echo "<tr>";
-            echo "<td>" . $counter . "</td>"; // Output the custom index
-            echo "<td>" . $row['customer_name'] . "</td>"; // Output the customer's name
-            echo "<td>" . $row['orders_count'] . "</td>"; // Output the count of orders
-            echo "</tr>";
-            $counter++; // Increment the counter for the next row
-          }
-        } else {
-          // Handle the case where the query failed
-          echo "Error: " . mysqli_error($conn);
-        }
-        ?>
-      </table>
-    </section>
+              // Loop through the results and display them in a table
+              while ($row = mysqli_fetch_assoc($ProductQuery)) {
+                echo "<tr>";
+                echo "<td>" . $counter . "</td>"; // Output the custom index
+                echo "<td>" . $row['customer_name'] . "</td>"; // Output the customer's name
+                echo "<td>" . $row['orders_count'] . "</td>"; // Output the count of orders
+                echo "</tr>";
+                $counter++; // Increment the counter for the next row
+              }
+            } else {
+              // Handle the case where the query failed
+              echo "Error: " . mysqli_error($conn);
+            }
+            ?>
+          </table>
+        </section>
 
-    <section class="Top10Body">
-      <table class="rightTable">
-        <tr>
-          <th class="indexTable">ลำดับ</th>
-          <th class="nameTable">ชื่อสินค้า</th>
-          <th class="priceTable">ยอดขาย</th>
-        </tr>
-        <tr>
-          <?php
-          // Execute the SQL query to get the top 10 products by sales within the specified date range
-          $ProductQuery = mysqli_query($conn, "SELECT * FROM product ORDER BY (PricePerUnit * StockQty) DESC LIMIT 10");
-          $index = 1; // Initialize the index variable
+        <section class="Top10Body">
+          <table class="rightTable">
+            <tr>
+              <th class="indexTable">ลำดับ</th>
+              <th class="nameTable">ชื่อสินค้า</th>
+              <th class="priceTable">ยอดขาย</th>
+            </tr>
+            <tr>
+              <?php
+              // Execute the SQL query to get the top 10 products by sales within the specified date range
+              $ProductQuery = mysqli_query($conn, "SELECT * FROM product ORDER BY (PricePerUnit * StockQty) DESC LIMIT 10");
+              $index = 1; // Initialize the index variable
 
-          // Loop through the results and display them in a table
-          while ($row = mysqli_fetch_assoc($ProductQuery)) {
-            $total = (float)$row['PricePerUnit'] * (float)$row['StockQty'];
-            echo "<tr>";
-            echo "<td>" . $index . "</td>"; // Output the index
-            echo "<td>" . $row['ProName'] . "</td>";
-            echo "<td>" . $total . "</td>";
-            echo "</tr>";
-            $index++; // Increment the index for the next row
-          }
-          ?>
+              // Loop through the results and display them in a table
+              while ($row = mysqli_fetch_assoc($ProductQuery)) {
+                $total = (float)$row['PricePerUnit'] * (float)$row['StockQty'];
+                echo "<tr>";
+                echo "<td>" . $index . "</td>"; // Output the index
+                echo "<td>" . $row['ProName'] . "</td>";
+                echo "<td>" . $total . "</td>";
+                echo "</tr>";
+                $index++; // Increment the index for the next row
+              }
+              ?>
 
-        </tr>
-      </table>
-    </section>
-  </main>
+            </tr>
+          </table>
+        </section>
+      </main>
+    </div>
+  </center>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+  document.getElementById('convertToPDF').addEventListener('click', function() {
+    // Hide the button first
+    document.getElementById("convertToPDF").style.display = "none";
+
+    // Capture the content of globalContainer and convert it to PDF
+    const element = document.querySelector('.globalContainer');
+    html2canvas(element).then(function(canvas) {
+      // Convert canvas to image data
+      const imageData = canvas.toDataURL('image/png');
+
+      // Create a new PDF document
+      var doc = new jspdf.jsPDF();
+
+      // Add the image data to the PDF document
+      doc.addImage(imageData, 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight());
+
+      // Save the PDF document
+      doc.save('Summary_Report.pdf');
+
+      document.getElementById("convertToPDF").style.display = "block";
+    });
+  });
+</script>
 
 </html>

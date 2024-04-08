@@ -1,3 +1,10 @@
+
+.globalContainer{
+  width: 380mm;
+  height:537.42mm;
+  justify-content: center;
+}
+
 .Header {
   text-align: right;
   padding: 20px 0;
