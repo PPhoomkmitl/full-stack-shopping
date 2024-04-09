@@ -29,12 +29,12 @@ $html = '
         <h2 id="PQ">Product Summary - Monthly</h2>
         <table style="border-collapse: collapse; width: 100%;">
             <tr>
-                <th style="border: 1px solid #000;">ID</th>
-                <th style="border: 1px solid #000;">Name</th>
-                <th style="border: 1px solid #000;">Price Per Unit</th>
-                <th style="border: 1px solid #000;">Total Unit Sold</th>
-                <th style="border: 1px solid #000;">Total Price</th>
-                <th style="border: 1px solid #000;">Percentage Sold</th>
+                <th style="border: 1px solid #000; background-color: #cccccc;">ID</th>
+                <th style="border: 1px solid #000; background-color: #cccccc;">Name</th>
+                <th style="border: 1px solid #000; background-color: #cccccc;">Price Per Unit</th>
+                <th style="border: 1px solid #000; background-color: #cccccc;">Total Unit Sold</th>
+                <th style="border: 1px solid #000; background-color: #cccccc;">Total Price</th>
+                <th style="border: 1px solid #000; background-color: #cccccc;">Percentage Sold</th>
             </tr>';
 
 // Calculate the total quantity sold across all products for the month
@@ -107,11 +107,11 @@ $html .= '
 <h2>Category-wise Sales</h2>
 <table style="border-collapse: collapse; width: 100%;">
     <tr>
-        <th style="border: 1px solid #000;">Category ID</th>
-        <th style="border: 1px solid #000;">Category Name</th>
-        <th style="border: 1px solid #000;">Total Unit Sold</th>
-        <th style="border: 1px solid #000;">Total Price</th>
-        <th style="border: 1px solid #000;">Percentage Sold</th>
+        <th style="border: 1px solid #000; background-color: #cccccc;">Category ID</th>
+        <th style="border: 1px solid #000; background-color: #cccccc;">Category Name</th>
+        <th style="border: 1px solid #000; background-color: #cccccc;">Total Unit Sold</th>
+        <th style="border: 1px solid #000; background-color: #cccccc;">Total Price</th>
+        <th style="border: 1px solid #000; background-color: #cccccc;">Percentage Sold</th>
     </tr>';
 
 while ($row = mysqli_fetch_assoc($categorySell_Query)) {

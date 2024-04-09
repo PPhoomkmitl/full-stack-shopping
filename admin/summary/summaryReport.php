@@ -52,9 +52,12 @@ include_once '../../dbConfig.php';
         .data-card {
             flex-grow: 1;
             margin: 0 10px 20px;
-            background-color: #E3F4F4;
+            /* background-color: #E3F4F4; */
+            background-color: #f0f0f0; /* Example background color */
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc; /* Example border */
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 2px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
 
@@ -75,11 +78,11 @@ include_once '../../dbConfig.php';
         td {
             padding: 8px;
             text-align: center;
-            border-bottom: 1px solid #C4DFDF;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         th {
-            background-color: #C4DFDF;
+            background-color: #cccccc;
         }
 
         #card-4 h1 {
@@ -215,9 +218,9 @@ include_once '../../dbConfig.php';
                 <label for="filter-type">Filter Type:</label>
                 <select id="filter-type" onchange="handleFilterTypeChange()">
                     <option value="no-filter">No Filter</option>
-                    <option value="monthly">Monthly</option>
+                    <!-- <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
-                    <option value="daily">Daily</option>
+                    <option value="daily">Daily</option> -->
                     <option value="custom">Custom</option>
                 </select>
 

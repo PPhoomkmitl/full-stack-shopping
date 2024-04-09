@@ -310,38 +310,73 @@
             echo "<td>";
             echo "<div style='border-radius:10px; padding: 3.920px 7.280px; width:120px; margin: 0 auto; background-color:";
 
-            // Conditions to set background color based on fullfill_status value
-            if ($row['fullfill_status'] == 'Unfulfilled') {
-                echo '#FF6868;';
-            } elseif ($row['fullfill_status'] == 'Fulfilled') {
-                echo '#06D6B1;';
-            } elseif ($row['fullfill_status'] == 'Return' && $row['shipping_status'] == 'Canceled') {
-                echo '#FFA500;';
-            }
-            else {
-                echo '#06D6B1;';
-            }
-            echo "'>";
-            echo "<select id='select_payment_$index' data-payment-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required";
+            if($row['shipping_status'] == 'Canceled') {
+                // Conditions to set background color based on fullfill_status value
+                if ($row['fullfill_status'] == 'Unfulfilled') {
+                    echo '#FF6868;';
+                // } elseif ($row['fullfill_status'] == 'Fulfilled') {
+                //     echo '#06D6B1;';
+                } elseif ($row['fullfill_status'] == 'Return' && $row['shipping_status'] == 'Canceled') {
+                    echo '#FFA500;';
+                }
+                else {
+                    echo '#06D6B1;';
+                }
+                echo "'>";
+                echo "<select id='select_payment_$index' data-payment-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required";
 
 
-            // Check if the fullfill_status is Fulfilled
-            if ($row['fullfill_status'] == 'Fulfilled' && $row['shipping_status'] != 'Canceled') {
-                // If it is Fulfilled, add the 'disabled' attribute to disable the select
-                echo " disabled";
-            }
-            elseif ($row['fullfill_status'] == 'Return'){
-                echo " disabled";
-            }
+                // Check if the fullfill_status is Fulfilled
+                if ($row['fullfill_status'] == 'Fulfilled' && $row['shipping_status'] != 'Canceled') {
+                    // If it is Fulfilled, add the 'disabled' attribute to disable the select
+                    echo " disabled";
+                }
+                elseif ($row['fullfill_status'] == 'Return'){
+                    echo " disabled";
+                }
+                echo ">";
 
-            echo ">";
+                // Options for fullfill_status
+                $shipping_statusCompare = ['Unfulfilled', 'Return'];
+                foreach ($shipping_statusCompare as $value) {
+                    $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
+                    echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+                }
 
-            // Options for fullfill_status
-            $shipping_statusCompare = ['Unfulfilled', 'Fulfilled', 'Return'];
-            foreach ($shipping_statusCompare as $value) {
-                $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
-                echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+            } else {
+                // Conditions to set background color based on fullfill_status value
+                if ($row['fullfill_status'] == 'Unfulfilled') {
+                    echo '#FF6868;';
+                } elseif ($row['fullfill_status'] == 'Fulfilled') {
+                    echo '#06D6B1;';
+                } elseif ($row['fullfill_status'] == 'Return' && $row['shipping_status'] == 'Canceled') {
+                    echo '#FFA500;';
+                }
+                else {
+                    echo '#06D6B1;';
+                }
+                echo "'>";
+                echo "<select id='select_payment_$index' data-payment-order_id='{$row['order_id']}' style='background-color: inherit; color: #ffff;' required";
+
+
+                // Check if the fullfill_status is Fulfilled
+                if ($row['fullfill_status'] == 'Fulfilled' && $row['shipping_status'] != 'Canceled') {
+                    // If it is Fulfilled, add the 'disabled' attribute to disable the select
+                    echo " disabled";
+                }
+                elseif ($row['fullfill_status'] == 'Return'){
+                    echo " disabled";
+                }
+                echo ">";
+
+                // Options for fullfill_status
+                $shipping_statusCompare = ['Unfulfilled', 'Fulfilled','Return'];
+                foreach ($shipping_statusCompare as $value) {
+                    $selected = ($value == $row['fullfill_status']) ? 'selected' : '';
+                    echo "<option value='$value' style='background-color: #ffff; color: black;' $selected>{$value}</option>";
+                }
             }
+                    
             echo "</select>";
             echo "</div></td>";
             echo "</tr>";
