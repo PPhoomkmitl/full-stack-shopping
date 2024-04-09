@@ -12,7 +12,7 @@ $statsArrow = ($statData == "increase") ? "increase.png" : "decrease.png";
 
 // Initialize variables
 $StartDate = isset($_SESSION['startDate']) ? $_SESSION['startDate'] : date("Y-m-d", strtotime("-1 week")); // Example: One week ago if not provided
-$EndDate = isset($_SESSION['endDate']) ?$_SESSION['endDate'] : date("Y-m-d"); // Today's date if not provided
+$EndDate = isset($_SESSION['endDate']) ? $_SESSION['endDate'] : date("Y-m-d"); // Today's date if not provided
 
 // SQL query to count the number of orders within the specified date range
 $query = "SELECT COUNT(order_id) AS order_count FROM orders 
@@ -175,24 +175,25 @@ if ($dateOrdersQuery) {
 </head>
 
 <body>
+  <button id="convertToPDF" style="display:block; margin:15% 0 0 5%; position:absolute; width:150; height:50px">Convert to PDF</button>
+
   <center>
     <div class="globalContainer">
       <section class="Header">
         <h2>Sales Summary Report</h2>
         <h3><?php echo $_SESSION['startDate']; ?> - <?php echo $_SESSION['endDate']; ?> </h3>
-        <button id="convertToPDF" style="display:block;">Convert to PDF</button>
       </section>
 
       <section class="Topic">
         <section class="Standard">
-          <aside class="left">
+          <div class="left">
             <h3 class="left-gap">กิจกรรม (ครั้ง)</h3>
             <h3 class="left-gap"><?php echo $eventCount; ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
-          </aside>
-          <aside class="right">
+          </div>
+          <div class="right">
             <h3 class="right-gap">ยอดขาย/WON SO (บาท)</h3>
             <h3 class="right-gap"><?php echo $purchaseTotal; ?><img src=../../img/<?php echo $statsArrow; ?>></h3>
-          </aside>
+          </div>
         </section>
       </section>
 
@@ -292,28 +293,16 @@ if ($dateOrdersQuery) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-  document.getElementById('convertToPDF').addEventListener('click', function() {
-    // Hide the button first
-    document.getElementById("convertToPDF").style.display = "none";
-
-    // Capture the content of globalContainer and convert it to PDF
-    const element = document.querySelector('.globalContainer');
-    html2canvas(element).then(function(canvas) {
-      // Convert canvas to image data
-      const imageData = canvas.toDataURL('image/png');
-
-      // Create a new PDF document
-      var doc = new jspdf.jsPDF();
-
-      // Add the image data to the PDF document
-      doc.addImage(imageData, 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight());
-
-      // Save the PDF document
-      doc.save('Summary_Report.pdf');
-
-      document.getElementById("convertToPDF").style.display = "block";
+    document.getElementById('convertToPDF').addEventListener('click', function() {
+      const element = document.querySelector('.globalContainer');
+      html2canvas(element).then(function(canvas) {
+        const imageData = canvas.toDataURL('image/png');
+        var doc = new jspdf.jsPDF();
+        // Adjust the scaling factor as needed
+        doc.addImage(imageData, 'PNG', 0, 0, doc.internal.pageSize.getWidth() * 1.15, doc.internal.pageSize.getHeight() * 1.75);
+        doc.save('Summary_Report.pdf');
+      });
     });
-  });
-</script>
+  </script>
 
 </html>

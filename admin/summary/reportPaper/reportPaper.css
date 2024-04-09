@@ -19,11 +19,12 @@ table.dataTable td {
 .Standard {
   display: inline-block; /* Display the asides as inline-block elements */
   vertical-align: top; /* Align them to the top of the line */
-  width: 60%; /* Set a width to prevent them from filling the entire line */
-  margin: 0 20% 0 20%; /* Add some margin between the asides */
+  width: 70%; /* Set a width to prevent them from filling the entire line */
+  margin: 0 20% 0 10%; /* Add some margin between the asides */
   background-color: #f0f0f0; /* Example background color */
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc; /* Example border */
+  z-index: 5;
 }
 
 .Standard .right {
@@ -34,6 +35,7 @@ table.dataTable td {
   float: right;
   margin-left: 2.5%;
   margin-right: 2.5%;
+  z-index: 10;
 }
 
 .Standard .right img,
@@ -50,11 +52,12 @@ table.dataTable td {
   float: left;
   margin-left: 2.5%;
   margin-right: 2.5%;
+  z-index: 10;
 }
 
 .Graph {
   position: relative;
-  margin: 0 20% 0 20%;
+  margin: 0 20% 0 10%;
   width: auto;
   height: 330px;
 }
@@ -77,8 +80,8 @@ table.dataTable td {
 
 .Top10Container {
   display: flex;
-  width: 60%;
-  margin: 0 20% 0 20%;
+  width: 70%;
+  margin: 0 20% 0 10%;
 }
 .Top10Container .leftTable {
   float: left;
